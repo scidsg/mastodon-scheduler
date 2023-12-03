@@ -6,9 +6,15 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-# Install Python, pip, and Git
+# Install Python, pip, Git, and OpenSSL
 apt update && apt -y dist-upgrade && apt -y autoremove
-apt install -y python3 python3-pip python3-venv git
+apt install -y python3 python3-pip python3-venv git libnss3-tools
+
+# Install mkcert
+wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
+chmod +x mkcert-v1.4.3-linux-arm
+mv mkcert-v1.4.3-linux-arm /usr/local/bin/mkcert
+mkcert -install
 
 # Set up project directory
 mkdir -p ~/mastodon_app
@@ -32,6 +38,9 @@ INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "http
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
+
+# Generate local certificates using mkcert
+mkcert -key-file key.pem -cert-file cert.pem tooter.local
 
 # Create main.py using a here-document and directly input the collected values
 cat > main.py <<EOF
@@ -59,7 +68,7 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='tooter.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
 EOF
 
 # Modify main.py to directly use these variables
@@ -100,4 +109,4 @@ EOF
 
 # Activate the virtual environment and run the Flask app
 source venv/bin/activate
-gunicorn -w 4 -b 0.0.0.0:5000 main:app
+gunicorn -w 4 -b tooter.local:5000 main:app --certfile=./cert.pem --keyfile=./key.pem
