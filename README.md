@@ -1,4 +1,4 @@
-# Mastodon Toot Scheduler
+# 🐘 Mastodon Toot Scheduler
 
 This project is a Flask-based web application that allows users to post statuses (toots) to Mastodon. It supports both immediate posting and scheduling posts for future times. It also includes image upload functionality.
 
