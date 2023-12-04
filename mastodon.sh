@@ -60,11 +60,14 @@ logging.basicConfig(level=logging.INFO)
 
 # Flask application setup
 app = Flask(__name__)
-app.secret_key = '$SECRET_KEY' 
+app.secret_key = '$SECRET_KEY'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 Megabyte limit
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Ensure the upload directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # SQLAlchemy setup
 db = SQLAlchemy(app)
@@ -79,9 +82,11 @@ class ScheduledPost(db.Model):
     def __repr__(self):
         return f'<ScheduledPost {self.id} {self.content[:20]}>'
 
-# Create an application context for the database creation
+# Check for existing tables before creating new ones
 with app.app_context():
-    db.create_all()  # Attempt to create database tables
+    inspector = inspect(db.engine)
+    if not inspector.has_table('scheduled_post'):
+        db.create_all()
 
 # APScheduler setup with SQLAlchemyJobStore
 jobstores = {
@@ -91,7 +96,6 @@ scheduler = BackgroundScheduler(jobstores=jobstores)
 
 # Check if apscheduler_jobs table exists before starting the scheduler
 with app.app_context():
-    inspector = inspect(db.engine)
     if not inspector.has_table('apscheduler_jobs'):
         scheduler.start()
 
@@ -154,15 +158,19 @@ def index():
             mastodon.status_post(status, media_ids=[media_id] if media_id else None)
             flash("Posted Successfully!")
 
-        return redirect(url_for('index'))
+    # Query all scheduled posts from the database and order by schedule time
+    scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
 
-    return render_template('index.html')
+    # Pass the scheduled posts to the template
+    return render_template('index.html', scheduled_posts=scheduled_posts)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
     posts = ScheduledPost.query.filter(ScheduledPost.schedule_time > datetime.now()).all()
     for post in posts:
-        scheduler.add_job(post_to_mastodon, 'date', run_date=post.schedule_time, args=[post.content, post.image_path])
+        job_id = f"post_{post.id}"
+        if not scheduler.get_job(job_id):
+            scheduler.add_job(post_to_mastodon, 'date', id=job_id, run_date=post.schedule_time, args=[post.content, post.image_path])
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
@@ -203,6 +211,14 @@ cat > templates/index.html <<"EOF"
         <input type="datetime-local" name="schedule_time"><br>
         <button type="submit">Post or Schedule</button>
     </form>
+    <h2>Scheduled Posts</h2>
+    <ul>
+    {% for post in scheduled_posts %}
+        <li>{{ post.schedule_time }} - {{ post.content }}</li>
+    {% else %}
+        <li>No scheduled posts</li>
+    {% endfor %}
+    </ul>
 </body>
 </html>
 EOF
