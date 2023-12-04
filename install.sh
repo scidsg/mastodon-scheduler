@@ -240,6 +240,16 @@ cat > scheduled_posts.json <<"EOF"
 ]
 EOF
 
+# Kill any process on port 5000
+kill_port_processes() {
+    echo "Checking for processes on port 5000..."
+    local pid=$(sudo lsof -t -i :5000)
+    if [ ! -z "$pid" ]; then
+        echo "Killing processes on port 5000..."
+        sudo kill -9 $pid
+    fi
+}
+
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
 [Unit]
@@ -250,7 +260,7 @@ After=network.target
 User=$USER
 Group=$USER
 WorkingDirectory=$HOME/mastodon_app
-ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 main:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
+ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 main:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
 
 [Install]
 WantedBy=multi-user.target
@@ -262,11 +272,10 @@ systemctl daemon-reload
 # Enable the service to start on boot
 systemctl enable mastodon_app.service
 
-# Start the service
-systemctl start mastodon_app.service
+# Start the Mastodon app service
+kill_port_processes
+echo "Starting Mastodon app service..."
+sudo systemctl start mastodon_app.service
 
 echo "Mastodon app setup complete and service started."
-
-# Activate the virtual environment and run the Flask app
-source venv/bin/activate
-gunicorn -w 4 -b tooter.local:5000 main:app --certfile=./cert.pem --keyfile=./key.pem
+echo "You can access your scheduling app at https://tooter.local:5000"
