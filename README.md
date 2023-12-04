@@ -32,7 +32,7 @@ cd mastodon_app
 3. Run the installation script:
 
 ```bash
-./install_script.sh
+./install.sh
 ```
 
 This script will set up a Python virtual environment, install necessary dependencies, create a Flask app, and set up a systemd service for the app.
@@ -50,7 +50,7 @@ Contributions to this project are welcome. To contribute, please follow these st
 1. Fork this repository.
 2. Create a branch: git checkout -b <branch_name>.
 3. Make your changes and commit them: git commit -m '<commit_message>'.
-4. Push to the original branch: git push origin post-to-mastodon/main.
+4. Push to the original branch: git push origin mastodon-scheduler/main.
 5. Create the pull request.
 
 Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
