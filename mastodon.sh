@@ -240,6 +240,34 @@ cat > scheduled_posts.json <<"EOF"
 ]
 EOF
 
+# Create a systemd service file for the application
+cat > /etc/systemd/system/mastodon_app.service <<EOF
+[Unit]
+Description=Mastodon App Service
+After=network.target
+
+[Service]
+User=$USER
+Group=$USER
+WorkingDirectory=/home/$USER/mastodon_app
+Environment="PATH=/home/$USER/mastodon_app/venv/bin"
+ExecStart=/home/$USER/mastodon_app/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 main:app --certfile=./cert.pem --keyfile=./key.pem
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Reload systemd to apply new service
+systemctl daemon-reload
+
+# Enable the service to start on boot
+systemctl enable mastodon_app.service
+
+# Start the service
+systemctl start mastodon_app.service
+
+echo "Mastodon app setup complete and service started."
+
 # Activate the virtual environment and run the Flask app
 source venv/bin/activate
 gunicorn -w 4 -b tooter.local:5000 main:app --certfile=./cert.pem --keyfile=./key.pem
