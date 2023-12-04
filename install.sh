@@ -249,9 +249,8 @@ After=network.target
 [Service]
 User=$USER
 Group=$USER
-WorkingDirectory=/home/$USER/mastodon_app
-Environment="PATH=/home/$USER/mastodon_app/venv/bin"
-ExecStart=/home/$USER/mastodon_app/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 main:app --certfile=./cert.pem --keyfile=./key.pem
+WorkingDirectory=$HOME/mastodon_app
+ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 main:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
 
 [Install]
 WantedBy=multi-user.target
