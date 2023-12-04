@@ -21,12 +21,12 @@ To install the Mastodon App, follow these steps:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/mastodon_app.git
+git clone https://github.com/glenn-sorrentino/mastodon_scheduler.git
 ```
   
 2. Navigate to the project directory:
 ```bash
-cd mastodon_app
+cd mastodon_scheduler
 ```
 
 3. Run the installation script:
@@ -50,7 +50,7 @@ Contributions to this project are welcome. To contribute, please follow these st
 1. Fork this repository.
 2. Create a branch: git checkout -b <branch_name>.
 3. Make your changes and commit them: git commit -m '<commit_message>'.
-4. Push to the original branch: git push origin mastodon-scheduler/main.
+4. Push to the original branch: git push origin <project_name>/<location>.
 5. Create the pull request.
 
 Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
