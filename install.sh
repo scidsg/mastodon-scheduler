@@ -18,6 +18,7 @@ mkcert -install
 
 # Set up project directory
 mkdir -p ~/mastodon_app
+mkdir -p ~/mastodon_app/static/uploads
 cd ~/mastodon_app
 
 # Create a Python virtual environment
@@ -34,7 +35,7 @@ mkdir -p templates
 CLIENT_KEY=$(whiptail --inputbox "Enter your Mastodon Client Key" 8 78 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Mastodon Client Secret" 8 78 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Mastodon Access Token" 8 78 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "https://fosstodon.org" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
+INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
@@ -59,9 +60,9 @@ from sqlalchemy import inspect
 logging.basicConfig(level=logging.INFO)
 
 # Flask application setup
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = '$SECRET_KEY'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 Megabyte limit
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -76,7 +77,7 @@ db = SQLAlchemy(app)
 class ScheduledPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    image_path = db.Column(db.String(255))
+    image_path = db.Column(db.String(255), nullable=True)  # Image path can be null
     schedule_time = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
@@ -84,20 +85,13 @@ class ScheduledPost(db.Model):
 
 # Check for existing tables before creating new ones
 with app.app_context():
-    inspector = inspect(db.engine)
-    if not inspector.has_table('scheduled_post'):
-        db.create_all()
+    db.create_all()
 
 # APScheduler setup with SQLAlchemyJobStore
-jobstores = {
-    'default': SQLAlchemyJobStore(url='sqlite:///jobs.sqlite')
-}
-scheduler = BackgroundScheduler(jobstores=jobstores)
-
-# Check if apscheduler_jobs table exists before starting the scheduler
-with app.app_context():
-    if not inspector.has_table('apscheduler_jobs'):
-        scheduler.start()
+scheduler = BackgroundScheduler({
+    'default': SQLAlchemyJobStore(url=app.config['SQLALCHEMY_DATABASE_URI'])
+})
+scheduler.start()
 
 # Mastodon API setup
 mastodon = Mastodon(
@@ -109,17 +103,27 @@ mastodon = Mastodon(
 
 def allowed_file(filename):
     """Check if the uploaded file is allowed."""
-    ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def post_to_mastodon(content, image_path=None):
     """Post to Mastodon, optionally with an image."""
     logging.info(f"Executing scheduled post: {content}")
     media_id = None
-    if image_path and os.path.exists(image_path):
-        media = mastodon.media_post(image_path)
-        media_id = media['id']
-    mastodon.status_post(content, media_ids=[media_id] if media_id else None)
+    try:
+        if image_path:
+            # Update this line to reflect the new path
+            full_image_path = os.path.join(app.root_path, 'static', image_path)
+            if os.path.exists(full_image_path):
+                media_response = mastodon.media_post(full_image_path)
+                logging.info(f"Media post response: {media_response}")
+                media_id = media_response['id']
+            else:
+                logging.error(f"Image file not found: {full_image_path}")
+        status_response = mastodon.status_post(content, media_ids=[media_id] if media_id else None)
+        logging.info(f"Status post response: {status_response}")
+    except Exception as e:
+        logging.error(f"Error posting to Mastodon: {e}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -134,8 +138,11 @@ def index():
             image_path = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(image_path)
+                # Save the file in the UPLOAD_FOLDER
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                # Save the relative path in the database
+                image_path = os.path.join('uploads', filename)
 
             # Save scheduled post to database
             new_post = ScheduledPost(
@@ -145,21 +152,31 @@ def index():
             )
             db.session.add(new_post)
             db.session.commit()
-            scheduler.add_job(post_to_mastodon, 'date', run_date=schedule_datetime, args=[status, image_path])
+
+            # Schedule the post
+            scheduler.add_job(
+                post_to_mastodon, 
+                'date', 
+                run_date=schedule_datetime, 
+                args=[status, image_path],
+                id=str(new_post.id)
+            )
             flash("Post scheduled for " + schedule_time)
         else:
             media_id = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
+                # Save the file in the UPLOAD_FOLDER
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
+                # Post directly with the file path
                 media = mastodon.media_post(file_path)
                 media_id = media['id']
             mastodon.status_post(status, media_ids=[media_id] if media_id else None)
             flash("Posted Successfully!")
 
-    # Query all scheduled posts from the database and order by schedule time
-    scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
+    # Query all scheduled posts from the database and order by schedule time descending
+    scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time.desc()).all()
 
     # Pass the scheduled posts to the template
     return render_template('index.html', scheduled_posts=scheduled_posts)
@@ -172,6 +189,10 @@ def load_scheduled_posts():
         if not scheduler.get_job(job_id):
             scheduler.add_job(post_to_mastodon, 'date', id=job_id, run_date=post.schedule_time, args=[post.content, post.image_path])
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
     app.run(host='tooter.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
@@ -183,8 +204,8 @@ sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" main.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" main.py
 sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 
-# Create index.html
-cat > templates/index.html <<"EOF"
+# Modify the index.html file to correctly reference images from the static path
+cat > templates/index.html <<'EOF'
 <!DOCTYPE html>
 <html>
 <head>
@@ -211,13 +232,20 @@ cat > templates/index.html <<"EOF"
         <input type="datetime-local" name="schedule_time"><br>
         <button type="submit">Post or Schedule</button>
     </form>
+
     <h2>Scheduled Posts</h2>
     <ul>
-    {% for post in scheduled_posts %}
-        <li>{{ post.schedule_time }} - {{ post.content }}</li>
-    {% else %}
+        {% for post in scheduled_posts %}
+        <li>
+            {{ post.schedule_time }} - {{ post.content }}
+            {% if post.image_path %}
+                <!-- Updated to reference images from the static folder -->
+                <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image" height="100">
+            {% endif %}
+        </li>
+        {% else %}
         <li>No scheduled posts</li>
-    {% endfor %}
+        {% endfor %}
     </ul>
 </body>
 </html>
