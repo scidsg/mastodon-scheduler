@@ -39,7 +39,7 @@ This script will set up a Python virtual environment, install necessary dependen
 
 ## Usage
 
-After installation, the Mastodon App will be running as a service on your machine. You can access the web interface by navigating to https://tooter.local:5000 in your web browser.
+After installation, the Mastodon App will be running as a service on your machine. You can access the web interface by navigating to `https://tooter.local:5000` in your web browser.
 
 To post a status or schedule a post, simply fill in the form on the main page and submit.
 
@@ -48,9 +48,9 @@ To post a status or schedule a post, simply fill in the form on the main page an
 Contributions to this project are welcome. To contribute, please follow these steps:
 
 1. Fork this repository.
-2. Create a branch: git checkout -b <branch_name>.
-3. Make your changes and commit them: git commit -m '<commit_message>'.
-4. Push to the original branch: git push origin <project_name>/<location>.
+2. Create a branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`.
+4. Push to the original branch: `git push origin <project_name>/<location>`.
 5. Create the pull request.
 
 Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
