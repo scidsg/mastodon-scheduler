@@ -69,7 +69,7 @@ li {
 
 form,
 .scheduled-posts {
-  max-width: 640px;
+  max-width: 768px;
   width: 100%;
   display: flex;
   flex-direction: column;
