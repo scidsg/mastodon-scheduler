@@ -211,10 +211,12 @@ cat > templates/index.html <<'EOF'
 <html>
 <head>
     <title>Post to Mastodon</title>
-    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
 </head>
 <body>
-    <h1>Post to Mastodon</h1>
+    <header>
+        <h1>Post to Mastodon</h1>
+    </header>
 
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages() %}
@@ -239,7 +241,7 @@ cat > templates/index.html <<'EOF'
         <ul>
             {% for post in scheduled_posts %}
             <li>
-                {{ post.schedule_time }} - {{ post.content }}
+                {{ post.content }}<br><span class="meta">{{ post.schedule_time }}</span>
                 {% if post.image_path %}
                     <!-- Updated to reference images from the static folder -->
                     <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
@@ -260,6 +262,37 @@ body {
   display: flex;
   flex-direction: column;
   font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  height: calc(100vh - 3.875rem);
+  justify-content: start;
+  padding-top: 3.875rem;
+
+}
+
+header {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    background-color: white;
+    width: 100%;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+h2 {
+    margin-bottom: .325rem;
+}
+
+.meta {
+    font-size: .825rem;
+    font-family: monospace;
+    margin: .5rem 0;
+    display: inline-flex;
+    color: #494949;
 }
 
 .notification {
@@ -275,7 +308,7 @@ body {
   box-shadow: 0px 12px 12px -4px rgba(20, 85, 10, 0.08);
 }
 
-.notification li {
+li {
     list-style: none;
 }
 
@@ -286,7 +319,7 @@ form,
   display: flex;
   flex-direction: column;
   align-self: center;
-  gap: .325rem
+  gap: .325rem;
   margin: 1rem 0;
 }
 
@@ -306,6 +339,11 @@ form textarea {
 .scheduled-posts li img {
     display: block;
     width: 50%;
+    margin-top: .5rem;
+}
+
+.scheduled-posts ul {
+    padding: 0;
 }
 EOF
 
