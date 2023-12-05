@@ -19,6 +19,7 @@ mkcert -install
 # Set up project directory
 mkdir -p ~/mastodon_app
 mkdir -p ~/mastodon_app/static/uploads
+mkdir -p ~/mastodon_app/static/css
 cd ~/mastodon_app
 
 # Create a Python virtual environment
@@ -161,7 +162,7 @@ def index():
                 args=[status, image_path],
                 id=str(new_post.id)
             )
-            flash("Post scheduled for " + schedule_time)
+            flash("👍 Successfully scheduled you post for " + schedule_time)
         else:
             media_id = None
             if file and allowed_file(file.filename):
@@ -210,6 +211,7 @@ cat > templates/index.html <<'EOF'
 <html>
 <head>
     <title>Post to Mastodon</title>
+    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
 </head>
 <body>
     <h1>Post to Mastodon</h1>
@@ -217,7 +219,7 @@ cat > templates/index.html <<'EOF'
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul>
+            <ul class="notification">
             {% for message in messages %}
                 <li>{{ message }}</li>
             {% endfor %}
@@ -232,23 +234,79 @@ cat > templates/index.html <<'EOF'
         <input type="datetime-local" name="schedule_time"><br>
         <button type="submit">Post or Schedule</button>
     </form>
-
-    <h2>Scheduled Posts</h2>
-    <ul>
-        {% for post in scheduled_posts %}
-        <li>
-            {{ post.schedule_time }} - {{ post.content }}
-            {% if post.image_path %}
-                <!-- Updated to reference images from the static folder -->
-                <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image" height="100">
-            {% endif %}
-        </li>
-        {% else %}
-        <li>No scheduled posts</li>
-        {% endfor %}
-    </ul>
+    <div class="scheduled-posts">
+        <h2>Scheduled Posts</h2>
+        <ul>
+            {% for post in scheduled_posts %}
+            <li>
+                {{ post.schedule_time }} - {{ post.content }}
+                {% if post.image_path %}
+                    <!-- Updated to reference images from the static folder -->
+                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
+                {% endif %}
+            </li>
+            {% else %}
+            <li>No scheduled posts</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
+EOF
+
+# Create stylesheet
+cat > static/css/style.css <<'EOF'
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.notification {
+  background-color: #c3fbc3;
+  width: fit-content;
+  padding: 1rem 1.25rem;
+  border-radius: .125rem;
+  position: fixed;
+  top: 1rem;
+  margin: 0;
+  right: 1rem;
+  outline: 1px solid #1f951f45;
+  box-shadow: 0px 12px 12px -4px rgba(20, 85, 10, 0.08);
+}
+
+.notification li {
+    list-style: none;
+}
+
+form,
+.scheduled-posts {
+  max-width: 640px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  gap: .325rem
+  margin: 1rem 0;
+}
+
+form input {
+  max-width: 320px;
+}
+
+form button {
+  width: fit-content;
+}
+
+form textarea {
+    height: 240px;
+    padding: .75rem;
+}
+
+.scheduled-posts li img {
+    display: block;
+    width: 50%;
+}
 EOF
 
 # Create scheduled_posts.json
