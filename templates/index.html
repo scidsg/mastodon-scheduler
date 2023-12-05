@@ -3,45 +3,58 @@
 <head>
     <title>Post to Mastodon</title>
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <header>
         <h1>Post to Mastodon</h1>
     </header>
 
-    <!-- Display flash messages -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="notification">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <main>
+        <!-- Display flash messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="notification">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
-    <!-- Form for posting status with file upload and scheduling -->
-    <form method="post" enctype="multipart/form-data">
-        <textarea name="status" placeholder="What's on your mind?"></textarea><br>
-        <input type="file" name="image"><br>
-        <input type="datetime-local" name="schedule_time"><br>
-        <button type="submit">Post or Schedule</button>
-    </form>
-    <div class="scheduled-posts">
-        <h2>Scheduled Posts</h2>
-        <ul>
-            {% for post in scheduled_posts %}
-            <li>
-                {{ post.content }}<br><span class="meta">{{ post.schedule_time }}</span>
-                {% if post.image_path %}
-                    <!-- Updated to reference images from the static folder -->
-                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
-                {% endif %}
-            </li>
-            {% else %}
-            <li>No scheduled posts</li>
-            {% endfor %}
-        </ul>
-    </div>
+        <!-- Form for posting status with file upload and scheduling -->
+        <form method="post" enctype="multipart/form-data">
+            <label for="status">Your Message</label>
+            <textarea id="status" name="status" placeholder="What's on your mind?"></textarea>
+
+            <label for="image">Upload Image</label>
+            <input type="file" id="image" name="image">
+
+            <label for="schedule_time">Schedule Time</label>
+            <input type="datetime-local" id="schedule_time" name="schedule_time">
+
+            <button type="submit">Post or Schedule</button>
+        </form>
+
+        <div class="scheduled-posts">
+            <h2>🗓️ Scheduled Posts</h2>
+            <ul>
+                {% for post in scheduled_posts %}
+                <li>
+                    {{ post.content }}<br><span class="meta">{{ post.schedule_time }}</span>
+                    {% if post.image_path %}
+                        <!-- Updated to reference images from the static folder -->
+                        <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
+                    {% endif %}
+                </li>
+                {% else %}
+                <li>No scheduled posts</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
 </body>
 </html>

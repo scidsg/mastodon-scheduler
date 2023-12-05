@@ -1,12 +1,11 @@
 body {
   display: flex;
   flex-direction: column;
-  font-family: Helvetica, Arial, sans-serif;
   margin: 0;
   height: calc(100vh - 3.875rem);
   justify-content: start;
   padding-top: 3.875rem;
-
+  font-family: 'Atkinson Hyperlegible', sans-serif;
 }
 
 header {
@@ -23,14 +22,20 @@ header h1 {
     font-size: 1.25rem;
 }
 
+main {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
 h2 {
     margin-bottom: .325rem;
 }
 
 .meta {
-    font-size: .825rem;
-    font-family: monospace;
-    margin: .5rem 0;
+    font-size: .775rem;
+    font-family: 'IBM Plex Mono', monospace;
+    margin: .25rem 0 .5rem 0;
     display: inline-flex;
     color: #494949;
 }
@@ -59,8 +64,19 @@ form,
   display: flex;
   flex-direction: column;
   align-self: center;
-  gap: .325rem;
   margin: 1rem 0;
+}
+
+form label {
+    font-size: .975rem;
+    margin: .75rem 0 .5rem 0;
+    font-weight: 700;
+}
+
+form input,
+form textarea {
+    margin-bottom: .325rem;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
 }
 
 form input {
@@ -69,6 +85,13 @@ form input {
 
 form button {
   width: fit-content;
+  margin: .75rem 0;
+  padding: .625rem .75rem;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  font-weight: 700;
+  background-color: #d590d5;
+  border-radius: .25rem;
+  border: none;
 }
 
 form textarea {
@@ -76,12 +99,28 @@ form textarea {
     padding: .75rem;
 }
 
+.scheduled-posts {
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding: 1rem 0;
+}
+
 .scheduled-posts li img {
     display: block;
     width: 50%;
-    margin-top: .5rem;
+    margin-top: .25rem;
+    border-radius: .5rem;
 }
 
 .scheduled-posts ul {
     padding: 0;
+}
+
+.scheduled-posts li {
+    margin-bottom: 1.25rem;
+}
+
+@media only screen and (max-width: 640px) {
+    .scheduled-posts li img {
+        width: 100%;
+    }
 }
