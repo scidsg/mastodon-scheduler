@@ -165,7 +165,7 @@ form p:first-of-type {
     padding-bottom: 1.25rem;
 }
 
-@media only screen and (max-width: 960px) {
+@media only screen and (max-width: 768px) {
     main {
         flex-direction: column;
         overflow-y: initial;
@@ -187,9 +187,7 @@ form p:first-of-type {
         height: initial;
         overflow: initial;
     }
-}
 
-@media only screen and (max-width: 640px) {
     .scheduled-posts li img {
         width: 100%;
     }
