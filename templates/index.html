@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <h1>🐘 Mastodon Scheduler</h1>
+        <h1>🗓️ Mastodon Scheduler</h1>
     </header>
 
     <main>
@@ -27,8 +27,6 @@
 
         <!-- Form for posting status with file upload and scheduling -->
         <form method="post" enctype="multipart/form-data">
-            <h2>✍️ Write Your Message</h2>
-            <p>The Mastodon Scheduler helps you plan and automate your social media content. Just add your message, an optional image, and when the content should post.</p>
 
             <label for="status">Your Message</label>
             <textarea id="status" name="status" placeholder="What's on your mind?"></textarea>
@@ -43,7 +41,7 @@
         </form>
 
         <div class="scheduled-posts">
-            <h2>🗓️ Scheduled Posts</h2>
+            <h2>⏰ Scheduled Posts</h2>
             <ul>
                 {% for post in scheduled_posts %}
                 <li>
