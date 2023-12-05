@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post to Mastodon</title>
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Post to Mastodon</h1>
+    </header>
+
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="notification">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Form for posting status with file upload and scheduling -->
+    <form method="post" enctype="multipart/form-data">
+        <textarea name="status" placeholder="What's on your mind?"></textarea><br>
+        <input type="file" name="image"><br>
+        <input type="datetime-local" name="schedule_time"><br>
+        <button type="submit">Post or Schedule</button>
+    </form>
+    <div class="scheduled-posts">
+        <h2>Scheduled Posts</h2>
+        <ul>
+            {% for post in scheduled_posts %}
+            <li>
+                {{ post.content }}<br><span class="meta">{{ post.schedule_time }}</span>
+                {% if post.image_path %}
+                    <!-- Updated to reference images from the static folder -->
+                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
+                {% endif %}
+            </li>
+            {% else %}
+            <li>No scheduled posts</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

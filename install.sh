@@ -10,6 +10,9 @@ fi
 apt update && apt -y dist-upgrade && apt -y autoremove
 apt install -y python3 python3-pip python3-venv git libnss3-tools
 
+# Clone repo
+git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
+
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
 chmod +x mkcert-v1.4.3-linux-arm
@@ -205,147 +208,11 @@ sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" main.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" main.py
 sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 
-# Modify the index.html file to correctly reference images from the static path
-cat > templates/index.html <<'EOF'
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Post to Mastodon</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style.css">
-</head>
-<body>
-    <header>
-        <h1>Post to Mastodon</h1>
-    </header>
+# Move the index file
+cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 
-    <!-- Display flash messages -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="notification">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Form for posting status with file upload and scheduling -->
-    <form method="post" enctype="multipart/form-data">
-        <textarea name="status" placeholder="What's on your mind?"></textarea><br>
-        <input type="file" name="image"><br>
-        <input type="datetime-local" name="schedule_time"><br>
-        <button type="submit">Post or Schedule</button>
-    </form>
-    <div class="scheduled-posts">
-        <h2>Scheduled Posts</h2>
-        <ul>
-            {% for post in scheduled_posts %}
-            <li>
-                {{ post.content }}<br><span class="meta">{{ post.schedule_time }}</span>
-                {% if post.image_path %}
-                    <!-- Updated to reference images from the static folder -->
-                    <img src="{{ url_for('static', filename=post.image_path) }}" alt="Scheduled image">
-                {% endif %}
-            </li>
-            {% else %}
-            <li>No scheduled posts</li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-</html>
-EOF
-
-# Create stylesheet
-cat > static/css/style.css <<'EOF'
-body {
-  display: flex;
-  flex-direction: column;
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 0;
-  height: calc(100vh - 3.875rem);
-  justify-content: start;
-  padding-top: 3.875rem;
-
-}
-
-header {
-    padding: 1.25rem 1rem;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    position: fixed;
-    top: 0;
-    background-color: white;
-    width: 100%;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 1.25rem;
-}
-
-h2 {
-    margin-bottom: .325rem;
-}
-
-.meta {
-    font-size: .825rem;
-    font-family: monospace;
-    margin: .5rem 0;
-    display: inline-flex;
-    color: #494949;
-}
-
-.notification {
-  background-color: #c3fbc3;
-  width: fit-content;
-  padding: 1rem 1.25rem;
-  border-radius: .125rem;
-  position: fixed;
-  top: 1rem;
-  margin: 0;
-  right: 1rem;
-  outline: 1px solid #1f951f45;
-  box-shadow: 0px 12px 12px -4px rgba(20, 85, 10, 0.08);
-}
-
-li {
-    list-style: none;
-}
-
-form,
-.scheduled-posts {
-  max-width: 640px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-self: center;
-  gap: .325rem;
-  margin: 1rem 0;
-}
-
-form input {
-  max-width: 320px;
-}
-
-form button {
-  width: fit-content;
-}
-
-form textarea {
-    height: 240px;
-    padding: .75rem;
-}
-
-.scheduled-posts li img {
-    display: block;
-    width: 50%;
-    margin-top: .5rem;
-}
-
-.scheduled-posts ul {
-    padding: 0;
-}
-EOF
+# Move the stylesheet
+cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
 
 # Create scheduled_posts.json
 cat > scheduled_posts.json <<"EOF"

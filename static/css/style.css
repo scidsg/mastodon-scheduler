@@ -1,0 +1,87 @@
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  height: calc(100vh - 3.875rem);
+  justify-content: start;
+  padding-top: 3.875rem;
+
+}
+
+header {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    background-color: white;
+    width: 100%;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+h2 {
+    margin-bottom: .325rem;
+}
+
+.meta {
+    font-size: .825rem;
+    font-family: monospace;
+    margin: .5rem 0;
+    display: inline-flex;
+    color: #494949;
+}
+
+.notification {
+  background-color: #c3fbc3;
+  width: fit-content;
+  padding: 1rem 1.25rem;
+  border-radius: .125rem;
+  position: fixed;
+  top: 1rem;
+  margin: 0;
+  right: 1rem;
+  outline: 1px solid #1f951f45;
+  box-shadow: 0px 12px 12px -4px rgba(20, 85, 10, 0.08);
+}
+
+li {
+    list-style: none;
+}
+
+form,
+.scheduled-posts {
+  max-width: 640px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  gap: .325rem;
+  margin: 1rem 0;
+}
+
+form input {
+  max-width: 320px;
+}
+
+form button {
+  width: fit-content;
+}
+
+form textarea {
+    height: 240px;
+    padding: .75rem;
+}
+
+.scheduled-posts li img {
+    display: block;
+    width: 50%;
+    margin-top: .5rem;
+}
+
+.scheduled-posts ul {
+    padding: 0;
+}
