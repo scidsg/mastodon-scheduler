@@ -9,6 +9,8 @@ This project is a Flask-based web application that allows users to post statuses
 - Upload images with your posts.
 - View a list of scheduled posts.
 
+![tooter](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/31f9639f-475e-4d0e-a062-b22bd0e3637b)
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
