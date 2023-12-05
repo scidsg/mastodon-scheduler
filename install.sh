@@ -6,6 +6,21 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+# Welcome message and ASCII art
+cat <<"EOF"
+ __  __               _        _                     
+|  \/  |  __ _   ___ | |_   __| |  ___   _ _         
+| |\/| | / _` | (_-< |  _| / _` | / _ \ | ' \        
+|_|  |_| \__,_| /__/  \__| \__,_| \___/ |_||_|       
+ ___        _               _          _             
+/ __|  __  | |_    ___   __| |  _  _  | |  ___   _ _ 
+\__ \ / _| | ' \  / -_) / _` | | || | | | / -_) | '_|
+|___/ \__| |_||_| \___| \__,_|  \_,_| |_| \___| |_|  
+
+Schedule your social media posts.
+EOF
+sleep 3
+
 # Install Python, pip, Git, and OpenSSL
 apt update && apt -y dist-upgrade && apt -y autoremove
 apt install -y python3 python3-pip python3-venv git libnss3-tools
