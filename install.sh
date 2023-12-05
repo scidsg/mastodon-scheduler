@@ -194,11 +194,19 @@ def index():
             mastodon.status_post(status, media_ids=[media_id] if media_id else None)
             flash("Posted Successfully!")
 
-    # Query all scheduled posts from the database and order by schedule time descending
-    scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time.desc()).all()
+    # Query all scheduled posts from the database and order by schedule time ascending
+    scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
 
-    # Pass the scheduled posts to the template
-    return render_template('index.html', scheduled_posts=scheduled_posts)
+    # Determine the next up post
+    now = datetime.now()
+    next_up_post = None
+    for post in scheduled_posts:
+        if post.schedule_time > now:
+            next_up_post = post
+            break
+
+    # Pass the scheduled posts and next up post to the template
+    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
