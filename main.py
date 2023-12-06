@@ -32,6 +32,7 @@ class ScheduledPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     image_path = db.Column(db.String(255), nullable=True)  # Image path can be null
     schedule_time = db.Column(db.DateTime, nullable=False)
+    image_alt_text = db.Column(db.String(255), nullable=True)  # Alt text for the image
 
     def __repr__(self):
         return f'<ScheduledPost {self.id} {self.content[:20]}>'
@@ -59,18 +60,18 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def post_to_mastodon(content, image_path=None):
-    """Post to Mastodon, optionally with an image."""
-    logging.info(f"Executing scheduled post: {content}")
+def post_to_mastodon(content, image_path=None, image_alt_text=None):
+    logging.info(f"Alt text received: {image_alt_text}")
     media_id = None
     try:
         if image_path:
-            # Update this line to reflect the new path
             full_image_path = os.path.join(app.root_path, 'static', image_path)
             if os.path.exists(full_image_path):
                 media_response = mastodon.media_post(full_image_path)
-                logging.info(f"Media post response: {media_response}")
-                media_id = media_response['id']
+                if media_response:
+                    # Set alt text for the image
+                    mastodon.media_update(media_response['id'], description=image_alt_text)
+                    media_id = media_response['id']
             else:
                 logging.error(f"Image file not found: {full_image_path}")
         status_response = mastodon.status_post(content, media_ids=[media_id] if media_id else None)
@@ -80,27 +81,26 @@ def post_to_mastodon(content, image_path=None):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    """Handle post and schedule requests."""
     if request.method == 'POST':
         status = request.form['status']
-        file = request.files['image']
+        file = request.files.get('image')  # Use get to safely handle cases where no file is uploaded
         schedule_time = request.form.get('schedule_time')
+        image_alt = request.form.get('image_alt', '')
 
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
             image_path = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Save the file in the UPLOAD_FOLDER
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                # Save the relative path in the database
                 image_path = os.path.join('uploads', filename)
 
             # Save scheduled post to database
             new_post = ScheduledPost(
                 content=status,
                 image_path=image_path,
+                image_alt_text=image_alt,
                 schedule_time=schedule_datetime
             )
             db.session.add(new_post)
@@ -111,22 +111,31 @@ def index():
                 post_to_mastodon, 
                 'date', 
                 run_date=schedule_datetime, 
-                args=[status, image_path],
+                args=[status, image_path, image_alt],
                 id=str(new_post.id)
             )
-            flash("👍 Successfully scheduled you post for " + schedule_time)
+            flash("👍 Successfully scheduled your post for " + schedule_time)
         else:
+            # Immediate post handling
             media_id = None
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Save the file in the UPLOAD_FOLDER
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                # Post directly with the file path
-                media = mastodon.media_post(file_path)
-                media_id = media['id']
-            mastodon.status_post(status, media_ids=[media_id] if media_id else None)
-            flash("Posted Successfully!")
+            try:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+
+                    media = mastodon.media_post(file_path)
+                    logging.info(f"Immediate post - Media post response: {media}")
+                    if media:
+                        mastodon.media_update(media['id'], description=image_alt)
+                        media_id = media['id']
+
+                status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None)
+                logging.info(f"Immediate post - Status post response: {status_response}")
+                flash("Posted Successfully!")
+            except Exception as e:
+                logging.error(f"Error during immediate post: {e}")
+                flash("Error during posting!")
 
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
