@@ -71,6 +71,7 @@ li {
     overflow-y: scroll;
     max-width: 768px;
     width: 100%;
+    padding-right: 1.5rem;
 }
 
 .scheduled-posts {
@@ -225,4 +226,14 @@ li.next-up {
     .scheduled-posts li img {
         width: 100%;
     }
+
+    .form-container {
+        overflow-y: initial;
+        padding-right: 0;
+    }
+
+    .scheduled-posts {
+        overflow-y: initial;
+    }
+
 }
