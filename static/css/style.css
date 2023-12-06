@@ -154,7 +154,7 @@ form p:first-of-type {
     background-color: white;
     box-sizing: border-box;
     border-radius: .25rem;
-    height: 83vh;
+    height: calc(100vh - 8.5rem);
     overflow: scroll;
     margin: 0;
 }
