@@ -86,6 +86,7 @@ def index():
         status = request.form['status']
         file = request.files['image']
         schedule_time = request.form.get('schedule_time')
+        image_alt = request.form.get('image_alt', '')
 
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
@@ -122,14 +123,16 @@ def index():
             media_id = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Save the file in the UPLOAD_FOLDER
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                # Post directly with the file path
+                # Post the image with alt text
                 media = mastodon.media_post(file_path)
-                media_id = media['id']
-            mastodon.status_post(status, media_ids=[media_id] if media_id else None)
-            flash("Posted Successfully!")
+                if media:
+                    # Set alt text for the image
+                    mastodon.media_update(media['id'], description=image_alt)
+                    media_id = media['id']
+                mastodon.status_post(status, media_ids=[media_id] if media_id else None)
+                flash("Posted Successfully!")
 
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
