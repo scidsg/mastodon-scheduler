@@ -120,19 +120,26 @@ def index():
             )
             flash("👍 Successfully scheduled you post for " + schedule_time)
         else:
+            # Immediate post handling
             media_id = None
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                # Post the image with alt text
-                media = mastodon.media_post(file_path)
-                if media:
-                    # Set alt text for the image
-                    mastodon.media_update(media['id'], description=image_alt)
-                    media_id = media['id']
-                mastodon.status_post(status, media_ids=[media_id] if media_id else None)
-                flash("Posted Successfully!")
+            try:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+
+                    media = mastodon.media_post(file_path)
+                    logging.info(f"Immediate post - Media post response: {media}")
+                    if media:
+                        mastodon.media_update(media['id'], description=image_alt)
+                        media_id = media['id']
+
+                    status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None)
+                    logging.info(f"Immediate post - Status post response: {status_response}")
+                    flash("Posted Successfully!")
+            except Exception as e:
+                logging.error(f"Error during immediate post: {e}")
+                flash("Error during posting!")
 
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
