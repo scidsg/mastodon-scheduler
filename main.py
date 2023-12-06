@@ -90,14 +90,18 @@ def index():
         image_alt = request.form.get('image_alt', '')
         cw_text = request.form.get('cw_text', '')  # Retrieve CW text
 
+        # Generate a unique identifier for the image filename
+        unique_id = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
             image_path = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                unique_filename = f"{unique_id}_{filename}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
                 file.save(file_path)
-                image_path = os.path.join('uploads', filename)
+                image_path = os.path.join('uploads', unique_filename)
 
             # Save scheduled post to database
             new_post = ScheduledPost(
@@ -123,7 +127,8 @@ def index():
             media_id = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                unique_filename = f"{unique_id}_{filename}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
                 file.save(file_path)
 
                 media = mastodon.media_post(file_path)
@@ -134,6 +139,7 @@ def index():
                 status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None, spoiler_text=cw_text)
                 flash("Posted Successfully!")
             else:
+                # Handle posting without an image
                 status_response = mastodon.status_post(status, spoiler_text=cw_text)
                 flash("Posted Successfully!")
 
