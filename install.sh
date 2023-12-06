@@ -18,8 +18,15 @@ cat <<"EOF"
 |___/ \__| |_||_| \___| \__,_|  \_,_| |_| \___| |_|  
                                                        
 Schedule your social media posts.
+
 EOF
 sleep 3
+
+# Use whiptail to collect Mastodon credentials
+CLIENT_KEY=$(whiptail --inputbox "Enter your Mastodon Client Key" 8 78 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
+CLIENT_SECRET=$(whiptail --inputbox "Enter your Mastodon Client Secret" 8 78 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
+ACCESS_TOKEN=$(whiptail --inputbox "Enter your Mastodon Access Token" 8 78 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
+INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 
 # Install Python, pip, Git, and OpenSSL
 apt update && apt -y dist-upgrade && apt -y autoremove
@@ -27,6 +34,9 @@ apt install -y python3 python3-pip python3-venv git libnss3-tools
 
 # Clone repo
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
+cd mastodon-scheduler
+git switch cw
+cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
@@ -49,12 +59,6 @@ pip install Flask Mastodon.py gunicorn APScheduler SQLAlchemy Flask-SQLAlchemy
 
 # Set up templates directory
 mkdir -p templates
-
-# Use whiptail to collect Mastodon credentials
-CLIENT_KEY=$(whiptail --inputbox "Enter your Mastodon Client Key" 8 78 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
-CLIENT_SECRET=$(whiptail --inputbox "Enter your Mastodon Client Secret" 8 78 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
-ACCESS_TOKEN=$(whiptail --inputbox "Enter your Mastodon Access Token" 8 78 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
