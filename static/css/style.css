@@ -41,7 +41,7 @@ h2 {
 .meta {
     font-size: .775rem;
     font-family: 'IBM Plex Mono', monospace;
-    margin: .25rem 0 .5rem 0;
+    margin: .25rem 0 .25rem 0;
     display: inline-flex;
     color: #494949;
 }
@@ -154,7 +154,7 @@ form p:first-of-type {
 .scheduled-posts li img {
     display: block;
     width: 50%;
-    margin-top: .5rem;
+    margin-top: 1rem;
     border-radius: .5rem;
     border: 1px solid rgba(0,0,0,0.1);
 }
@@ -171,9 +171,12 @@ form p:first-of-type {
 }
 
 .scheduled-posts li {
-    margin-bottom: 1.25rem;
-    border-bottom: 1px solid rgba(0,0,0,.1);
+    margin-bottom: 1rem;
+    outline: 1px solid rgba(0,0,0,.12);
     padding-bottom: 1.25rem;
+    padding-top: 1.25rem;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,.08);
+    border-radius: .5rem;
 }
 
 .scheduled-posts li:not(.next-up) {
@@ -186,7 +189,7 @@ li.next-up {
   padding: 1rem;
   box-shadow: 4px 4px 0px 0px rgba(99,100,255,.25);
   border-radius: .5rem;
-  border: 1px solid rgba(99,100,255,.75);
+  outline: 1px solid rgba(99,100,255,.75);
 }
 
 .badge {
