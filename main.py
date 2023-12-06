@@ -81,30 +81,26 @@ def post_to_mastodon(content, image_path=None, image_alt_text=None):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    """Handle post and schedule requests."""
     if request.method == 'POST':
         status = request.form['status']
-        file = request.files['image']
+        file = request.files.get('image')  # Use get to safely handle cases where no file is uploaded
         schedule_time = request.form.get('schedule_time')
         image_alt = request.form.get('image_alt', '')
 
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
             image_path = None
-            image_alt = request.form.get('image_alt', '')  # Get alt text from form
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Save the file in the UPLOAD_FOLDER
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                # Save the relative path in the database
                 image_path = os.path.join('uploads', filename)
 
             # Save scheduled post to database
             new_post = ScheduledPost(
                 content=status,
                 image_path=image_path,
-                image_alt_text=image_alt,  # Save alt text
+                image_alt_text=image_alt,
                 schedule_time=schedule_datetime
             )
             db.session.add(new_post)
@@ -115,10 +111,10 @@ def index():
                 post_to_mastodon, 
                 'date', 
                 run_date=schedule_datetime, 
-                args=[status, image_path, image_alt],  # Include the alt text here
+                args=[status, image_path, image_alt],
                 id=str(new_post.id)
             )
-            flash("👍 Successfully scheduled you post for " + schedule_time)
+            flash("👍 Successfully scheduled your post for " + schedule_time)
         else:
             # Immediate post handling
             media_id = None
@@ -134,9 +130,9 @@ def index():
                         mastodon.media_update(media['id'], description=image_alt)
                         media_id = media['id']
 
-                    status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None)
-                    logging.info(f"Immediate post - Status post response: {status_response}")
-                    flash("Posted Successfully!")
+                status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None)
+                logging.info(f"Immediate post - Status post response: {status_response}")
+                flash("Posted Successfully!")
             except Exception as e:
                 logging.error(f"Error during immediate post: {e}")
                 flash("Error during posting!")
