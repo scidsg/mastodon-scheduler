@@ -88,6 +88,9 @@ form,
   align-self: start;
   margin: .5rem 0;
   padding-top: 1rem;
+  box-sizing: border-box;
+  padding-left: 0.125rem;
+  padding-right: .125rem;
 }
 
 form label {
