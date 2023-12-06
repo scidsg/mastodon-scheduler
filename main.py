@@ -61,8 +61,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def post_to_mastodon(content, image_path=None, image_alt_text=None):
-    """Post to Mastodon, optionally with an image."""
-    logging.info(f"Executing scheduled post: {content}")
+    logging.info(f"Alt text received: {image_alt_text}")
     media_id = None
     try:
         if image_path:
