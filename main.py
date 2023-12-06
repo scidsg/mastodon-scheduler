@@ -33,6 +33,7 @@ class ScheduledPost(db.Model):
     image_path = db.Column(db.String(255), nullable=True)  # Image path can be null
     schedule_time = db.Column(db.DateTime, nullable=False)
     image_alt_text = db.Column(db.String(255), nullable=True)  # Alt text for the image
+    cw_text = db.Column(db.String(255), nullable=True)  # Content Warning text
 
     def __repr__(self):
         return f'<ScheduledPost {self.id} {self.content[:20]}>'
@@ -60,8 +61,9 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def post_to_mastodon(content, image_path=None, image_alt_text=None):
-    logging.info(f"Alt text received: {image_alt_text}")
+def post_to_mastodon(content, image_path=None, image_alt_text=None, cw_text=None):
+    """Post to Mastodon, optionally with an image and content warning."""
+    logging.info(f"Executing scheduled post: {content}, CW: {cw_text}")
     media_id = None
     try:
         if image_path:
@@ -69,39 +71,45 @@ def post_to_mastodon(content, image_path=None, image_alt_text=None):
             if os.path.exists(full_image_path):
                 media_response = mastodon.media_post(full_image_path)
                 if media_response:
-                    # Set alt text for the image
                     mastodon.media_update(media_response['id'], description=image_alt_text)
                     media_id = media_response['id']
             else:
                 logging.error(f"Image file not found: {full_image_path}")
-        status_response = mastodon.status_post(content, media_ids=[media_id] if media_id else None)
+        status_response = mastodon.status_post(content, media_ids=[media_id] if media_id else None, spoiler_text=cw_text)
         logging.info(f"Status post response: {status_response}")
     except Exception as e:
         logging.error(f"Error posting to Mastodon: {e}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """Handle post and schedule requests."""
     if request.method == 'POST':
         status = request.form['status']
-        file = request.files.get('image')  # Use get to safely handle cases where no file is uploaded
+        file = request.files.get('image')
         schedule_time = request.form.get('schedule_time')
         image_alt = request.form.get('image_alt', '')
+        cw_text = request.form.get('cw_text', '')  # Retrieve CW text
+
+        # Generate a unique identifier for the image filename
+        unique_id = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
 
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
             image_path = None
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                unique_filename = f"{unique_id}_{filename}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
                 file.save(file_path)
-                image_path = os.path.join('uploads', filename)
+                image_path = os.path.join('uploads', unique_filename)
 
             # Save scheduled post to database
             new_post = ScheduledPost(
                 content=status,
                 image_path=image_path,
+                schedule_time=schedule_datetime,
                 image_alt_text=image_alt,
-                schedule_time=schedule_datetime
+                cw_text=cw_text  # Save CW text
             )
             db.session.add(new_post)
             db.session.commit()
@@ -111,31 +119,29 @@ def index():
                 post_to_mastodon, 
                 'date', 
                 run_date=schedule_datetime, 
-                args=[status, image_path, image_alt],
+                args=[status, image_path, image_alt, cw_text],  # Include CW text
                 id=str(new_post.id)
             )
             flash("👍 Successfully scheduled your post for " + schedule_time)
         else:
-            # Immediate post handling
             media_id = None
-            try:
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    file.save(file_path)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                unique_filename = f"{unique_id}_{filename}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                file.save(file_path)
 
-                    media = mastodon.media_post(file_path)
-                    logging.info(f"Immediate post - Media post response: {media}")
-                    if media:
-                        mastodon.media_update(media['id'], description=image_alt)
-                        media_id = media['id']
+                media = mastodon.media_post(file_path)
+                if media:
+                    mastodon.media_update(media['id'], description=image_alt)
+                    media_id = media['id']
 
-                status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None)
-                logging.info(f"Immediate post - Status post response: {status_response}")
+                status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None, spoiler_text=cw_text)
                 flash("Posted Successfully!")
-            except Exception as e:
-                logging.error(f"Error during immediate post: {e}")
-                flash("Error during posting!")
+            else:
+                # Handle posting without an image
+                status_response = mastodon.status_post(status, spoiler_text=cw_text)
+                flash("Posted Successfully!")
 
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()

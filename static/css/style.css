@@ -24,7 +24,7 @@ header h1 {
 }
 
 main {
-    padding: 1.25rem;
+    padding: 0 1.25rem;
     display: flex;
     justify-content: center;
     gap: 1.25rem;
@@ -67,6 +67,18 @@ li {
     list-style: none;
 }
 
+.form-container {
+    overflow-y: scroll;
+    max-width: 768px;
+    width: 100%;
+}
+
+.scheduled-posts {
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+}
+
 form,
 .scheduled-posts {
   max-width: 768px;
@@ -75,6 +87,10 @@ form,
   flex-direction: column;
   align-self: start;
   margin: .5rem 0;
+  padding-top: 1rem;
+  box-sizing: border-box;
+  padding-left: 0.125rem;
+  padding-right: .125rem;
 }
 
 form label {
@@ -84,7 +100,7 @@ form label {
 }
 
 form label:first-of-type {
-    margin-top: 0;
+    margin-top: .425rem;
 }
 
 form input,
@@ -123,7 +139,7 @@ form button {
 }
 
 form textarea {
-    height: 240px;
+    height: 180px;
     padding: .75rem;
 }
 
@@ -132,12 +148,6 @@ form p:first-of-type {
     padding-bottom: 2rem;
     font-size: .925rem;
     margin-bottom: 1rem;
-}
-
-.scheduled-posts {
-    margin: 0;
-    padding: 0;
-    overflow-y: auto;
 }
 
 .scheduled-posts li img {
