@@ -72,10 +72,10 @@ sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" main.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" main.py
 sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 
-# Move the index file
+# Copy the index file
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 
-# Move the stylesheet
+# Copy the stylesheet
 cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
 
 # Create scheduled_posts.json
