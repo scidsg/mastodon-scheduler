@@ -150,7 +150,7 @@ form p:first-of-type {
 
 .scheduled-posts ul {
     border: 1px solid rgb(99,100,255);
-    padding: 1rem 1.5rem;
+    padding: 1rem;
     background-color: white;
     box-sizing: border-box;
     border-radius: .25rem;
@@ -163,6 +163,11 @@ form p:first-of-type {
     margin-bottom: 1.25rem;
     border-bottom: 1px solid rgba(0,0,0,.1);
     padding-bottom: 1.25rem;
+}
+
+.scheduled-posts li:not(.next-up) {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 li.next-up {
