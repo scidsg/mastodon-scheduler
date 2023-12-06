@@ -127,8 +127,9 @@ def index():
                 post_to_mastodon, 
                 'date', 
                 run_date=schedule_datetime, 
-                args=[status, image_path, image_alt, cw_text],  # Include CW text
-                id=str(new_post.id)
+                args=[new_post.id],  # Only post_id is needed
+                id=f"post_{new_post.id}",
+                replace_existing=True
             )
             flash("👍 Successfully scheduled your post for " + schedule_time)
         else:
