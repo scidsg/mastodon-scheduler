@@ -53,7 +53,7 @@
                         <span class="meta">{{ next_up_post.schedule_time }}</span><br>
                         {{ next_up_post.content }}
                         {% if next_up_post.image_path %}
-                            <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="Next up image">
+                            <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ post.image_alt_text }}">
                         {% endif %}
                     </li>
                 {% endif %}
