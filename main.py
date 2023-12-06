@@ -60,16 +60,15 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def post_to_mastodon(content, image_path=None):
+def post_to_mastodon(content, image_path=None, image_alt_text=None):
     """Post to Mastodon, optionally with an image."""
     logging.info(f"Executing scheduled post: {content}")
     media_id = None
     try:
         if image_path:
-            # Update this line to reflect the new path
             full_image_path = os.path.join(app.root_path, 'static', image_path)
             if os.path.exists(full_image_path):
-                media_response = mastodon.media_post(full_image_path)
+                media_response = mastodon.media_post(full_image_path, description=image_alt_text)
                 logging.info(f"Media post response: {media_response}")
                 media_id = media_response['id']
             else:
@@ -114,7 +113,7 @@ def index():
                 post_to_mastodon, 
                 'date', 
                 run_date=schedule_datetime, 
-                args=[status, image_path],
+                args=[status, image_path, image_alt],  # Include the alt text here
                 id=str(new_post.id)
             )
             flash("👍 Successfully scheduled you post for " + schedule_time)
