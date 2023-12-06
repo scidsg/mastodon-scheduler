@@ -67,9 +67,11 @@ def post_to_mastodon(content, image_path=None, image_alt_text=None):
         if image_path:
             full_image_path = os.path.join(app.root_path, 'static', image_path)
             if os.path.exists(full_image_path):
-                media_response = mastodon.media_post(full_image_path, description=image_alt_text)
-                logging.info(f"Media post response: {media_response}")
-                media_id = media_response['id']
+                media_response = mastodon.media_post(full_image_path)
+                if media_response:
+                    # Set alt text for the image
+                    mastodon.media_update(media_response['id'], description=image_alt_text)
+                    media_id = media_response['id']
             else:
                 logging.error(f"Image file not found: {full_image_path}")
         status_response = mastodon.status_post(content, media_ids=[media_id] if media_id else None)
