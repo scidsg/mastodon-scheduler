@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Flask application setup
 app = Flask(__name__, static_folder='static')
-app.secret_key = '$SECRET_KEY'
+app.secret_key = 'SECRET_KEY'
 app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 Megabyte limit
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.sqlite'
