@@ -32,6 +32,7 @@ class ScheduledPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     image_path = db.Column(db.String(255), nullable=True)  # Image path can be null
     schedule_time = db.Column(db.DateTime, nullable=False)
+    image_alt_text = db.Column(db.String(255), nullable=True)  # Alt text for the image
 
     def __repr__(self):
         return f'<ScheduledPost {self.id} {self.content[:20]}>'
@@ -89,6 +90,7 @@ def index():
         if schedule_time:
             schedule_datetime = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
             image_path = None
+            image_alt = request.form.get('image_alt', '')  # Get alt text from form
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 # Save the file in the UPLOAD_FOLDER
@@ -101,6 +103,7 @@ def index():
             new_post = ScheduledPost(
                 content=status,
                 image_path=image_path,
+                image_alt_text=image_alt,  # Save alt text
                 schedule_time=schedule_datetime
             )
             db.session.add(new_post)
