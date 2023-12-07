@@ -163,6 +163,7 @@ def index():
             next_up_post = post
             break
 
+    print(scheduled_posts)  # This is for debugging purposes; remove it after fixing the issue
     # Pass the scheduled posts and next up post to the template
     return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post)
 
@@ -194,6 +195,44 @@ def delete_post(post_id):
 
     flash("Scheduled post deleted successfully")
     return redirect(url_for('index'))
+
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post_to_edit = ScheduledPost.query.get_or_404(post_id)
+    
+    if request.method == 'POST':
+        # Update the post details
+        post_to_edit.content = request.form['status']
+        post_to_edit.cw_text = request.form.get('cw_text', '')
+        post_to_edit.image_alt_text = request.form.get('image_alt', '')
+        
+        schedule_time = request.form.get('schedule_time')
+        if schedule_time:
+            post_to_edit.schedule_time = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
+        
+        # Handle image update if a new image was uploaded
+        file = request.files.get('image')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}_{filename}"
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(file_path)
+            post_to_edit.image_path = os.path.join('uploads', unique_filename)
+
+        db.session.commit()
+        
+        # Update the APScheduler job
+        try:
+            scheduler.reschedule_job(f'post_{post_id}', trigger='date', run_date=post_to_edit.schedule_time)
+        except Exception as e:
+            logging.error(f"Error rescheduling job: {e}")
+        
+        flash("Scheduled post updated successfully")
+        return redirect(url_for('index'))
+    else:
+        # Present the form for editing with the current post details
+        scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
+        return render_template('edit_post.html', post=post_to_edit)
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
