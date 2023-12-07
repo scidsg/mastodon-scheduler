@@ -163,7 +163,7 @@ form p:first-of-type {
 
 .scheduled-posts li img {
     display: block;
-    width: 50%;
+    width: 120px;
     margin-top: 1rem;
     border-radius: .5rem;
     border: 1px solid rgba(0,0,0,0.1);
@@ -213,8 +213,11 @@ form p:first-of-type {
 li.next-up {
   position: relative;
   padding: 1rem;
-  box-shadow: 4px 4px 0px 0px rgba(99,100,255,.25);
   border-radius: .5rem;
+}
+
+li.next-up:first-of-type {
+  box-shadow: 4px 4px 0px 0px rgba(99,100,255,.25);
   outline: 1px solid rgba(99,100,255,.75);
 }
 
