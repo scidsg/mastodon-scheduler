@@ -60,6 +60,10 @@
                         {% if next_up_post.image_path %}
                             <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}">
                         {% endif %}
+                        <!-- Delete button for next up post -->
+                        <form action="{{ url_for('delete_post', post_id=next_up_post.id) }}" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
                     </li>
                 {% endif %}
                 {% for post in scheduled_posts %}
@@ -72,12 +76,17 @@
                         {% if post.image_path %}
                             <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}">
                         {% endif %}
+                        <!-- Delete button for each post -->
+                        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
                     </li>
                 {% else %}
                     <li>No scheduled posts</li>
                 {% endfor %}
             </ul>
         </div>
+
     </main>
 </body>
 </html>
