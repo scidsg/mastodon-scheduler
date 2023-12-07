@@ -82,23 +82,6 @@ cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 # Copy the stylesheet
 cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
 
-# Create scheduled_posts.json
-cat > scheduled_posts.json <<"EOF"
-[
-    {
-        "time": "2024-01-01 09:00:00",
-        "content": "Happy New Year!",
-        "image": "path/to/image1.jpg"
-    },
-    {
-        "time": "2024-02-14 10:00:00",
-        "content": "Happy Valentine's Day!",
-        "image": "path/to/image2.jpg"
-    }
-    // ... more scheduled posts ...
-]
-EOF
-
 # Kill any process on port 5000
 kill_port_processes() {
     echo "Checking for processes on port 5000..."
