@@ -166,7 +166,7 @@ form p:first-of-type {
     width: 120px;
     margin-top: 1rem;
     border-radius: .5rem;
-    border: 1px solid rgba(0,0,0,0.1);
+    outline: 1px solid rgba(0,0,0,0.1);
 }
 
 .scheduled-posts ul {
