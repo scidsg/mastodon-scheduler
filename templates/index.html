@@ -50,12 +50,12 @@
             <ul>
                 {% if next_up_post %}
                     <li class="next-up">
-                        <span class="badge">⏰ Next Up</span><br>
+                        <span class="badge">⏰ Next Up</span>
                         <span class="meta">{{ next_up_post.schedule_time }}</span><br>
                         {{ next_up_post.content }}
                         <!-- Display CW text if available -->
                         {% if next_up_post.cw_text %}
-                            <p><strong>CW:</strong> {{ next_up_post.cw_text }}</p>
+                            <br><span class="contWarning">Content Warning: {{ next_up_post.cw_text }}</span>
                         {% endif %}
                         {% if next_up_post.image_path %}
                             <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}">
@@ -67,7 +67,7 @@
                         <span class="meta">{{ post.schedule_time }}</span><br>{{ post.content }}
                         <!-- Display CW text if available -->
                         {% if post.cw_text %}
-                            <p><strong>CW:</strong> {{ post.cw_text }}</p>
+                            <br><span class="contWarning">Content Warning: {{ post.cw_text }}</span>
                         {% endif %}
                         {% if post.image_path %}
                             <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}">
