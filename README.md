@@ -4,15 +4,15 @@ This project is a Flask-based web application that allows users to post statuses
 
 ## Features
 
-- Post Immediately: Send toots to Mastodon right away.
-- Schedule Posts: Plan your posts for future dates and times.
-- Upload Images: Attach images to your toots with ease.
-- Content Warnings: Add content warnings to your posts for sensitive or spoiler content.
-- Image Alt Text: Provide alternative text for images, enhancing accessibility.
-- View Scheduled Posts: Review all your scheduled posts in one place.
-- Delete Scheduled Posts: Cancel scheduled posts before they are published.
+- **Post Immediately**: Send toots to Mastodon right away.
+- **Schedule Posts**: Plan your posts for future dates and times.
+- **Upload Images**: Attach images to your toots with ease.
+- **Content Warnings**: Add content warnings to your posts for sensitive or spoiler content.
+- **Image Alt Text**: Provide alternative text for images, enhancing accessibility.
+- **View Scheduled Posts**: Review all your scheduled posts in one place.
+- **Delete Scheduled Posts**: Cancel scheduled posts before they are published.
 
-![tooter](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/6b5b04bd-b7bb-4c1b-a90a-562245504b2c)
+![Frame 101](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/05a3d0c2-1802-4bda-aa15-a75df484322f)
 
 ## Prerequisites
 
