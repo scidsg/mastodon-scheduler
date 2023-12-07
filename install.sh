@@ -75,6 +75,7 @@ sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 
 # Copy the index file
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
+cp $HOME/mastodon-scheduler/templates/edit_post.html $HOME/mastodon_app/templates
 
 # Copy the stylesheet
 cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
