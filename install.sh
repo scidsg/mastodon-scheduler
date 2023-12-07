@@ -34,9 +34,6 @@ apt install -y python3 python3-pip python3-venv git libnss3-tools
 
 # Clone repo
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-cd mastodon-scheduler
-git switch content-warning
-cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
