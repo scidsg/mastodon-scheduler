@@ -17,6 +17,7 @@ header {
     top: 0;
     background-color: white;
     width: 100%;
+    z-index: 1;
 }
 
 header h1 {
@@ -194,6 +195,12 @@ form p:first-of-type {
     padding-right: 1rem;
 }
 
+.scheduled-posts form {
+    margin-top: 1rem;
+    padding-top: 0;
+    margin-bottom: 0;
+}
+
 .scheduled-posts button {
     background: transparent !important;
     color: #ac1c1c;
@@ -204,10 +211,25 @@ form p:first-of-type {
     cursor: pointer;
 }
 
-.scheduled-posts form {
-    margin-top: 1rem;
-    padding-top: 0;
-    margin-bottom: 0;
+.scheduled-posts a {
+    text-decoration: none;
+    color: #595959;
+}
+
+.scheduled-posts a:hover,
+.scheduled-posts button:hover {
+    text-decoration: underline;
+}
+
+.action-container {
+    display: flex;
+    font-size: .825rem;
+    gap: .325rem;
+    margin-top: .75rem;
+}
+
+.action-container form {
+    margin-top: 0;
 }
 
 li.next-up {
