@@ -8,6 +8,7 @@ body {
   font-family: 'Atkinson Hyperlegible', sans-serif;
   background-color: #f6f6ff;
   overflow-y: hidden;
+  color: #333;
 }
 
 header {
@@ -41,9 +42,19 @@ h2 {
 .meta {
     font-size: .775rem;
     font-family: 'IBM Plex Mono', monospace;
-    margin: .25rem 0 .25rem 0;
+    margin: .25rem 0 .75rem 0;
     display: inline-flex;
-    color: #494949;
+    color: #595959;
+}
+
+.contWarning {
+    font-size: .825rem;
+    letter-spacing: .0125rem;
+    display: inline-flex;
+    color: #595959;
+    margin-top: .9125rem;
+    position: relative;
+    top: -.5px;
 }
 
 .notification {
@@ -71,7 +82,6 @@ li {
     overflow-y: scroll;
     max-width: 768px;
     width: 100%;
-    padding-right: 1.5rem;
 }
 
 .scheduled-posts {
@@ -199,8 +209,9 @@ li.next-up {
     border-radius: 50vh;
     font-size: .775rem;
     font-weight: 700;
-    margin-bottom: .5rem;
+    margin-bottom: .75rem;
     display: inline-flex;
+    margin-right: .25rem;
 }
 
 @media only screen and (max-width: 768px) {
