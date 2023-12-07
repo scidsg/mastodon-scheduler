@@ -129,7 +129,9 @@ def index():
                 id=f"post_{new_post.id}",
                 replace_existing=True
             )
-            flash("👍 Successfully scheduled your post for " + schedule_time)
+            # Format the datetime for the flash message
+            human_readable_time = schedule_datetime.strftime('%B %d, %Y at %I:%M %p')
+            flash(f"👍 Successfully scheduled your post for {human_readable_time}")
         else:
             media_id = None
             if file and allowed_file(file.filename):
