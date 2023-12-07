@@ -62,31 +62,29 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def post_to_mastodon(post_id):
-    """Post to Mastodon, optionally with an image and content warning."""
-    # Fetch the latest data for the post
-    post = ScheduledPost.query.get(post_id)
-    if not post:
-        logging.error(f"Post with ID {post_id} not found")
-        return
+    with app.app_context():  # Manually push the application context
+        # Fetch the latest data for the post
+        post = ScheduledPost.query.get(post_id)
+        if not post:
+            logging.error(f"Post with ID {post_id} not found")
+            return
 
-    logging.info(f"Executing scheduled post: {post.content}, CW: {post.cw_text}")
-    media_id = None
-    try:
-        if post.image_path:
-            full_image_path = os.path.join(app.root_path, 'static', post.image_path)
-            if os.path.exists(full_image_path):
-                media_response = mastodon.media_post(full_image_path)
-                if media_response:
-                    mastodon.media_update(media_response['id'], description=post.image_alt_text)
-                    media_id = media_response['id']
-            else:
-                logging.error(f"Image file not found: {full_image_path}")
-
-        # Include CW text when posting
-        status_response = mastodon.status_post(post.content, media_ids=[media_id] if media_id else None, spoiler_text=post.cw_text)
-        logging.info(f"Status post response: {status_response}")
-    except Exception as e:
-        logging.error(f"Error posting to Mastodon: {e}")
+        logging.info(f"Executing scheduled post: {post.content}, CW: {post.cw_text}")
+        media_id = None
+        try:
+            if post.image_path:
+                full_image_path = os.path.join(app.root_path, 'static', post.image_path)
+                if os.path.exists(full_image_path):
+                    media_response = mastodon.media_post(full_image_path)
+                    if media_response:
+                        mastodon.media_update(media_response['id'], description=post.image_alt_text)
+                        media_id = media_response['id']
+                else:
+                    logging.error(f"Image file not found: {full_image_path}")
+            status_response = mastodon.status_post(post.content, media_ids=[media_id] if media_id else None, spoiler_text=post.cw_text)
+            logging.info(f"Status post response: {status_response}")
+        except Exception as e:
+            logging.error(f"Error posting to Mastodon: {e}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
