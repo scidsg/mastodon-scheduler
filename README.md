@@ -2,6 +2,11 @@
 
 This project is a Flask-based web application that allows users to post statuses (toots) to Mastodon. It supports both immediate posting and scheduling posts for future times. It also includes image upload functionality.
 
+## Easy Install
+```bash
+curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/install.sh | bash
+```
+
 ## Features
 
 - **Post Immediately**: Send toots to Mastodon right away.
