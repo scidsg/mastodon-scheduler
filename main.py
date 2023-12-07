@@ -176,6 +176,23 @@ def load_scheduled_posts():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    post_to_delete = ScheduledPost.query.get_or_404(post_id)
+    
+    # Remove the scheduled job
+    try:
+        scheduler.remove_job(f'post_{post_id}')
+    except Exception as e:
+        logging.error(f"Error removing job: {e}")
+
+    # Delete the post from the database
+    db.session.delete(post_to_delete)
+    db.session.commit()
+
+    flash("Scheduled post deleted successfully")
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
     app.run(host='tooter.local', port=5000, ssl_context=('cert.pem', 'key.pem'))

@@ -194,6 +194,22 @@ form p:first-of-type {
     padding-right: 1rem;
 }
 
+.scheduled-posts button {
+    background: transparent !important;
+    color: #ac1c1c;
+    font-weight: normal;
+    font-size: .825rem;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.scheduled-posts form {
+    margin-top: 1rem;
+    padding-top: 0;
+    margin-bottom: 0;
+}
+
 li.next-up {
   position: relative;
   padding: 1rem;
