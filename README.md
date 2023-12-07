@@ -17,7 +17,7 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/
 - **View Scheduled Posts**: Review all your scheduled posts in one place.
 - **Delete Scheduled Posts**: Cancel scheduled posts before they are published.
 
-![Frame 101](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/05a3d0c2-1802-4bda-aa15-a75df484322f)
+![Frame 102](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/65b43470-30c8-48f1-a938-4ac417252a5b)
 
 ## Prerequisites
 
