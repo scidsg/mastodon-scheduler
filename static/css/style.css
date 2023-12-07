@@ -82,7 +82,6 @@ li {
     overflow-y: scroll;
     max-width: 768px;
     width: 100%;
-    padding-right: 1.5rem;
 }
 
 .scheduled-posts {
