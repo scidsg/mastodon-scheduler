@@ -6,6 +6,7 @@ This project is a Flask-based web application that allows users to post statuses
 ```bash
 curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/install.sh | bash
 ```
+![Frame 102](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/519ffe3b-3ee5-40df-ba8d-b969464f7e5b)
 
 ## Features
 
@@ -17,7 +18,6 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/
 - **View Scheduled Posts**: Review all your scheduled posts in one place.
 - **Delete Scheduled Posts**: Cancel scheduled posts before they are published.
 
-![Frame 102](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/65b43470-30c8-48f1-a938-4ac417252a5b)
 
 ## Prerequisites
 
