@@ -144,11 +144,11 @@ def index():
                     media_id = media['id']
 
                 status_response = mastodon.status_post(status, media_ids=[media_id] if media_id else None, spoiler_text=cw_text)
-                flash("Posted Successfully!")
+                flash("🛫 Posted Successfully!")
             else:
                 # Handle posting without an image
                 status_response = mastodon.status_post(status, spoiler_text=cw_text)
-                flash("Posted Successfully!")
+                flash("🛫 Posted Successfully!")
 
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
