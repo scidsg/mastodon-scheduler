@@ -18,11 +18,21 @@ header {
     background-color: white;
     width: 100%;
     z-index: 1;
+    box-sizing: border-box;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 header h1 {
     margin: 0;
     font-size: 1.125rem;
+}
+
+header p {
+    font-size: .825rem;
+    color: #595959;
+    margin: 0;
 }
 
 main {
