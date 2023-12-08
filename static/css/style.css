@@ -131,7 +131,7 @@ li {
 
 .form-container {
     overflow-y: scroll;
-    max-width: 768px;
+    max-width: 480px;
     width: 100%;
 }
 
@@ -143,7 +143,7 @@ li {
 
 form,
 .scheduled-posts {
-  max-width: 768px;
+  max-width: 480px;
   width: 100%;
   display: flex;
   flex-direction: column;
