@@ -45,12 +45,12 @@ or
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/glenn-sorrentino/mastodon_scheduler.git
+git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
 ```
   
 2. Navigate to the project directory:
 ```bash
-cd mastodon_scheduler
+cd mastodon-scheduler
 ```
 
 3. Make the installer executable:
