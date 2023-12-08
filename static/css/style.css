@@ -80,10 +80,48 @@ h2 {
   right: 1rem;
   box-shadow: 0px 12px 12px -4px rgba(20, 85, 10, 0.08);
   border: 1px solid rgba(0,0,0,0.05);
-  transform: translateX(-50%);
   right: 50%;
   left: 50%;
   z-index: 2;
+}
+
+/* Style for the notification */
+.notification {
+    opacity: 0; /* Start with 0 opacity */
+    transform: translateY(-10px) translateX(-50%); /* Start slightly above its final position */
+    transition: all .3s ease-in-out; /* Transition for both fade-in, fade-out, and movement */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) translateX(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+.notification-visible {
+    animation: fadeIn .3s forwards;
+}
+
+/* Fade-out animation */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px) translateX(-50%);
+    }
+}
+
+.notification-hidden {
+    animation: fadeOut .3s forwards;
 }
 
 li {
