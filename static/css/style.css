@@ -175,6 +175,8 @@ form textarea {
     border-radius: .25rem;
     padding: .5rem;
     font-size: 1rem;
+    background-color: white;
+    color: #333;
 }
 
 form input {
@@ -185,6 +187,11 @@ form input[type="file"] {
     box-shadow: none;
     border: none;
     padding: 0;
+    background-color: transparent;
+}
+
+form input[type="datetime-local"] {
+    box-shadow: 4px 4px 0px 0px rgba(99,100,255,.25);
 }
 
 form button {
