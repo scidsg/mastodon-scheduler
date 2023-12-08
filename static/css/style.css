@@ -237,9 +237,22 @@ form p:first-of-type {
     box-sizing: border-box;
     border-radius: .5rem;
     height: calc(100vh - 8.5rem);
-    overflow: scroll;
+    overflow: hidden scroll;
     margin: 0;
 }
+
+ /* Hide scrollbar for Chrome, Safari and Opera */
+.form-container::-webkit-scrollbar,
+.scheduled-posts ul::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.form-container,
+.scheduled-posts ul {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+} 
 
 .scheduled-posts li {
     margin-bottom: 1rem;
