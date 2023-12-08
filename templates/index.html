@@ -34,11 +34,12 @@
                 <textarea id="status" name="status" required placeholder="What's on your mind?"></textarea>
 
                 <label for="image">Upload Image</label>
-                <input type="file" id="image" name="image">
+                <input type="file" id="image" name="image" onchange="toggleAltTextField()">
 
-                <label for="image_alt">Image Alt Text</label>
-                <input type="text" id="image_alt" name="image_alt" placeholder="Describe the image">
-
+                <div id="altTextField" class="altText" style="display: none;">
+                    <label for="image_alt">Image Alt Text</label>
+                    <input type="text" id="image_alt" name="image_alt" placeholder="Describe the image">
+                </div>
                 <label for="cw_text">Content Warning (Optional)</label>
                 <input type="text" id="cw_text" name="cw_text" placeholder="Add a content warning">
 
@@ -99,5 +100,7 @@
         </div>
 
     </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

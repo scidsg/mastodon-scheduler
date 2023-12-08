@@ -166,6 +166,15 @@ form textarea {
     padding: .75rem;
 }
 
+form .altText {
+    display: flex;
+    flex-direction: column;
+}
+
+form .altText label {
+    margin: .75rem 0 .5rem 0;
+}
+
 form p:first-of-type {
     border-bottom: 1px solid rgba(0,0,0,0.1);
     padding-bottom: 2rem;
