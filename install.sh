@@ -30,7 +30,7 @@ INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "http
 
 # Install Python, pip, Git, and OpenSSL
 apt update && apt -y dist-upgrade && apt -y autoremove
-apt install -y python3 python3-pip python3-venv git libnss3-tools
+apt install -y python3 python3-pip python3-venv git libnss3-tools ufw fail2ban
 
 # Clone repo
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
@@ -118,6 +118,35 @@ systemctl enable mastodon_app.service
 kill_port_processes
 echo "Starting Mastodon app service..."
 sudo systemctl start mastodon_app.service
+
+echo "Configuring fail2ban..."
+
+systemctl start fail2ban
+systemctl enable fail2ban
+cp /etc/fail2ban/jail.{conf,local}
+
+# Configure fail2ban
+cp $HOME/mastodon-scheduler/assets/jail.local /etc/fail2ban
+
+systemctl restart fail2ban
+
+# Configure UFW (Uncomplicated Firewall)
+
+echo "Configuring UFW..."
+
+# Default rules
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 5000 # Allow Flask app port
+
+# Allow SSH (modify as per your requirements)
+ufw allow ssh
+ufw limit ssh/tcp
+
+# Enable UFW non-interactively
+echo "y" | ufw enable
+
+echo "UFW configuration complete."
 
 echo "Mastodon app setup complete and service started."
 echo "You can access your scheduling app at https://tooter.local:5000"
