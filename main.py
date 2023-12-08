@@ -165,9 +165,9 @@ def index():
 
     user_info = get_mastodon_user_info()
     username = user_info.username if user_info else "Unknown"
-
-    # Pass the scheduled posts and username to the template
-    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username)
+    
+    # Pass the scheduled posts and next up post to the template
+    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
@@ -235,15 +235,6 @@ def edit_post(post_id):
         # Present the form for editing with the current post details
         scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
         return render_template('edit_post.html', post=post_to_edit)
-
-def get_mastodon_user_info():
-    try:
-        # Assuming 'mastodon' is your Mastodon API client instance
-        user_data = mastodon.account_verify_credentials()
-        return user_data
-    except Exception as e:
-        logging.error(f"Error fetching user info: {e}")
-        return None
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
