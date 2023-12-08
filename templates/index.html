@@ -54,26 +54,31 @@
             <h2>🗓️ Scheduled Posts</h2>
             <ul>
                 {% if next_up_post %}
-                <li class="next-up">
-                    <span class="badge">⏰ Next Up</span>
-                    <span class="meta">{{ next_up_post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
-                    {{ next_up_post.content }}
-                    <!-- Display CW text if available -->
-                    {% if next_up_post.cw_text %}
-                        <br><span class="contWarning">Content Warning: {{ next_up_post.cw_text }}</span>
-                    {% endif %}
-                    {% if next_up_post.image_path %}
-                        <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}">
-                    {% endif %}
-                    <!-- Edit and Delete buttons for the 'Next Up' post -->
-                    <div class="action-container">
-                        <a href="{{ url_for('edit_post', post_id=next_up_post.id) }}">Edit</a>
-                        <form action="{{ url_for('delete_post', post_id=next_up_post.id) }}" method="post">
-                            <button type="submit">Delete</button>
-                        </form>
-                    </div>
-                </li>
-            {% endif %}
+                    <li class="next-up">
+                        <span class="badge">⏰ Next Up</span>
+                        <span class="meta">{{ next_up_post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
+                        {{ next_up_post.content }}
+                        <!-- Display CW text if available -->
+                        {% if next_up_post.cw_text %}
+                            <br><span class="contWarning">Content Warning: {{ next_up_post.cw_text }}</span>
+                        {% endif %}
+                        <div class="image-container">
+                            {% if next_up_post.image_path %}
+                                <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}">
+                                {% if next_up_post.image_alt_text %}
+                                    <span class="altTextIndicator">Alt</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <!-- Edit and Delete buttons for the 'Next Up' post -->
+                        <div class="action-container">
+                            <a href="{{ url_for('edit_post', post_id=next_up_post.id) }}">Edit</a>
+                            <form action="{{ url_for('delete_post', post_id=next_up_post.id) }}" method="post">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endif %}
                 {% for post in scheduled_posts %}
                     <li{% if next_up_post and post.id == next_up_post.id %} class="next-up"{% endif %}>
                         <span class="meta">{{ post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
@@ -82,9 +87,14 @@
                         {% if post.cw_text %}
                             <br><span class="contWarning">Content Warning: {{ post.cw_text }}</span>
                         {% endif %}
-                        {% if post.image_path %}
-                            <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}">
-                        {% endif %}
+                        <div class="image-container">
+                            {% if post.image_path %}
+                                <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}">
+                                {% if post.image_alt_text %}
+                                    <span class="altTextIndicator">Alt</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                         <!-- Edit and Delete buttons for each post -->
                         <div class="action-container">
                             <a href="{{ url_for('edit_post', post_id=post.id) }}">Edit</a>
@@ -98,7 +108,6 @@
                 {% endfor %}
             </ul>
         </div>
-
     </main>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
