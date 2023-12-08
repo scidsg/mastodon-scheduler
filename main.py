@@ -152,6 +152,11 @@ def index():
                 status_response = mastodon.status_post(status, spoiler_text=cw_text)
                 flash("🛫 Posted Successfully!")
 
+    # Fetch Mastodon user info
+    user_info = get_mastodon_user_info()
+    username = user_info.username if user_info else "Unknown"
+    profile_url = user_info.url if user_info else "#"
+    
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
 
@@ -163,12 +168,8 @@ def index():
             next_up_post = post
             break
 
-    # Fetch Mastodon user info
-    user_info = get_mastodon_user_info()
-    username = user_info.username if user_info else "Unknown"
-
-    # Pass the scheduled posts, next up post, and username to the template
-    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username)
+    # Pass the scheduled posts, next up post, username, and profile URL to the template
+    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username, profile_url=profile_url)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
