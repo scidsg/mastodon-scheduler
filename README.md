@@ -22,9 +22,16 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/
 
 ## Prerequisites
 
-Before you begin, ensure you have met the following requirements:
-- You have a Linux machine with Python 3, pip, and Git installed.
-- You have a Mastodon account and have generated your Mastodon API credentials (Client Key, Client Secret, Access Token).
+Before you begin the installation of Mastodon Scheduler, ensure you have:
+
+- **Linux Environment**: A compatible Linux operating system. The installation script is tailored for Debian-based distributions (e.g., Ubuntu).
+- **Root Access**: The script requires root privileges to install necessary packages and perform configurations.
+- **Internet Connection**: An active internet connection to download required packages and dependencies.
+- **Mastodon Account**: A Mastodon account and your generated API credentials (Client Key, Client Secret, Access Token) with the following scopes:
+  -  `read:accounts`
+  -  `write:media`
+  -  `write:statuses`
+  -  `crypto`
 
 ## Installation
 
