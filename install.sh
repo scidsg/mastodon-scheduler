@@ -45,6 +45,7 @@ mkcert -install
 mkdir -p ~/mastodon_app
 mkdir -p ~/mastodon_app/static/uploads
 mkdir -p ~/mastodon_app/static/css
+mkdir -p ~/mastodon_app/static/js
 cd ~/mastodon_app
 
 # Create a Python virtual environment
@@ -77,8 +78,9 @@ sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/templates/edit_post.html $HOME/mastodon_app/templates
 
-# Copy the stylesheet
+# Copy the static files
 cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
+cp $HOME/mastodon-scheduler/static/js/script.js $HOME/mastodon_app/static/js
 
 # Kill any process on port 5000
 kill_port_processes() {
