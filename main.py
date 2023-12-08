@@ -163,7 +163,9 @@ def index():
             next_up_post = post
             break
 
-    print(scheduled_posts)  # This is for debugging purposes; remove it after fixing the issue
+    user_info = get_mastodon_user_info()
+    username = user_info.username if user_info else "Unknown"
+    
     # Pass the scheduled posts and next up post to the template
     return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post)
 
