@@ -30,7 +30,7 @@ INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "http
 
 # Install Python, pip, Git, and OpenSSL
 apt update && apt -y dist-upgrade && apt -y autoremove
-apt install -y python3 python3-pip python3-venv git libnss3-tools ufw fail2ban
+apt install -y python3 python3-pip python3-venv git libnss3-tools ufw fail2ban unattended-upgrades
 
 # Clone repo
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
@@ -149,6 +149,14 @@ ufw limit ssh/tcp
 echo "y" | ufw enable
 
 echo "✅ UFW configuration complete."
+
+# Configure Unattended Upgrades
+cp $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
+cp $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
+
+systemctl restart unattended-upgrades
+
+echo "✅ Automatic updates have been installed and configured."
 
 # Change the hostname to tooter.local
 echo "Changing the hostname to tooter.local..."
