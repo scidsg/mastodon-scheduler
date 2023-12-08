@@ -236,6 +236,15 @@ def edit_post(post_id):
         scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
         return render_template('edit_post.html', post=post_to_edit)
 
+def get_mastodon_user_info():
+    try:
+        # Assuming 'mastodon' is your Mastodon API client instance
+        user_data = mastodon.account_verify_credentials()
+        return user_data
+    except Exception as e:
+        logging.error(f"Error fetching user info: {e}")
+        return None
+
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
     app.run(host='tooter.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
