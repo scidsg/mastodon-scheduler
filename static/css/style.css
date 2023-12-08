@@ -29,7 +29,7 @@ header h1 {
     font-size: 1.125rem;
 }
 
-header p {
+header a {
     font-size: .825rem;
     color: #595959;
     margin: 0;
@@ -289,6 +289,23 @@ form p:first-of-type {
 
 .action-container form {
     margin-top: 0;
+}
+
+.image-container {
+    position: relative;
+}
+
+.image-container .altTextIndicator {
+    position: absolute;
+    bottom: .25rem;
+    left: .25rem;
+    background-color: #333;
+    color: white;
+    padding: .25rem .5rem;
+    border-radius: .25rem;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 li.next-up {
