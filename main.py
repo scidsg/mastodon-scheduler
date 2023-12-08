@@ -203,13 +203,18 @@ def delete_post(post_id):
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
     post_to_edit = ScheduledPost.query.get_or_404(post_id)
+
+    # Fetch Mastodon user info
+    user_info = get_mastodon_user_info()
+    username = user_info.username if user_info else "Unknown"
+    profile_url = user_info.url if user_info else "#"
     
     if request.method == 'POST':
         # Update the post details
         post_to_edit.content = request.form['status']
         post_to_edit.cw_text = request.form.get('cw_text', '')
         post_to_edit.image_alt_text = request.form.get('image_alt', '')
-        
+
         schedule_time = request.form.get('schedule_time')
         if schedule_time:
             new_schedule_time = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
@@ -238,7 +243,7 @@ def edit_post(post_id):
                     )
                 except Exception as e:
                     logging.error(f"Error scheduling new job: {e}")
-        
+
         # Handle image update if a new image was uploaded
         file = request.files.get('image')
         if file and allowed_file(file.filename):
@@ -255,7 +260,7 @@ def edit_post(post_id):
     else:
         # Present the form for editing with the current post details
         scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
-        return render_template('edit_post.html', post=post_to_edit)
+        return render_template('edit_post.html', post=post_to_edit, username=username, profile_url=profile_url)
 
 def get_mastodon_user_info():
     try:
