@@ -130,6 +130,8 @@ cp $HOME/mastodon-scheduler/assets/jail.local /etc/fail2ban
 
 systemctl restart fail2ban
 
+echo "✅ fail2ban configuration complete."
+
 # Configure UFW (Uncomplicated Firewall)
 
 echo "Configuring UFW..."
@@ -146,7 +148,15 @@ ufw limit ssh/tcp
 # Enable UFW non-interactively
 echo "y" | ufw enable
 
-echo "UFW configuration complete."
+echo "✅ UFW configuration complete."
 
-echo "Mastodon app setup complete and service started."
-echo "You can access your scheduling app at https://tooter.local:5000"
+# Change the hostname to tooter.local
+echo "Changing the hostname to tooter.local..."
+hostnamectl set-hostname tooter.local
+echo "127.0.0.1 tooter.local" >> /etc/hosts
+
+echo "✅ Mastodon app setup complete and service started."
+echo "After rebooting, you can access your scheduling app at https://tooter.local:5000"
+echo "⏲️ Rebooting your device in 3 seconds..."
+sleep 3
+reboot
