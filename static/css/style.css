@@ -33,6 +33,7 @@ header p {
     font-size: .825rem;
     color: #595959;
     margin: 0;
+    letter-spacing: .0125rem;
 }
 
 main {
@@ -53,7 +54,7 @@ h2 {
 .meta {
     font-size: .775rem;
     font-family: 'IBM Plex Mono', monospace;
-    margin: .25rem 0 .75rem 0;
+    margin: 0 0 .75rem 0;
     display: inline-flex;
     color: #595959;
 }
@@ -63,7 +64,7 @@ h2 {
     letter-spacing: .0125rem;
     display: inline-flex;
     color: #595959;
-    margin-top: .9125rem;
+    margin-top: .75rem;
     position: relative;
     top: -.5px;
 }
@@ -242,8 +243,8 @@ form p:first-of-type {
 .scheduled-posts li {
     margin-bottom: 1rem;
     outline: 1px solid rgba(0,0,0,.12);
-    padding-bottom: 1.25rem;
-    padding-top: 1.25rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
     box-shadow: 4px 4px 0px 0px rgba(0,0,0,.08);
     border-radius: .5rem;
 }
