@@ -211,7 +211,32 @@ def edit_post(post_id):
         
         schedule_time = request.form.get('schedule_time')
         if schedule_time:
-            post_to_edit.schedule_time = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
+            new_schedule_time = datetime.strptime(schedule_time, '%Y-%m-%dT%H:%M')
+            # Check if the schedule time has actually changed
+            if new_schedule_time != post_to_edit.schedule_time:
+                post_to_edit.schedule_time = new_schedule_time
+
+                # Create a consistent job ID based on post ID
+                job_id = f'post_{post_id}'
+
+                # Remove existing job with the same ID (if any)
+                if scheduler.get_job(job_id):
+                    try:
+                        scheduler.remove_job(job_id)
+                    except Exception as e:
+                        logging.error(f"Error removing existing job: {e}")
+
+                # Schedule a new job
+                try:
+                    scheduler.add_job(
+                        post_to_mastodon, 
+                        'date', 
+                        run_date=new_schedule_time, 
+                        args=[post_to_edit.id], 
+                        id=job_id
+                    )
+                except Exception as e:
+                    logging.error(f"Error scheduling new job: {e}")
         
         # Handle image update if a new image was uploaded
         file = request.files.get('image')
@@ -223,13 +248,7 @@ def edit_post(post_id):
             post_to_edit.image_path = os.path.join('uploads', unique_filename)
 
         db.session.commit()
-        
-        # Update the APScheduler job
-        try:
-            scheduler.reschedule_job(f'post_{post_id}', trigger='date', run_date=post_to_edit.schedule_time)
-        except Exception as e:
-            logging.error(f"Error rescheduling job: {e}")
-        
+
         flash("Scheduled post updated successfully")
         return redirect(url_for('index'))
     else:
