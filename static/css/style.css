@@ -348,6 +348,13 @@ li.next-up:first-of-type {
     .scheduled-posts {
         height: initial;
         overflow: initial;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(99,100,255,.25);
+    }
+
+    .scheduled-posts h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
     .scheduled-posts ul {
