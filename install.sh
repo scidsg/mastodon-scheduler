@@ -33,8 +33,9 @@ apt update && apt -y dist-upgrade && apt -y autoremove
 apt install -y python3 python3-pip python3-venv git libnss3-tools ufw fail2ban unattended-upgrades
 
 # Clone repo
+cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-sleep 10
+sleep 5
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
