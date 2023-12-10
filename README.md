@@ -69,7 +69,7 @@ This script will set up a Python virtual environment, install necessary dependen
 
 ## Usage
 
-After installation, the Mastodon App will run as a service on your machine. You can access the web interface by navigating to `https://tooter.local:5000` in your web browser.
+After installation, the Mastodon App will run as a service on your machine. You can access the web interface by navigating to `https://mastodon-scheduler.local:5000` in your web browser.
 
 To post a status or schedule a post, fill in the form on the main page and submit.
 
@@ -87,4 +87,4 @@ Alternatively, see the GitHub documentation on [creating a pull request](https:/
 
 ## Contact
 
-If you have any questions or feedback, please get in touch with me at hello@scidsg.org.
+If you have any questions or feedback, please get in touch with me at glenn@scidsg.org.
