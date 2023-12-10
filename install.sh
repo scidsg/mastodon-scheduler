@@ -78,7 +78,7 @@ sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" main.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" main.py
 sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
 
-# Copy the index file
+# Copy the HTML files
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/templates/edit_post.html $HOME/mastodon_app/templates
 
