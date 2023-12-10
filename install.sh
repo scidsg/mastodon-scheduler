@@ -64,7 +64,7 @@ mkdir -p templates
 SECRET_KEY=$(openssl rand -hex 24)
 
 # Generate local certificates using mkcert
-mkcert -key-file key.pem -cert-file cert.pem tooter.local
+mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
 # Copy the app
 cp $HOME/mastodon-scheduler/main.py $HOME/mastodon_app
@@ -160,13 +160,13 @@ systemctl restart unattended-upgrades
 
 echo "✅ Automatic updates have been installed and configured."
 
-# Change the hostname to tooter.local
-echo "Changing the hostname to tooter.local..."
-hostnamectl set-hostname tooter.local
-echo "127.0.0.1 tooter.local" >> /etc/hosts
+# Change the hostname to mastodon-scheduler.local
+echo "Changing the hostname to mastodon-scheduler.local..."
+hostnamectl set-hostname mastodon-scheduler.local
+echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
 
 echo "✅ Mastodon app setup complete and service started."
-echo "After rebooting, you can access your scheduling app at https://tooter.local:5000"
+echo "After rebooting, you can access your scheduling app at https://mastodon-scheduler.local:5000"
 echo "⏲️ Rebooting your device in 3 seconds..."
 sleep 3
 reboot

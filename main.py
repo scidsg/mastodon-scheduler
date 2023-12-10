@@ -285,4 +285,4 @@ def get_mastodon_user_info():
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
-    app.run(host='tooter.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host='mastodon-scheduler.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
