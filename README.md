@@ -18,7 +18,7 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/
 - **Image Alt Text**: Provide alternative text for images, enhancing accessibility.
 - **View Scheduled Posts**: Review all your scheduled posts in one place.
 - **Delete Scheduled Posts**: Cancel scheduled posts before publication.
-
+- **Automated Post Status**: See if your scheduled posts succeeded
 
 ## Prerequisites
 
