@@ -281,11 +281,10 @@ form p:first-of-type {
 }
 
 .scheduled-posts ul {
-    border: 1px solid rgb(99,100,255);
-    padding: 1rem;
-    background-color: white;
+    padding: 1px .25rem .25rem 1px;
+    background-color: transparent;
     box-sizing: border-box;
-    border-radius: .5rem .5rem 0 0;
+    border-radius: 0;
     height: calc(100vh - 7.7125rem);
     overflow: hidden scroll;
     margin: 0;
@@ -311,15 +310,12 @@ form p:first-of-type {
     padding-top: 1rem;
     box-shadow: 4px 4px 0px 0px rgba(0,0,0,.08);
     border-radius: .5rem;
+    background-color: white;
 }
 
 .scheduled-posts li:not(.next-up) {
     padding-left: 1rem;
     padding-right: 1rem;
-}
-
-.scheduled-posts li:last-of-type {
-    margin-bottom: 0;
 }
 
 .scheduled-posts form {
@@ -407,12 +403,19 @@ li.next-up:first-of-type {
 }
 
 @media only screen and (max-width: 768px) {
+    header {
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
     main {
         flex-direction: column;
         overflow-y: initial;
-        padding-bottom: 1.125rem;
+        padding-bottom: .625rem;
         height: initial;
         align-items: center;
+        padding-left: .625rem;
+        padding-right: .625rem;
     }
 
     body {
@@ -426,6 +429,11 @@ li.next-up:first-of-type {
         padding-top: 2rem;
         border-top: 1px solid rgba(99,100,255,.25);
         align-self: center;
+        margin-bottom: 0;
+    }
+
+    .scheduled-posts li:last-of-type {
+        margin-bottom: 0;
     }
 
     .scheduled-posts h2 {
