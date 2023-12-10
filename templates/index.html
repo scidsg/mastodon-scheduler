@@ -82,9 +82,9 @@
                 {% for post in scheduled_posts %}
                     <li{% if next_up_post and post.id == next_up_post.id %} class="next-up"{% endif %}>
                         <span class="meta">{% if post.is_posted %}
-                            <span class="post-status" aria-label="Posted Successfully">✅</span>
+                            <span class="post-status" aria-label="Posted Successfully" title="Posted Successfully">✅</span>
                         {% elif not post.is_posted and post.schedule_time < now %}
-                            <span class="post-status" aria-label="Not Posted"❗</span>
+                            <span class="post-status" aria-label="Not Posted" title="Not Posted">❗</span>
                         {% endif %} {{ post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
                         {{ post.content }}
                         <!-- Display CW text if available -->
