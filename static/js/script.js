@@ -23,3 +23,14 @@ window.onload = function() {
         });
     }, 5000); // Time before fade-out starts
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    var form = document.querySelector("form");
+    var submitButton = document.getElementById("submit-button");
+
+    form.addEventListener("submit", function() {
+        // Change button content to spinner
+        submitButton.innerHTML = '<div class="spinner"></div>';
+        submitButton.disabled = true; // Disable button to prevent multiple submissions
+    });
+});

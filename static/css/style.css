@@ -1,3 +1,7 @@
+* {
+    transition: .3s;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -195,18 +199,46 @@ form input[type="datetime-local"] {
 }
 
 form button {
-  width: fit-content;
-  margin: .75rem 0;
-  padding: .625rem .75rem;
-  font-family: 'Atkinson Hyperlegible', sans-serif;
-  font-weight: 700;
-  background: rgb(99,100,255);
-  background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
-  border-radius: .25rem;
-  border: none;
-  color: white;
-  font-size: 1rem;
+    width: fit-content;
+    min-width: 164px;
+    min-height: 44px;
+    margin: .75rem 0;
+    padding: .625rem .75rem;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-weight: 700;
+    background: rgb(99,100,255);
+    background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
+    border-radius: .25rem;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden; /* To prevent spinner from extending button's boundaries */
 }
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #fff; /* Spinner color */
+    border-radius: 50%;
+    width: 16px; /* Spinner size */
+    height: 16px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Adjust the transform property to combine both translate and rotate */
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
 
 form textarea {
     height: 180px;
@@ -289,6 +321,8 @@ form p:first-of-type {
     padding: 0;
     margin: 0;
     cursor: pointer;
+    min-height: initial;
+    min-width: initial;
 }
 
 .scheduled-posts a {
@@ -304,7 +338,7 @@ form p:first-of-type {
 .action-container {
     display: flex;
     font-size: .825rem;
-    gap: .325rem;
+    gap: .5rem;
     margin-top: .75rem;
 }
 
