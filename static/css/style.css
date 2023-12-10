@@ -285,8 +285,8 @@ form p:first-of-type {
     padding: 1rem;
     background-color: white;
     box-sizing: border-box;
-    border-radius: .5rem;
-    height: calc(100vh - 8.5rem);
+    border-radius: .5rem .5rem 0 0;
+    height: calc(100vh - 7.7125rem);
     overflow: hidden scroll;
     margin: 0;
 }
@@ -316,6 +316,10 @@ form p:first-of-type {
 .scheduled-posts li:not(.next-up) {
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.scheduled-posts li:last-of-type {
+    margin-bottom: 0;
 }
 
 .scheduled-posts form {
@@ -432,6 +436,8 @@ li.next-up:first-of-type {
     .scheduled-posts ul {
         height: initial;
         overflow: initial;
+        border-radius: .5rem;
+
     }
 
     .scheduled-posts li img {
