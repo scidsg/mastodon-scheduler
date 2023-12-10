@@ -62,6 +62,7 @@ h2 {
     display: inline-flex;
     color: #595959;
     letter-spacing: -.0125rem;
+    align-items: center;
 }
 
 .contWarning {
@@ -333,6 +334,11 @@ form p:first-of-type {
 .scheduled-posts a:hover,
 .scheduled-posts button:hover {
     text-decoration: underline;
+}
+
+.post-status {
+    font-size: .6125rem;
+    margin-right: .5rem;
 }
 
 .action-container {
