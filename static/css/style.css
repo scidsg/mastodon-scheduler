@@ -408,6 +408,7 @@ li.next-up:first-of-type {
         overflow-y: initial;
         padding-bottom: 1.125rem;
         height: initial;
+        align-items: center;
     }
 
     body {
@@ -420,6 +421,7 @@ li.next-up:first-of-type {
         overflow: initial;
         padding-top: 2rem;
         border-top: 1px solid rgba(99,100,255,.25);
+        align-self: center;
     }
 
     .scheduled-posts h2 {
