@@ -17,7 +17,9 @@ cat <<"EOF"
 \__ \ / _| | ' \  / -_) / _` | | || | | | / -_) | '_|
 |___/ \__| |_||_| \___| \__,_|  \_,_| |_| \___| |_|  
                                                        
-Schedule your social media posts.
+🗓️ A self-hosted app to schedule your posts to 🐘 Mastodon.
+
+https://github.com/glenn-sorrentino/mastodon-scheduler
 
 EOF
 sleep 3
