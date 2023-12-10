@@ -278,11 +278,10 @@ def edit_post(post_id):
 def get_mastodon_user_info():
     try:
         user_data = mastodon.account_verify_credentials()
-        return user_data.avatar if user_data else None  # Fetch the avatar URL
+        return user_data  # Return the whole user_data object
     except Exception as e:
         logging.error(f"Error fetching user info: {e}")
         return None
-
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
