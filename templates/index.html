@@ -64,9 +64,9 @@
                         {% endif %}
                         <div class="image-container">
                             {% if next_up_post.image_path %}
-                                <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}">
+                                <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}" title="{{ next_up_post.image_alt_text }}">
                                 {% if next_up_post.image_alt_text %}
-                                    <span class="altTextIndicator">Alt</span>
+                                    <span class="altTextIndicator" title="{{ next_up_post.image_alt_text }}">Alt</span>
                                 {% endif %}
                             {% endif %}
                         </div>
@@ -93,9 +93,9 @@
                         {% endif %}
                         <div class="image-container">
                             {% if post.image_path %}
-                                <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}">
+                                <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}" title="{{ post.image_alt_text }}">
                                 {% if post.image_alt_text %}
-                                    <span class="altTextIndicator">Alt</span>
+                                    <span class="altTextIndicator" title="{{ post.image_alt_text }}">Alt</span>
                                 {% endif %}
                             {% endif %}
                         </div>
