@@ -8,6 +8,7 @@ from mastodon import Mastodon, MastodonError
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from sqlalchemy import inspect
+from linkedin_api import Linkedin
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
