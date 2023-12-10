@@ -16,7 +16,7 @@ body {
 }
 
 header {
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
     position: fixed;
     top: 0;
     background-color: white;
@@ -38,6 +38,16 @@ header a {
     color: #595959;
     margin: 0;
     letter-spacing: .0125rem;
+    align-items: center;
+    display: flex;
+}
+
+.user-avatar {
+    width: 2rem;  /* Adjust as needed */
+    height: 2rem; /* Adjust as needed */
+    border-radius: 50%;
+    margin-right: .5rem;
+    border: 1px solid rgba(0,0,0,0.1);
 }
 
 main {

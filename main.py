@@ -162,10 +162,12 @@ def index():
                 status_response = mastodon.status_post(status, spoiler_text=cw_text)
                 flash("🛫 Posted Successfully!")
 
-    # Fetch Mastodon user info
+    # Fetch Mastodon user info and avatar
     user_info = get_mastodon_user_info()
     username = user_info.username if user_info else "Unknown"
     profile_url = user_info.url if user_info else "#"
+    avatar_url = user_info.avatar if user_info else "default_avatar.png"  # Default avatar image if not found
+
     
     # Query all scheduled posts from the database and order by schedule time ascending
     scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
@@ -179,7 +181,7 @@ def index():
             break
 
     # Pass the scheduled posts, next up post, username, and profile URL to the template
-    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username, profile_url=profile_url, now=now)
+    return render_template('index.html', avatar_url=avatar_url, scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username, profile_url=profile_url, now=now)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
@@ -218,6 +220,7 @@ def edit_post(post_id):
     user_info = get_mastodon_user_info()
     username = user_info.username if user_info else "Unknown"
     profile_url = user_info.url if user_info else "#"
+    avatar_url = user_info.avatar if user_info else "default_avatar.png"  # Default avatar image if not found
     
     if request.method == 'POST':
         # Update the post details
@@ -270,16 +273,16 @@ def edit_post(post_id):
     else:
         # Present the form for editing with the current post details
         scheduled_posts = ScheduledPost.query.order_by(ScheduledPost.schedule_time).all()
-        return render_template('edit_post.html', post=post_to_edit, username=username, profile_url=profile_url)
+        return render_template('edit_post.html', post=post_to_edit, username=username, profile_url=profile_url, avatar_url=avatar_url)
 
 def get_mastodon_user_info():
     try:
-        # Assuming 'mastodon' is your Mastodon API client instance
         user_data = mastodon.account_verify_credentials()
-        return user_data
+        return user_data.avatar if user_data else None  # Fetch the avatar URL
     except Exception as e:
         logging.error(f"Error fetching user info: {e}")
         return None
+
 
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
