@@ -35,6 +35,7 @@ class ScheduledPost(db.Model):
     schedule_time = db.Column(db.DateTime, nullable=False)
     image_alt_text = db.Column(db.String(255), nullable=True)  # Alt text for the image
     cw_text = db.Column(db.String(255), nullable=True)  # Content Warning text
+    is_posted = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f'<ScheduledPost {self.id} {self.content[:20]}>'
@@ -63,8 +64,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def post_to_mastodon(post_id):
-    with app.app_context():  # Manually push the application context
-        # Fetch the latest data for the post
+    with app.app_context():
         post = ScheduledPost.query.get(post_id)
         if not post:
             logging.error(f"Post with ID {post_id} not found")
@@ -82,10 +82,20 @@ def post_to_mastodon(post_id):
                         media_id = media_response['id']
                 else:
                     logging.error(f"Image file not found: {full_image_path}")
+
             status_response = mastodon.status_post(post.content, media_ids=[media_id] if media_id else None, spoiler_text=post.cw_text)
             logging.info(f"Status post response: {status_response}")
+
+            # Check if post was successful and set is_posted flag
+            # Adjust this condition based on how you determine success
+            if status_response:  
+                post.is_posted = True
+
         except Exception as e:
             logging.error(f"Error posting to Mastodon: {e}")
+
+        # Commit the change outside of the try block
+        db.session.commit()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
