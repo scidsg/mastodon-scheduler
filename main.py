@@ -8,7 +8,6 @@ from mastodon import Mastodon, MastodonError
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from sqlalchemy import inspect
-from linkedin_api import Linkedin
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -180,7 +179,7 @@ def index():
             break
 
     # Pass the scheduled posts, next up post, username, and profile URL to the template
-    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username, profile_url=profile_url)
+    return render_template('index.html', scheduled_posts=scheduled_posts, next_up_post=next_up_post, username=username, profile_url=profile_url, now=now)
 
 def load_scheduled_posts():
     """Load and schedule any posts from the database."""
