@@ -17,7 +17,7 @@ cat <<"EOF"
 \__ \ / _| | ' \  / -_) / _` | | || | | | / -_) | '_|
 |___/ \__| |_||_| \___| \__,_|  \_,_| |_| \___| |_|  
                                                        
-🗓️ A self-hosted app to schedule your posts to 🐘 Mastodon.
+A self-hosted app to schedule your posts to Mastodon 🐘.
 
 https://github.com/glenn-sorrentino/mastodon-scheduler
 
