@@ -48,8 +48,9 @@ def display_post(epd, post_data):
     post_content_height = sum(draw.textsize(line, font=font_post)[1] for line in wrapped_post_content_lines)
     schedule_time_height = draw.textsize(schedule_time, font=font_schedule)[1]
 
-    # Calculate total height of text block
-    total_text_height = post_content_height + schedule_time_height + 5  # Padding between texts
+    # Calculate total height of text block including padding
+    padding_between_texts = 10  # Space between post content and schedule time
+    total_text_height = post_content_height + schedule_time_height + padding_between_texts
 
     # Calculate starting Y position for vertical centering
     start_y = (epd.width - total_text_height) // 2
@@ -60,8 +61,8 @@ def display_post(epd, post_data):
         draw.text((5, y), line, font=font_post, fill=0)
         y += draw.textsize(line, font=font_post)[1]
 
-    # Draw schedule time
-    draw.text((5, y + 5), schedule_time, font=font_schedule, fill=0)
+    # Draw schedule time, accounting for padding
+    draw.text((5, y + padding_between_texts), schedule_time, font=font_schedule, fill=0)
 
     # Send image to e-paper display
     epd.display(epd.getbuffer(image.rotate(90, expand=True)))
