@@ -114,7 +114,7 @@ def main():
 def display_no_posts_message(epd):
     image = Image.new('1', (epd.height, epd.width), 255)
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 10)
+    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 11)
     message = "No scheduled posts"
     draw.text((5, 50), message, font=font, fill=0)
     epd.display(epd.getbuffer(image.rotate(90, expand=True)))
