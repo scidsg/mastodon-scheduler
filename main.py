@@ -283,6 +283,16 @@ def get_mastodon_user_info():
         logging.error(f"Error fetching user info: {e}")
         return None
 
+@app.route('/api/next_post', methods=['GET'])
+def get_next_post():
+    next_up_post = ScheduledPost.query.filter(ScheduledPost.schedule_time > datetime.now()).order_by(ScheduledPost.schedule_time).first()
+    if next_up_post:
+        return {
+            "content": next_up_post.content,
+            "schedule_time": next_up_post.schedule_time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+    return {"message": "No upcoming posts"}, 404
+
 if __name__ == '__main__':
     load_scheduled_posts()  # Load scheduled posts
     app.run(host='mastodon-scheduler.local', port=5000, ssl_context=('cert.pem', 'key.pem'))
