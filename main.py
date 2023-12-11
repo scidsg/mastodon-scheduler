@@ -289,7 +289,10 @@ def get_next_post():
     if next_up_post:
         return {
             "content": next_up_post.content,
-            "schedule_time": next_up_post.schedule_time.strftime("%Y-%m-%d %H:%M:%S")
+            "schedule_time": next_up_post.schedule_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "image_path": next_up_post.image_path if next_up_post.image_path else "",
+            "image_alt_text": next_up_post.image_alt_text if next_up_post.image_alt_text else "",
+            "cw_text": next_up_post.cw_text if next_up_post.cw_text else ""
         }
     return {"message": "No upcoming posts"}, 404
 

@@ -4,6 +4,7 @@ import sys
 import os
 import http.client as http_client
 from waveshare_epd import epd2in13_V3
+from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import textwrap
 
@@ -29,28 +30,45 @@ def display_post(epd, post_data):
     # Define font sizes
     font_post = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 11)
     font_schedule = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 10)
+    font_meta = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 10)
 
     # Prepare and wrap post content
     post_content = post_data.get('content', 'No content').replace("\n", " ")
     wrapped_post_content = textwrap.fill(post_content, width=30)  # Adjust width as needed
 
     # Truncate long posts and add ellipsis if truncated
-    max_lines = 4  # Adjust as needed
+    max_lines = 4
     wrapped_post_content_lines = wrapped_post_content.split('\n')
     if len(wrapped_post_content_lines) > max_lines:
         wrapped_post_content_lines = wrapped_post_content_lines[:max_lines]
-        wrapped_post_content_lines[-1] += '…'  # Ellipsis character
+        wrapped_post_content_lines[-1] += '…'
 
-    # Schedule time text
-    schedule_time = "Schedule Time: " + post_data.get('schedule_time', 'No schedule time')
-
-    # Calculate text heights
+    # Calculate post content height
     post_content_height = sum(draw.textsize(line, font=font_post)[1] for line in wrapped_post_content_lines)
+
+    # Format schedule time
+    schedule_time_str = post_data.get('schedule_time', '')
+    if schedule_time_str:
+        try:
+            schedule_time_obj = datetime.strptime(schedule_time_str, '%Y-%m-%d %H:%M:%S')
+            formatted_schedule_time = schedule_time_obj.strftime('%b %d, %Y at %-I:%M %p')
+        except ValueError:
+            formatted_schedule_time = schedule_time_str
+    else:
+        formatted_schedule_time = 'No schedule time'
+
+    schedule_time = "Scheduled for " + formatted_schedule_time
     schedule_time_height = draw.textsize(schedule_time, font=font_schedule)[1]
 
-    # Calculate total height of text block including padding
-    padding_between_texts = 10  # Space between post content and schedule time
-    total_text_height = post_content_height + schedule_time_height + padding_between_texts
+    # Check for image, alt text, and content warning
+    has_image = '✔' if post_data.get('image_path') else '✖'
+    has_alt_text = '✔' if post_data.get('image_alt_text') else '✖'
+    has_cw = '✓' if post_data.get('cw_text') else '✖'
+    metadata = f"Img: {has_image} Alt: {has_alt_text} CW: {has_cw}"
+    metadata_height = draw.textsize(metadata, font=font_meta)[1]
+
+    # Calculate total height of text block including metadata
+    total_text_height = post_content_height + schedule_time_height + metadata_height + 15  # Adjust padding as needed
 
     # Calculate starting Y position for vertical centering
     start_y = (epd.width - total_text_height) // 2
@@ -61,8 +79,12 @@ def display_post(epd, post_data):
         draw.text((5, y), line, font=font_post, fill=0)
         y += draw.textsize(line, font=font_post)[1]
 
-    # Draw schedule time, accounting for padding
-    draw.text((5, y + padding_between_texts), schedule_time, font=font_schedule, fill=0)
+    # Draw schedule time
+    draw.text((5, y + 10), schedule_time, font=font_schedule, fill=0)
+    y += schedule_time_height + 5
+
+    # Draw metadata
+    draw.text((5, y + 15), metadata, font=font_meta, fill=0)
 
     # Send image to e-paper display
     epd.display(epd.getbuffer(image.rotate(90, expand=True)))
