@@ -68,7 +68,7 @@ def display_post(epd, post_data):
     metadata_height = draw.textsize(metadata, font=font_meta)[1]
 
     # Calculate total height of text block including metadata
-    total_text_height = post_content_height + schedule_time_height + metadata_height + 15  # Adjust padding as needed
+    total_text_height = post_content_height + schedule_time_height + metadata_height + 20  # Adjust padding as needed
 
     # Calculate starting Y position for vertical centering
     start_y = (epd.width - total_text_height) // 2
