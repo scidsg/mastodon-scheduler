@@ -27,7 +27,7 @@ def display_post(epd, post_data):
     draw = ImageDraw.Draw(image)
 
     # Define font sizes
-    font_post = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 12)
+    font_post = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 11)
     font_schedule = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 10)
 
     # Prepare and wrap post content
@@ -35,7 +35,7 @@ def display_post(epd, post_data):
     wrapped_post_content = textwrap.fill(post_content, width=30)  # Adjust width as needed
 
     # Truncate long posts and add ellipsis if truncated
-    max_lines = 5  # Adjust as needed
+    max_lines = 4  # Adjust as needed
     wrapped_post_content_lines = wrapped_post_content.split('\n')
     if len(wrapped_post_content_lines) > max_lines:
         wrapped_post_content_lines = wrapped_post_content_lines[:max_lines]
