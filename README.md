@@ -24,7 +24,7 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/
 
 Waveshare's 2.13" e-paper display is supported! 
 
-## Easy Insall
+### Easy Insall
 
 ```bash
 curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/display.sh | bash
