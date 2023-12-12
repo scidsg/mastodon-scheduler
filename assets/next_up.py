@@ -68,7 +68,7 @@ def display_post(epd, post_data):
     metadata_height = draw.textsize(metadata, font=font_meta)[1]
 
     # Calculate total height of text block including metadata
-    total_text_height = post_content_height + schedule_time_height + metadata_height + 20  # Adjust padding as needed
+    total_text_height = post_content_height + schedule_time_height + metadata_height + 17  # Adjust padding as needed
 
     # Calculate starting Y position for vertical centering
     start_y = (epd.width - total_text_height) // 2
@@ -80,14 +80,14 @@ def display_post(epd, post_data):
         y += draw.textsize(line, font=font_post)[1]
 
     # Draw schedule time
-    draw.text((5, y + 10), schedule_time, font=font_schedule, fill=0)
+    draw.text((5, y + 7), schedule_time, font=font_schedule, fill=0)
     y += schedule_time_height + 5
 
     # Draw metadata
-    draw.text((5, y + 15), metadata, font=font_meta, fill=0)
+    draw.text((5, y + 10), metadata, font=font_meta, fill=0)
 
     # Send image to e-paper display
-    epd.display(epd.getbuffer(image.rotate(90, expand=True)))
+    epd.display(epd.getbuffer(image.rotate(270, expand=True)))
 
 def main():
     print("Starting Mastodon display script")
@@ -117,7 +117,7 @@ def display_no_posts_message(epd):
     font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 11)
     message = "No scheduled posts"
     draw.text((5, 50), message, font=font, fill=0)
-    epd.display(epd.getbuffer(image.rotate(90, expand=True)))
+    epd.display(epd.getbuffer(image.rotate(270, expand=True)))
 
 if __name__ == '__main__':
     main()
