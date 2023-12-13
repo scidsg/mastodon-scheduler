@@ -30,8 +30,7 @@ Waveshare's 2.13" e-paper display is supported!
 curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/display.sh | bash
 ```
 
-![Screenshot 2023-12-11 at 1 14 45 PM](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/a569aeda-f761-4445-82c3-5a2a3564daa5)
-
+![IMG_8299](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/304e3381-f573-4179-95b3-925b2138c44e)
 
 ## Prerequisites
 
