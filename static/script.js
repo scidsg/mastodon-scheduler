@@ -58,10 +58,10 @@ function toggleAltTextInput(imageInput) {
     }
 }
 
-function showSpinner() {
-    document.getElementById('submit-button').style.display = 'none';
-    document.getElementById('spinner').style.display = 'block';
-}
+// function showSpinner() {
+//     document.getElementById('submit-button').style.display = 'none';
+//     document.getElementById('spinner').style.display = 'block';
+// }
 
 window.onload = function() {
     hideFlashMessages();
