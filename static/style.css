@@ -235,6 +235,10 @@ h2 {
         align-items: center;
         padding: 0 1rem;
     }
+
+    header {
+        padding: 1rem;
+    }
     
     .scheduled-posts,
     .publisher {
