@@ -19,9 +19,6 @@ ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mast
 # Clone the repo
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-cd mastodon-scheduler
-git switch mkcert
-cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
