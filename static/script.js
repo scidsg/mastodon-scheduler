@@ -18,7 +18,7 @@ function hideFlashMessages() {
     flashMessages.forEach(msg => {
         setTimeout(() => {
             msg.style.display = 'none';
-        }, 5000); // Hide after 5 seconds
+        }, 30000); // Hide after 5 seconds
     });
 }
 
