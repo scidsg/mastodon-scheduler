@@ -10,15 +10,37 @@ header {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     background-color: white;
     left: 0;
     right: 0;
+    justify-content: space-between;
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.user-info {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+    font-size: .875rem
 }
 
 header h1 {
     margin: 0;
     font-size: 1.25rem
+}
+
+.user-info {
+
+}
+
+.user-info img {
+    width: 2rem;
+    border-radius: 50vh;
+    border: 1px solid rgba(0,0,0,1);
+    box-shadow: 2px 2px 0px 0 rgba(0,0,0,1);
 }
 
 h2 {
@@ -43,7 +65,7 @@ h2 {
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 57px;
+    margin-top: 66px;
     padding-top: 2rem;
 }
 
@@ -81,7 +103,7 @@ h2 {
 
 .scheduled-posts,
 .publisher {
-    height: calc(100vh - 57px);
+    height: calc(100vh - 66px);
     overflow-y: scroll;
 }
 
