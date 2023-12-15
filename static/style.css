@@ -3,7 +3,7 @@ body {
     font-family: 'Atkinson Hyperlegible', sans-serif;
     justify-content: center;
     margin: 0;
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(99,100,255,.08);
     padding-left: .5rem;
     padding-right: .5rem;
 }
@@ -100,8 +100,16 @@ h2 {
     font-size: 1rem;
     border-radius: .25rem;
     border: none;
-    outline: 1px solid rgba(0,0,0,1);
-    box-shadow: 4px 4px 0px 0 rgba(0,0,0,1);
+    border: 1px solid rgba(99,100,255,.75);
+    box-shadow: 4px 4px 0px 0 rgba(99,100,255,.33);
+}
+
+.publisher input[type="submit"] {
+    background: rgb(99,100,255);
+    background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
+    color: white;
+    font-weight: 700;
+    box-shadow: none;
 }
 
 .publisher * {
@@ -127,8 +135,8 @@ h2 {
     background-color: white;
     padding: 1rem;
     border-radius: .25rem;
-    border: 1px solid rgba(0,0,0,1);
-    box-shadow: 4px 4px 0px 0 rgba(0,0,0,1);
+    border: 1px solid rgba(99,100,255,.75);
+    box-shadow: 4px 4px 0px 0 rgba(99,100,255,.33);
     display: flex;
     flex-direction: column;
     gap: .5rem;
