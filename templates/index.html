@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Glenn Sorrentino">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🗓️ Mastodon Scheduler</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>🗓️ Mastodon Scheduler</h1>
+        <div class="user-info">
+            <a href="{{ profile_url }}" class="user-profile-link">
+                {% if user_avatar %}
+                    <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                {% endif %}
+                <span class="username">{{ username }}</span>
+            </a>
+        </div>
+    </header>
+    <div class="publisher">
+        <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <label for="content_warning">Content Warning</label><br>
+            <input type="text" id="content_warning" name="content_warning"><br>
+            <label for="content">Your Message</label><br>
+            <textarea id="content" name="content"></textarea><br>
+            <label for="scheduled_at">Schedule Post</label><br>
+            <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
+            <label for="image">Add an Image</label><br>
+            <input type="file" id="image" name="image" accept="image/*"><br>
+            <label for="alt_text">Image Description</label><br>
+            <input type="text" id="alt_text" name="alt_text"><br>
+            <input type="submit" value="Toot!">
+        </form>
+    </div>
+    <div class="scheduled-posts">
+        <h2>Scheduled Posts</h2>
+        <ul>
+            {% for status in scheduled_statuses %}
+            <li>
+                <!-- Display content -->
+                {{ status['params']['text'] }}<br>
+                <!-- Display images with alt text as title -->
+                {% for media in status.get('media_attachments', []) %}
+                <div class="image-container">
+                    <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
+                    {% if media.description %}
+                    <span class="alt-indicator">Alt</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <!-- Display content warning if available -->
+                {% if status['params']['spoiler_text'] %}
+                <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+                {% endif %}
+                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
+                <!-- Cancel button -->
+                <form action="/cancel/{{ status['id'] }}" method="post">
+                    <input type="submit" value="Cancel">
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
