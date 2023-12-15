@@ -22,6 +22,7 @@ header {
     border-radius: .5rem;
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
+    z-index: 2;
 }
 
 #flash-messages {
@@ -58,10 +59,6 @@ header h1 {
     font-size: 1.25rem
 }
 
-.user-info {
-
-}
-
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
@@ -90,7 +87,7 @@ h2 {
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 66px;
+    margin-top: 73px;
     padding-top: 2rem;
 }
 
@@ -150,6 +147,7 @@ h2 {
     color: white;
     font-weight: 700;
     box-shadow: none;
+    width: fit-content;
 }
 
 .loader {
@@ -186,7 +184,7 @@ h2 {
 
 .scheduled-posts,
 .publisher {
-    height: calc(100vh - 66px);
+    height: calc(100vh - 73px);
     overflow-y: scroll;
 }
 
@@ -232,6 +230,7 @@ h2 {
 
 .image-container {
     position: relative;
+    margin-top: .325rem;
 }
 
 .image-container img {
