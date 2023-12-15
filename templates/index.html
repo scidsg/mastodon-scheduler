@@ -36,7 +36,7 @@
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
             <label for="content">Your Message</label><br>
-            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()"></textarea><br>
+            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()" required="required"></textarea><br>
             <div id="charCount">0/500</div>
             <label for="scheduled_at">Schedule Post</label><br>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
