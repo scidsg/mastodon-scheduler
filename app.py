@@ -25,10 +25,13 @@ def index():
         user_info = mastodon.account_verify_credentials()
         user_avatar = user_info['avatar']
         username = user_info['username']
+        profile_url = user_info['url']  # Retrieve the profile URL
     except Exception as e:
         user_avatar = None
         username = "User"
+        profile_url = "#"  # Default or placeholder URL
         print(f"Error fetching user information: {e}")
+
 
     if request.method == 'POST':
         content = request.form['content']
@@ -78,7 +81,8 @@ def index():
         error_message = f"Error fetching scheduled statuses: {e}"
 
     return render_template('index.html', scheduled_statuses=scheduled_statuses, 
-                           error_message=error_message, user_avatar=user_avatar, username=username)
+                           error_message=error_message, user_avatar=user_avatar, 
+                           username=username, profile_url=profile_url)
 
 
 @app.route('/cancel/<status_id>', methods=['POST'])

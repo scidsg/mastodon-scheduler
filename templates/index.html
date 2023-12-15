@@ -16,11 +16,13 @@
     <header>
         <h1>🗓️ Mastodon Scheduler</h1>
         <div class="user-info">
-        {% if user_avatar %}
-            <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
-        {% endif %}
-        <span class="username">{{ username }}</span>
-    </div>
+            <a href="{{ profile_url }}" class="user-profile-link">
+                {% if user_avatar %}
+                    <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                {% endif %}
+                <span class="username">{{ username }}</span>
+            </a>
+        </div>
     </header>
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
