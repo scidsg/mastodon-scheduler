@@ -43,6 +43,13 @@ cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 
+# Modify app.py to directly use these variables
+sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
+sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
+sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
+sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
+sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" app.py
+
 # Kill any process on port 5000
 kill_port_processes() {
     echo "Checking for processes on port 5000..."

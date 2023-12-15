@@ -8,10 +8,10 @@ app = Flask(__name__)
 
 # Initialize Mastodon
 mastodon = Mastodon(
-    client_id='$CLIENT_KEY',
-    client_secret='$CLIENT_SECRET',
-    access_token='$ACCESS_TOKEN',
-    api_base_url='$MASTODON_URL'
+    client_id='CLIENT_KEY',
+    client_secret='CLIENT_SECRET',
+    access_token='ACCESS_TOKEN',
+    api_base_url='MASTODON_URL'
 )
 
 @app.route('/', methods=['GET', 'POST'])
