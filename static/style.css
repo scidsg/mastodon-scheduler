@@ -4,6 +4,8 @@ body {
     justify-content: center;
     margin: 0;
     background-color: rgba(0,0,0,0.1);
+    padding-left: .5rem;
+    padding-right: .5rem;
 }
 
 header {
@@ -154,17 +156,39 @@ h2 {
 .image-container .alt-indicator {
     position: absolute;
     bottom: .625rem;
-    left: .25rem;
+    left: .325rem;
     background-color: #333;
     color: white;
     padding: .25rem;
     text-transform: uppercase;
     font-size: .75rem;
     border-radius: .25rem;
+    font-weight: 700;
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 640px) {
     body {
         flex-direction: column;
+        align-items: center;
+        padding: 0 1rem;
+    }
+    
+    .scheduled-posts,
+    .publisher {
+        height: initial;
+        overflow-y: initial;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .scheduled-posts {
+        margin: 0;
+        border-top: 1px solid rgba(0,0,0,1);
+        margin-top: 1rem;   
+    }
+    
+    .scheduled-posts h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
     }
 }
