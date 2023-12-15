@@ -14,11 +14,11 @@ function validateForm() {
 }
 
 function hideFlashMessages() {
-    const flashMessages = document.querySelectorAll('.flash-message');
+    const flashMessages = document.querySelectorAll('#flash-messages');
     flashMessages.forEach(msg => {
         setTimeout(() => {
             msg.style.display = 'none';
-        }, 30000); // Hide after 5 seconds
+        }, 5000); // Hide after 5 seconds
     });
 }
 
