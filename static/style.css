@@ -47,8 +47,8 @@ header h1 {
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
-    border: 1px solid rgba(0,0,0,1);
-    box-shadow: 2px 2px 0px 0 rgba(0,0,0,1);
+    border: 1px solid rgba(99,100,255,.75);
+    box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
 }
 
 h2 {
