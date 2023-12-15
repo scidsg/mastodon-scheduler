@@ -42,9 +42,9 @@
                 {% endfor %}
                 <!-- Display content warning if available -->
                 {% if status['params']['spoiler_text'] %}
-                    <strong>Content Warning:</strong> {{ status['params']['spoiler_text'] }}<br>
+                    <span class="meta">Content Warning: {{ status['params']['spoiler_text'] }}</span><br>
                 {% endif %}
-                <strong>Scheduled for:</strong> {{ status['scheduled_at'] }}<br>
+                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span><br>
                 <!-- Cancel button -->
                 <form action="/cancel/{{ status['id'] }}" method="post">
                     <input type="submit" value="Cancel">
