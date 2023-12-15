@@ -22,7 +22,7 @@ header {
     align-items: center;
 }
 
-.user-info {
+.user-info a {
     align-items: center;
     display: flex;
     gap: .5rem;
