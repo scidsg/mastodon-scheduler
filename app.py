@@ -3,15 +3,16 @@ from mastodon import Mastodon
 import datetime
 from werkzeug.utils import secure_filename
 import mimetypes
+import pytz
 
 app = Flask(__name__)
 
 # Initialize Mastodon
 mastodon = Mastodon(
-    client_id='CLIENT_KEY',
-    client_secret='CLIENT_SECRET',
-    access_token='ACCESS_TOKEN',
-    api_base_url='INSTANCE_URL'
+    client_id='$CLIENT_KEY',
+    client_secret='$CLIENT_SECRET',
+    access_token='$ACCESS_TOKEN',
+    api_base_url='$INSTANCE_URL'
 )
 
 @app.route('/', methods=['GET', 'POST'])
@@ -58,10 +59,10 @@ def index():
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
 
+        # Extract media URLs from scheduled statuses
         for status in scheduled_statuses:
-            scheduled_time = datetime.fromisoformat(status['scheduled_at'])
-            local_time = scheduled_time.astimezone(pytz.timezone('America/Los_Angeles'))
-            status['formatted_scheduled_at'] = local_time.strftime("%b. %d, %Y at %I:%M %p")
+            media_urls = [media['url'] for media in status.get('media_attachments', [])]
+            status['media_urls'] = media_urls
     except Exception as e:
         scheduled_statuses = []
         error_message = f"Error fetching scheduled statuses: {e}"

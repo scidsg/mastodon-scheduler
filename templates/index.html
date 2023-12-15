@@ -44,8 +44,7 @@
                 {% if status['params']['spoiler_text'] %}
                     <strong>Content Warning:</strong> {{ status['params']['spoiler_text'] }}<br>
                 {% endif %}
-                <!-- Corrected: Display formatted scheduled time -->
-                <strong>Scheduled for:</strong> {{ status['formatted_scheduled_at'] }}<br>
+                <strong>Scheduled for:</strong> {{ status['scheduled_at'] }}<br>
                 <!-- Cancel button -->
                 <form action="/cancel/{{ status['id'] }}" method="post">
                     <input type="submit" value="Cancel">
