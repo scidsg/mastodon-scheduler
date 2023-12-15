@@ -5,7 +5,7 @@ sudo apt-get update
 sudo apt-get install -y python3 python3-pip whiptail
 
 # Use whiptail to collect Mastodon credentials and instance URL
-MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
+MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
@@ -35,7 +35,11 @@ cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 
+# Generate a secret key
+SECRET_KEY=$(openssl rand -hex 24)
+
 # Modify app.py to directly use these variables
+sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
