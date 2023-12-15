@@ -1,8 +1,14 @@
 #!/bin/bash
 
+#Run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "Script needs to run as root. Elevating permissions now."
+  exec sudo /bin/bash "$0" "$@"
+fi
+
 # Update and install necessary packages
-sudo apt-get update
-sudo apt-get install -y python3 python3-pip whiptail
+apt-get update
+apt-get install -y python3 python3-pip whiptail
 
 # Use whiptail to collect Mastodon credentials and instance URL
 MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
@@ -61,10 +67,10 @@ EOF
 # Kill any process on port 5000
 kill_port_processes() {
     echo "Checking for processes on port 5000..."
-    local pid=$(sudo lsof -t -i :5000)
+    local pid=$(lsof -t -i :5000)
     if [ ! -z "$pid" ]; then
         echo "Killing processes on port 5000..."
-        sudo kill -9 $pid
+        kill -9 $pid
     fi
 }
 
@@ -77,6 +83,8 @@ systemctl enable mastodon_app.service
 # Start the Mastodon app service
 kill_port_processes
 echo "Starting Mastodon app service..."
-sudo systemctl start mastodon_app.service
+systemctl start mastodon_app.service
 
-echo "Setup complete"
+echo "Setup complete. Rebooting in 3 seconds..."
+sleep 3
+reboot
