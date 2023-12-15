@@ -32,6 +32,7 @@ header {
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 2px 2px 0 0 #46954654;
       width: max-content;
+      display: none;
 }
 
 .user-info a {

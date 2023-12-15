@@ -12,3 +12,14 @@ function validateForm() {
     }
     return true;
 }
+
+function hideFlashMessages() {
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.display = 'none';
+        }, 5000); // Hide after 5 seconds
+    });
+}
+
+window.onload = hideFlashMessages;
