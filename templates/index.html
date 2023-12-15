@@ -38,13 +38,12 @@
                             <span class="alt-indicator">Alt</span>
                         {% endif %}
                     </div>
-                    <br>
                 {% endfor %}
                 <!-- Display content warning if available -->
                 {% if status['params']['spoiler_text'] %}
-                    <span class="meta">Content Warning: {{ status['params']['spoiler_text'] }}</span><br>
+                    <span class="meta">Content Warning: {{ status['params']['spoiler_text'] }}</span>
                 {% endif %}
-                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span><br>
+                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
                 <!-- Cancel button -->
                 <form action="/cancel/{{ status['id'] }}" method="post">
                     <input type="submit" value="Cancel">
