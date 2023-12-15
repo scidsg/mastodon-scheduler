@@ -13,6 +13,9 @@ ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mast
 # Clone the repo
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
+cd mastodon-scheduler
+git switch mkcert
+cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
@@ -25,6 +28,11 @@ mkdir mastodon_app
 cd mastodon_app
 mkdir static
 mkdir templates
+
+# Change the hostname to mastodon-scheduler.local
+echo "Changing the hostname to mastodon-scheduler.local..."
+hostnamectl set-hostname mastodon-scheduler.local
+echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
 
 # Create a Python virtual environment
 python3 -m venv venv
