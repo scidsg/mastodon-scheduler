@@ -111,7 +111,7 @@ h2 {
 
 .publisher input,
 .publisher textarea {
-     margin-bottom: 1.125rem;
+     margin-bottom: 1rem;
 }
 
 .publisher label {
@@ -163,7 +163,7 @@ h2 {
 }
 
 #charCount {
-    margin-bottom: 1.125rem;
+    margin-bottom: 1rem;
     font-size: .825rem;
 }
 
