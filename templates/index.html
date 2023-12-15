@@ -41,7 +41,7 @@
             <label for="scheduled_at">Schedule Post</label><br>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
             <label for="image">Add an Image</label><br>
-            <input type="file" id="image" name="image" accept="image/*"><br>
+            <input type="file" name="image" accept="image/*" onchange="toggleAltTextInput(this)">
             <div id="altTextContainer" style="display: none;">
                 <label for="alt_text">Image Description (Alt Text):</label>
                 <input type="text" name="alt_text" placeholder="Enter image description (alt text)">
