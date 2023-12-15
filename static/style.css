@@ -22,6 +22,18 @@ header {
     align-items: center;
 }
 
+.flash-messages {
+      position: fixed;
+      top: 1rem;
+      background-color: #b5eeb5;
+      padding: 1rem;
+      z-index: 2;
+      border-radius: .25rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 2px 2px 0 0 #46954654;
+      width: max-content;
+}
+
 .user-info a {
     align-items: center;
     display: flex;

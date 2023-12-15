@@ -35,8 +35,6 @@
     </div>
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
-            <label for="content_warning">Content Warning</label><br>
-            <input type="text" id="content_warning" name="content_warning"><br>
             <label for="content">Your Message</label><br>
             <textarea id="content" name="content"></textarea><br>
             <label for="scheduled_at">Schedule Post</label><br>
@@ -45,6 +43,8 @@
             <input type="file" id="image" name="image" accept="image/*"><br>
             <label for="alt_text">Image Description</label><br>
             <input type="text" id="alt_text" name="alt_text"><br>
+            <label for="content_warning">Content Warning</label><br>
+            <input type="text" id="content_warning" name="content_warning"><br>
             <input type="submit" value="Toot!">
         </form>
     </div>
