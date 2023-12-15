@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
@@ -10,38 +11,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  <div class="publisher">
-      <h1>Post to Mastodon</h1>
-      <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
-         <input type="text" name="content_warning" placeholder="Content warning"><br>
-         <textarea name="content" placeholder="What's happening?"></textarea><br>
-         Schedule Post (optional, in your local time):<br>
-         <input type="datetime-local" name="scheduled_at" placeholder="YYYY-MM-DDTHH:MM"><br>
-         <input type="file" name="image" accept="image/*"><br>
-         <input type="text" name="alt_text" placeholder="Enter image description (alt text)"><br>
-         <input type="submit" value="Toot!">
-      </form>
-  </div>
-  <div class="scheduled-posts">
-    <h2>Scheduled Posts</h2>
-    <ul>
-        {% for status in scheduled_statuses %}
+    <div class="publisher">
+        <h1>Post to Mastodon</h1>
+        <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <label for="content_warning">Content Warning</label><br>
+            <input type="text" id="content_warning" name="content_warning"><br>
+            <label for="content">What's happening?</label><br>
+            <textarea id="content" name="content" placeholder="What's on your mind?"></textarea><br>
+            <label for="scheduled_at">Schedule Post</label><br>
+            <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
+            <label for="image">Add an Image</label><br>
+            <input type="file" id="image" name="image" accept="image/*"><br>
+            <label for="alt_text">Image Description</label><br>
+            <input type="text" id="alt_text" name="alt_text"><br>
+            <input type="submit" value="Toot!">
+        </form>
+    </div>
+    <div class="scheduled-posts">
+        <h2>Scheduled Posts</h2>
+        <ul>
+            {% for status in scheduled_statuses %}
             <li>
                 <!-- Display content -->
                 {{ status['params']['text'] }}<br>
                 <!-- Display images with alt text as title -->
                 {% for media in status.get('media_attachments', []) %}
-                    <div class="image-container">
-                        <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
-                        {% if media.description %}
-                            <span class="alt-indicator">Alt</span>
-                        {% endif %}
-                    </div>
+                <div class="image-container">
+                    <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
+                    {% if media.description %}
+                    <span class="alt-indicator">Alt</span>
+                    {% endif %}
+                </div>
                 {% endfor %}
                 <!-- Display content warning if available -->
                 {% if status['params']['spoiler_text'] %}
-                    <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+                <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
                 {% endif %}
                 <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
                 <!-- Cancel button -->
@@ -49,9 +55,10 @@
                     <input type="submit" value="Cancel">
                 </form>
             </li>
-        {% endfor %}
-    </ul>
-  </div>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>

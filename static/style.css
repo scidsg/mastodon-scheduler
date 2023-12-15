@@ -1,6 +1,6 @@
 body {
     display: flex;
-    font-family: sans-serif;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
     justify-content: center;
     margin: 0;
     background-color: rgba(0,0,0,0.1);
@@ -8,6 +8,7 @@ body {
 
 .meta {
     font-size: .75rem;
+    font-family: 'IBM Plex Mono', monospace;
 }
 .cw {
     font-size: .875rem;
@@ -28,13 +29,19 @@ body {
     flex-direction: column;
 }
 
-.publisher form {
-     gap: .5rem;
+.publisher input,
+.publisher textarea {
+     margin-bottom: 1rem;
+}
+
+.publisher label {
+    margin-bottom: .25rem;
 }
 
 .publisher form input:not([type='file']),
 .publisher form textarea {
     padding: .75rem;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
     font-size: 1rem;
     border-radius: .25rem;
     border: none;
