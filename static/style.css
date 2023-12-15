@@ -120,6 +120,10 @@ h2 {
     font-weight: 700;
 }
 
+h2, .publisher label {
+    font-size: 1rem;
+}
+
 .publisher form input:not([type='file']),
 .publisher form textarea {
     padding: .75rem;
