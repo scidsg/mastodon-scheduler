@@ -22,12 +22,15 @@ header {
     align-items: center;
 }
 
-#flash-message {
+#flash-messages {
       position: absolute;
       top: 1rem;
+      z-index: 3;
+      display: none;
+
 }
 
-.flash-messages {
+.flash-message {
       background-color: #b5eeb5;
       padding: 1rem;
       z-index: 2;
@@ -35,7 +38,6 @@ header {
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 2px 2px 0 0 #46954654;
       width: max-content;
-      display: none;
 }
 
 .user-info a {
