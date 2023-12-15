@@ -22,9 +22,12 @@ header {
     align-items: center;
 }
 
-.flash-messages {
-      position: fixed;
+#flash-message {
+      position: absolute;
       top: 1rem;
+}
+
+.flash-messages {
       background-color: #b5eeb5;
       padding: 1rem;
       z-index: 2;
