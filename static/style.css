@@ -120,6 +120,10 @@ h2 {
     box-shadow: 4px 4px 0px 0 rgba(99,100,255,.33);
 }
 
+.publisher form textarea {
+    margin-bottom: .75rem;    
+}
+
 .publisher input[type="submit"] {
     background: rgb(99,100,255);
     background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
@@ -137,6 +141,11 @@ h2 {
 .publisher {
     height: calc(100vh - 66px);
     overflow-y: scroll;
+}
+
+#charCount {
+    margin-bottom: 1.125rem;
+    font-size: .825rem;
 }
 
 .scheduled-posts ul {
