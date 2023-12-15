@@ -6,12 +6,20 @@ body {
     background-color: rgba(0,0,0,0.1);
 }
 
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem;
+}
+
 .meta {
     font-size: .75rem;
     font-family: 'IBM Plex Mono', monospace;
 }
 .cw {
     font-size: .875rem;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
 }
 
 .publisher,
@@ -70,6 +78,19 @@ body {
     display: flex;
     flex-direction: column;
     gap: .5rem;
+}
+
+.scheduled-posts form input {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: #ac5252;
+}
+
+.scheduled-posts input:hover {
+    text-decoration: underline;
 }
 
 .image-container {

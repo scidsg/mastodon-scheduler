@@ -13,13 +13,15 @@
 </head>
 
 <body>
-    <div class="publisher">
+    <header>
         <h1>Post to Mastodon</h1>
+    </header>
+    <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
             <label for="content_warning">Content Warning</label><br>
             <input type="text" id="content_warning" name="content_warning"><br>
-            <label for="content">What's happening?</label><br>
-            <textarea id="content" name="content" placeholder="What's on your mind?"></textarea><br>
+            <label for="content">What's on your mind?</label><br>
+            <textarea id="content" name="content"></textarea><br>
             <label for="scheduled_at">Schedule Post</label><br>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
             <label for="image">Add an Image</label><br>
