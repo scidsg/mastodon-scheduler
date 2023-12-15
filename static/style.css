@@ -10,16 +10,18 @@ body {
 
 header {
     position: fixed;
-    top: 0;
-    width: 100%;
+    top: .5rem;
     padding: 1rem 1.5rem;
     background-color: white;
-    left: 0;
-    right: 0;
+    left: .5rem;
+    right: .5rem;
     justify-content: space-between;
     display: flex;
     box-sizing: border-box;
     align-items: center;
+    border-radius: .25rem;
+    border: 1px solid rgba(99,100,255,.75);
+    box-shadow: 2px 2px 0px 0 rgba(99,100,255,.15);
 }
 
 #flash-messages {
