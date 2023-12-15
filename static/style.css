@@ -121,7 +121,8 @@ h2 {
 }
 
 .publisher form textarea {
-    margin-bottom: .75rem;    
+    margin-bottom: .75rem;
+    height: 200px;
 }
 
 .publisher input[type="submit"] {
