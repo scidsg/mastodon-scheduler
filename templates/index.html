@@ -29,7 +29,7 @@
         {% for status in scheduled_statuses %}
             <li>
                 <!-- Display content -->
-                Content: {{ status['params']['text'] }}<br>
+                {{ status['params']['text'] }}<br>
                 <!-- Display images with alt text as title -->
                 {% for media in status.get('media_attachments', []) %}
                     <div class="image-container">
