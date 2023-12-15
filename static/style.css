@@ -137,7 +137,7 @@ h2, .publisher label {
 
 .publisher form input:focus,
 .publisher form textarea:focus {
-    outline: 2px solid rgba(99,100,255,.75);
+    outline: 3px double rgba(99,100,255,.75);
 }
 
 .publisher form textarea {
