@@ -19,9 +19,9 @@ header {
     display: flex;
     box-sizing: border-box;
     align-items: center;
-    border-radius: .25rem;
+    border-radius: .5rem;
     border: 1px solid rgba(99,100,255,.75);
-    box-shadow: 2px 2px 0px 0 rgba(99,100,255,.15);
+    box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
 }
 
 #flash-messages {
@@ -65,8 +65,7 @@ header h1 {
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
-    border: 1px solid rgba(99,100,255,.75);
-    box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
+    outline: 1px solid rgba(0,0,0,.15);
 }
 
 h2 {
@@ -95,6 +94,19 @@ h2 {
     padding-top: 2rem;
 }
 
+ /* Hide scrollbar for Chrome, Safari and Opera */
+.publisher::-webkit-scrollbar,
+.scheduled-posts::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.publisher,
+.scheduled-posts {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+} 
+
 .publisher form {
     display: flex;
     flex-direction: column;
@@ -120,6 +132,11 @@ h2 {
     border: none;
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 4px 4px 0px 0 rgba(99,100,255,.33);
+}
+
+.publisher form input:focus,
+.publisher form textarea:focus {
+    outline: 2px solid rgba(99,100,255,.75);
 }
 
 .publisher form textarea {
@@ -162,7 +179,7 @@ h2 {
     margin-bottom: 1rem;
     background-color: white;
     padding: 1rem;
-    border-radius: .25rem;
+    border-radius: .5rem;
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 4px 4px 0px 0 rgba(99,100,255,.33);
     display: flex;
@@ -191,7 +208,7 @@ h2 {
 }
 
 .image-container img {
-    border: 1px solid rgba(0,0,0,.2);
+    outline: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
 }
 
@@ -206,6 +223,10 @@ h2 {
     font-size: .75rem;
     border-radius: .25rem;
     font-weight: 700;
+}
+
+#altTextContainer {
+    flex-direction: column;
 }
 
 @media only screen and (max-width: 640px) {

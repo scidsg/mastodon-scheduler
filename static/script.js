@@ -38,7 +38,7 @@ function toggleAltTextInput(imageInput) {
 
     if (imageInput.files && imageInput.files[0]) {
         // Show the alt text input if an image is selected
-        altTextContainer.style.display = 'block';
+        altTextContainer.style.display = 'flex';
     } else {
         // Hide the alt text input if no image is selected
         altTextContainer.style.display = 'none';
