@@ -25,7 +25,7 @@ function hideFlashMessages() {
 function updateCharCount() {
     const textarea = document.querySelector('textarea[name="content"]');
     const charCountDiv = document.getElementById('charCount');
-    const maxLength = textarea.getAttribute('maxlength');
+    const maxLength = parseInt(textarea.getAttribute('maxlength'));
     const currentLength = textarea.value.length;
     charCountDiv.textContent = `${maxLength - currentLength} characters remaining`;
 }
