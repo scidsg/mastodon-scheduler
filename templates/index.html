@@ -1,122 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>🗓️ Mastodon Scheduler</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <h1>🗓️ Mastodon Scheduler</h1>
-        <a href="{{ profile_url }}" target="_blank" rel="noopener noreferrer"><img src="{{ avatar_url }}" alt="User Avatar" class="user-avatar"> @{{ username }}</a>
-    </header>
-
-    <main>
-        <!-- Display flash messages -->
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="notification">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <div class="form-container">
-            <!-- Form for posting status with file upload and scheduling -->
-            <form method="post" enctype="multipart/form-data">
-                <label for="status">Your Message</label>
-                <textarea id="status" name="status" required placeholder="What's on your mind?"></textarea>
-
-                <label for="image">Upload Image</label>
-                <input type="file" id="image" name="image" onchange="toggleAltTextField()">
-
-                <div id="altTextField" class="altText" style="display: none;">
-                    <label for="image_alt">Image Alt Text</label>
-                    <input type="text" id="image_alt" name="image_alt" placeholder="Describe the image">
-                </div>
-                <label for="cw_text">Content Warning (Optional)</label>
-                <input type="text" id="cw_text" name="cw_text" placeholder="Add a content warning">
-
-                <label for="schedule_time">Schedule Time</label>
-                <input type="datetime-local" id="schedule_time" name="schedule_time">
-
-                <button type="submit" id="submit-button">Post or Schedule</button>
-            </form>
-        </div>
-
-        <div class="scheduled-posts">
-            <h2>🗓️ Scheduled Posts</h2>
-            <ul>
-                {% if next_up_post %}
-                    <li class="next-up">
-                        <span class="badge">⏰ Next Up</span>
-                        <span class="meta">{{ next_up_post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
-                        {{ next_up_post.content }}
-                        <!-- Display CW text if available -->
-                        {% if next_up_post.cw_text %}
-                            <br><span class="contWarning">Content Warning: {{ next_up_post.cw_text }}</span>
-                        {% endif %}
-                        <div class="image-container">
-                            {% if next_up_post.image_path %}
-                                <img src="{{ url_for('static', filename=next_up_post.image_path) }}" alt="{{ next_up_post.image_alt_text }}" title="{{ next_up_post.image_alt_text }}">
-                                {% if next_up_post.image_alt_text %}
-                                    <span class="altTextIndicator" title="{{ next_up_post.image_alt_text }}">Alt</span>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                        <!-- Edit and Delete buttons for the 'Next Up' post -->
-                        <div class="action-container">
-                            <a href="{{ url_for('edit_post', post_id=next_up_post.id) }}">Edit</a>
-                            <form action="{{ url_for('delete_post', post_id=next_up_post.id) }}" method="post">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                    </li>
+        <div class="user-info">
+            <a href="{{ profile_url }}" class="user-profile-link">
+                {% if user_avatar %}
+                    <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
                 {% endif %}
-                {% for post in scheduled_posts %}
-                    <li{% if next_up_post and post.id == next_up_post.id %} class="next-up"{% endif %}>
-                        <span class="meta">{% if post.is_posted %}
-                            <span class="post-status" aria-label="Posted Successfully" title="Posted Successfully">✅</span>
-                        {% elif not post.is_posted and post.schedule_time < now %}
-                            <span class="post-status" aria-label="Not Posted" title="Not Posted">❗</span>
-                        {% endif %} {{ post.schedule_time.strftime('%b. %d, %Y at %-I:%M %p') }}</span><br>
-                        {{ post.content }}
-                        <!-- Display CW text if available -->
-                        {% if post.cw_text %}
-                            <br><span class="contWarning">Content Warning: {{ post.cw_text }}</span>
-                        {% endif %}
-                        <div class="image-container">
-                            {% if post.image_path %}
-                                <img src="{{ url_for('static', filename=post.image_path) }}" alt="{{ post.image_alt_text }}" title="{{ post.image_alt_text }}">
-                                {% if post.image_alt_text %}
-                                    <span class="altTextIndicator" title="{{ post.image_alt_text }}">Alt</span>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                        <!-- Edit and Delete buttons for each post -->
-                        <div class="action-container">
-                            <a href="{{ url_for('edit_post', post_id=post.id) }}">Edit</a>
-                            <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                        <!-- Display post status -->
-                        
-                    </li>
-                {% else %}
-                    <li>No scheduled posts</li>
-                {% endfor %}
-
-            </ul>
+                <span class="username">{{ username }}</span>
+            </a>
         </div>
-    </main>
-
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <div class="publisher">
+        <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <label for="content">Your Message</label><br>
+            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()"></textarea><br>
+            <div id="charCount">0/500</div>
+            <label for="scheduled_at">Schedule Post</label><br>
+            <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
+            <label for="image">Add an Image</label><br>
+            <input type="file" name="image" accept="image/*" onchange="toggleAltTextInput(this)">
+            <div id="altTextContainer" style="display: none;">
+                <label for="alt_text">Alt Text</label>
+                <input type="text" name="alt_text">
+            </div>
+            <label for="content_warning">Content Warning</label><br>
+            <input type="text" id="content_warning" name="content_warning"><br>
+            <input type="submit" value="Toot!">
+        </form>
+    </div>
+    <div class="scheduled-posts">
+        <h2>Scheduled Posts</h2>
+        <ul>
+            {% for status in scheduled_statuses %}
+            <li>
+                <!-- Display content -->
+                {{ status['params']['text'] }}<br>
+                <!-- Display images with alt text as title -->
+                {% for media in status.get('media_attachments', []) %}
+                <div class="image-container">
+                    <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
+                    {% if media.description %}
+                    <span class="alt-indicator">Alt</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <!-- Display content warning if available -->
+                {% if status['params']['spoiler_text'] %}
+                <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+                {% endif %}
+                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
+                <!-- Cancel button -->
+                <form action="/cancel/{{ status['id'] }}" method="post">
+                    <input type="submit" value="Cancel">
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
