@@ -11,7 +11,7 @@ mastodon = Mastodon(
     client_id='CLIENT_KEY',
     client_secret='CLIENT_SECRET',
     access_token='ACCESS_TOKEN',
-    api_base_url='MASTODON_URL'
+    api_base_url='INSTANCE_URL'
 )
 
 @app.route('/', methods=['GET', 'POST'])
