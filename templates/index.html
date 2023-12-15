@@ -42,8 +42,10 @@
             <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
             <label for="image">Add an Image</label><br>
             <input type="file" id="image" name="image" accept="image/*"><br>
-            <label for="alt_text">Image Description</label><br>
-            <input type="text" id="alt_text" name="alt_text"><br>
+            <div id="altTextContainer" style="display: none;">
+                <label for="alt_text">Image Description (Alt Text):</label>
+                <input type="text" name="alt_text" placeholder="Enter image description (alt text)">
+            </div>
             <label for="content_warning">Content Warning</label><br>
             <input type="text" id="content_warning" name="content_warning"><br>
             <input type="submit" value="Toot!">
