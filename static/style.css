@@ -79,7 +79,8 @@ h2 {
     box-sizing: border-box;
 }
 
-.scheduled-posts {
+.scheduled-posts,
+.publisher {
     height: calc(100vh - 57px);
     overflow-y: scroll;
 }

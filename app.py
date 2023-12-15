@@ -20,6 +20,16 @@ def index():
     error_message = None
     media_id = None
 
+    # Retrieve user information
+    try:
+        user_info = mastodon.account_verify_credentials()
+        user_avatar = user_info['avatar']
+        username = user_info['username']
+    except Exception as e:
+        user_avatar = None
+        username = "User"
+        print(f"Error fetching user information: {e}")
+
     if request.method == 'POST':
         content = request.form['content']
         content_warning = request.form.get('content_warning')
@@ -67,7 +77,9 @@ def index():
         scheduled_statuses = []
         error_message = f"Error fetching scheduled statuses: {e}"
 
-    return render_template('index.html', scheduled_statuses=scheduled_statuses, error_message=error_message)
+    return render_template('index.html', scheduled_statuses=scheduled_statuses, 
+                           error_message=error_message, user_avatar=user_avatar, username=username)
+
 
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
