@@ -25,9 +25,12 @@ function hideFlashMessages() {
 function updateCharCount() {
     const textarea = document.querySelector('textarea[name="content"]');
     const charCountDiv = document.getElementById('charCount');
-    const maxLength = parseInt(textarea.getAttribute('maxlength'));
-    const currentLength = textarea.value.length;
-    charCountDiv.textContent = `${maxLength - currentLength} characters remaining`;
+    
+    if (textarea) {
+        const currentLength = textarea.value.length;
+        const maxLength = textarea.getAttribute('maxlength');
+        charCountDiv.textContent = `${currentLength}/${maxLength}`;
+    }
 }
 
 window.onload = function() {

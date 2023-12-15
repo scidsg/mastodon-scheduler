@@ -36,8 +36,8 @@
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
             <label for="content">Your Message</label><br>
-            <textarea id="content" name="content" maxlength="500"></textarea><br>
-            <div id="charCount">500 characters remaining</div>
+            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()"></textarea><br>
+            <div id="charCount">0/500</div>
             <label for="scheduled_at">Schedule Post</label><br>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
             <label for="image">Add an Image</label><br>
