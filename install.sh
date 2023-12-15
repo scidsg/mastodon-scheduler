@@ -14,6 +14,12 @@ ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mast
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
 
+# Install mkcert
+wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
+chmod +x mkcert-v1.4.3-linux-arm
+mv mkcert-v1.4.3-linux-arm /usr/local/bin/mkcert
+mkcert -install
+
 # Create a directory for the app
 mkdir mastodon_app
 cd mastodon_app
@@ -35,6 +41,9 @@ cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
 
+# Generate local certificates using mkcert
+mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
+
 # Modify app.py to directly use these variables
 sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
@@ -52,7 +61,7 @@ After=network.target
 User=$USER
 Group=$USER
 WorkingDirectory=$HOME/mastodon_app
-ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app
+ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
 
 [Install]
 WantedBy=multi-user.target
