@@ -21,6 +21,11 @@ header h1 {
     font-size: 1.25rem
 }
 
+h2 {
+    font-size: 1.125rem;
+    margin: 0 0 .25rem 0;
+}
+
 .meta {
     font-size: .75rem;
     font-family: 'IBM Plex Mono', monospace;
@@ -38,8 +43,7 @@ header h1 {
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding-top: 4rem;
-
+    padding-top: 6rem;
 }
 
 .publisher form {
@@ -49,11 +53,13 @@ header h1 {
 
 .publisher input,
 .publisher textarea {
-     margin-bottom: 1rem;
+     margin-bottom: 1.125rem;
 }
 
 .publisher label {
-    margin-bottom: .25rem;
+    margin-bottom: .5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
 }
 
 .publisher form input:not([type='file']),
@@ -74,7 +80,7 @@ header h1 {
 
 .scheduled-posts ul {
     padding-left: 0;
-    margin-top: .75rem;
+    margin-top: .225rem;
 }
 
 .scheduled-posts li {
