@@ -26,7 +26,13 @@ header {
     align-items: center;
     display: flex;
     gap: .5rem;
-    font-size: .875rem
+    font-size: .875rem;
+    color: #595959;
+    text-decoration: none;
+}
+
+.user-info a:hover {
+    text-decoration: underline;
 }
 
 header h1 {
