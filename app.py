@@ -12,7 +12,7 @@ mastodon = Mastodon(
     client_id='$CLIENT_KEY',
     client_secret='$CLIENT_SECRET',
     access_token='$ACCESS_TOKEN',
-    api_base_url='$INSTANCE_URL'
+    api_base_url='$MASTODON_URL'
 )
 
 @app.route('/', methods=['GET', 'POST'])
@@ -79,4 +79,4 @@ def cancel_post(status_id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
