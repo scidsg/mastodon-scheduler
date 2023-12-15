@@ -7,6 +7,9 @@ import pytz
 
 app = Flask(__name__)
 
+# Set a secret key for the Flask app
+app.secret_key = 'SECRET_KEY'
+
 # Initialize Mastodon
 mastodon = Mastodon(
     client_id='CLIENT_KEY',
