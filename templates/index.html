@@ -41,7 +41,7 @@
                 {% endfor %}
                 <!-- Display content warning if available -->
                 {% if status['params']['spoiler_text'] %}
-                    <span class="meta">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+                    <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
                 {% endif %}
                 <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
                 <!-- Cancel button -->
