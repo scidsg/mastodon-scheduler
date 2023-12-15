@@ -27,7 +27,7 @@ header {
 
 #flash-messages {
       position: absolute;
-      top: 1rem;
+      top: 1.5rem;
       z-index: 3;
 }
 
@@ -148,6 +148,7 @@ h2 {
     font-weight: 700;
     box-shadow: none;
     width: fit-content;
+    min-width: 120px;
 }
 
 .loader {
