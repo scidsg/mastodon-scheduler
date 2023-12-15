@@ -18,7 +18,7 @@ git switch refactor
 cd ..
 
 # Create a directory for the app
-mkdir mastodon_app
+mkdir mastodon_app mastodon_app/templates mastodon_app/static
 cd mastodon_app
 
 # Install mkcert
@@ -37,132 +37,11 @@ pip3 install Flask Mastodon.py pytz gunicorn
 # Generate local certificates using mkcert
 mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
-# Copy the app
+# Copy the app files
 cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
-
-# HTML template for the form
-mkdir templates
-cat <<EOF > templates/index.html
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="author" content="Glenn Sorrentino">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>🗓️ Mastodon Scheduler</title>
-    <link rel="stylesheet" type="text/css" href="static/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="publisher">
-      <h1>Post to Mastodon</h1>
-      <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
-         <input type="text" name="content_warning" placeholder="Content warning"><br>
-         <textarea name="content" placeholder="What's happening?"></textarea><br>
-         Schedule Post (optional, in your local time):<br>
-         <input type="datetime-local" name="scheduled_at" placeholder="YYYY-MM-DDTHH:MM"><br>
-         <input type="file" name="image" accept="image/*"><br>
-         <input type="text" name="alt_text" placeholder="Enter image description (alt text)"><br>
-         <input type="submit" value="Toot!">
-      </form>
-  </div>
-  <div class="scheduled-posts">
-    <h2>Scheduled Posts</h2>
-    <ul>
-        {% for status in scheduled_statuses %}
-            <li>
-                <!-- Display content -->
-                Content: {{ status['params']['text'] }}<br>
-                <!-- Display images with alt text as title -->
-                {% for media in status.get('media_attachments', []) %}
-                    <div class="image-container">
-                        <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
-                        {% if media.description %}
-                            <span class="alt-indicator">Alt</span>
-                        {% endif %}
-                    </div>
-                    <br>
-                {% endfor %}
-                <!-- Display content warning if available -->
-                {% if status['params']['spoiler_text'] %}
-                    <strong>Content Warning:</strong> {{ status['params']['spoiler_text'] }}<br>
-                {% endif %}
-                <strong>Scheduled for:</strong> {{ status['scheduled_at'] }}<br>
-                <!-- Cancel button -->
-                <form action="/cancel/{{ status['id'] }}" method="post">
-                    <input type="submit" value="Cancel">
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-  </div>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
-EOF
-
-# Create CSS
-mkdir static
-cat <<EOF > static/style.css
-body {
-    display: flex;
-    justify-content: center;
-    margin: 0;
-}
-
-.publisher,
-.scheduled-posts {
-    padding: 1rem;
-    box-sizing: border-box;
-}
-
-.scheduled-posts ul {
-    padding-left: 0;
-}
-
-.scheduled-posts li {
-    list-style: none;
-    margin-bottom: 1rem;
-}
-
-.image-container {
-    position: relative;
-}
-
-.image-container .alt-indicator {
-    position: absolute;
-    bottom: .25rem;
-    left: .25rem;
-    background-color: #333;
-    color: white;
-}
-
-@media only screen and (max-width: 480px) {
-    body {
-        flex-direction: column;
-    }
-}
-EOF
-
-# Create JS
-cat <<EOF > static/script.js
-function validateForm() {
-    var scheduledTimeInput = document.getElementsByName("scheduled_at")[0];
-    if (scheduledTimeInput.value) {
-        var scheduledTime = new Date(scheduledTimeInput.value);
-        var currentTime = new Date();
-        var fiveMinutesLater = new Date(currentTime.getTime() + 5 * 60000); // Add 5 minutes
-
-        if (scheduledTime <= fiveMinutesLater) {
-            alert("Scheduled time must be at least 5 minutes in the future.");
-            return false;
-        }
-    }
-    return true;
-}
-EOF
+cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
+cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 
 # Kill any process on port 5000
 kill_port_processes() {

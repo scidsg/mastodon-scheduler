@@ -1,36 +1,14 @@
-function toggleAltTextField() {
-    var imageField = document.getElementById('image');
-    var altTextField = document.getElementById('altTextField');
-    if (imageField.files.length > 0) {
-        altTextField.style.display = 'flex';
-    } else {
-        altTextField.style.display = 'none';
+function validateForm() {
+    var scheduledTimeInput = document.getElementsByName("scheduled_at")[0];
+    if (scheduledTimeInput.value) {
+        var scheduledTime = new Date(scheduledTimeInput.value);
+        var currentTime = new Date();
+        var fiveMinutesLater = new Date(currentTime.getTime() + 5 * 60000); // Add 5 minutes
+
+        if (scheduledTime <= fiveMinutesLater) {
+            alert("Scheduled time must be at least 5 minutes in the future.");
+            return false;
+        }
     }
+    return true;
 }
-
-window.onload = function() {
-    // Fade in the notifications
-    var flashMessages = document.querySelectorAll('.notification');
-    flashMessages.forEach(function(msg) {
-        msg.classList.add('notification-visible');
-    });
-
-    // Set timeout to fade out the notifications
-    setTimeout(function() {
-        flashMessages.forEach(function(msg) {
-            msg.classList.remove('notification-visible');
-            msg.classList.add('notification-hidden'); // Start fade-out
-        });
-    }, 5000); // Time before fade-out starts
-};
-
-document.addEventListener("DOMContentLoaded", function() {
-    var form = document.querySelector("form");
-    var submitButton = document.getElementById("submit-button");
-
-    form.addEventListener("submit", function() {
-        // Change button content to spinner
-        submitButton.innerHTML = '<div class="spinner"></div>';
-        submitButton.disabled = true; // Disable button to prevent multiple submissions
-    });
-});
