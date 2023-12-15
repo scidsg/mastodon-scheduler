@@ -50,3 +50,8 @@ window.onload = function() {
     updateCharCount(); // Initialize character count
     document.querySelector('textarea[name="content"]').addEventListener('input', updateCharCount);
 };
+
+document.getElementById('your-form-id').addEventListener('submit', function() {
+    document.getElementById('submit-button').style.display = 'none';
+    document.getElementById('spinner').style.display = 'block';
+});
