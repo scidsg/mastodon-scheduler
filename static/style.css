@@ -26,8 +26,6 @@ header {
       position: absolute;
       top: 1rem;
       z-index: 3;
-      display: none;
-
 }
 
 .flash-message {
