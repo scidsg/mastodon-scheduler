@@ -1,43 +1,25 @@
 #!/bin/bash
 
-# Ensure the script is run as root
-if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
+# Update and install necessary packages
+sudo apt-get update
+sudo apt-get install -y python3 python3-pip whiptail
 
-# Welcome message and ASCII art
-cat <<"EOF"
- __  __               _              _               
-|  \/  |  __ _   ___ | |_   ___   __| |  ___   _ _   
-| |\/| | / _` | (_-< |  _| / _ \ / _` | / _ \ | ' \  
-|_|  |_| \__,_| /__/  \__| \___/ \__,_| \___/ |_||_| 
- ___        _               _          _             
-/ __|  __  | |_    ___   __| |  _  _  | |  ___   _ _ 
-\__ \ / _| | ' \  / -_) / _` | | || | | | / -_) | '_|
-|___/ \__| |_||_| \___| \__,_|  \_,_| |_| \___| |_|  
-                                                       
-A self-hosted app to schedule your posts to Mastodon 🐘.
+# Use whiptail to collect Mastodon credentials and instance URL
+MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
+CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
+CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
+ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
 
-https://github.com/glenn-sorrentino/mastodon-scheduler
-
-EOF
-sleep 3
-
-# Use whiptail to collect Mastodon credentials
-CLIENT_KEY=$(whiptail --inputbox "Enter your Mastodon Client Key" 8 78 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
-CLIENT_SECRET=$(whiptail --inputbox "Enter your Mastodon Client Secret" 8 78 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
-ACCESS_TOKEN=$(whiptail --inputbox "Enter your Mastodon Access Token" 8 78 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-INSTANCE_URL=$(whiptail --inputbox "Enter your Mastodon Instance URL" 8 78 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
-
-# Install Python, pip, Git, and OpenSSL
-apt update && apt -y dist-upgrade && apt -y autoremove
-apt install -y python3 python3-pip python3-venv git libnss3-tools ufw fail2ban unattended-upgrades
-
-# Clone repo
+# Clone the repo
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-sleep 5
+cd mastodon-scheduler
+git switch refactor
+cd ..
+
+# Create a directory for the app
+mkdir mastodon_app
+cd mastodon_app
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
@@ -45,46 +27,142 @@ chmod +x mkcert-v1.4.3-linux-arm
 mv mkcert-v1.4.3-linux-arm /usr/local/bin/mkcert
 mkcert -install
 
-# Set up project directory
-mkdir -p ~/mastodon_app
-mkdir -p ~/mastodon_app/static/uploads
-mkdir -p ~/mastodon_app/static/css
-mkdir -p ~/mastodon_app/static/js
-cd ~/mastodon_app
-
 # Create a Python virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
 # Install Flask and Mastodon.py
-pip install Flask Mastodon.py gunicorn APScheduler SQLAlchemy Flask-SQLAlchemy
-
-# Set up templates directory
-mkdir -p templates
-
-# Generate a secret key
-SECRET_KEY=$(openssl rand -hex 24)
+pip3 install Flask Mastodon.py pytz gunicorn
 
 # Generate local certificates using mkcert
 mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
 # Copy the app
-cp $HOME/mastodon-scheduler/main.py $HOME/mastodon_app
+cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
 
-# Modify main.py to directly use these variables
-sed -i "s|SECRET_KEY|$SECRET_KEY|g" main.py
-sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" main.py
-sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" main.py
-sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" main.py
-sed -i "s|INSTANCE_URL|$INSTANCE_URL|g" main.py
+# HTML template for the form
+mkdir templates
+cat <<EOF > templates/index.html
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Glenn Sorrentino">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🗓️ Mastodon Scheduler</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="publisher">
+      <h1>Post to Mastodon</h1>
+      <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
+         <input type="text" name="content_warning" placeholder="Content warning"><br>
+         <textarea name="content" placeholder="What's happening?"></textarea><br>
+         Schedule Post (optional, in your local time):<br>
+         <input type="datetime-local" name="scheduled_at" placeholder="YYYY-MM-DDTHH:MM"><br>
+         <input type="file" name="image" accept="image/*"><br>
+         <input type="text" name="alt_text" placeholder="Enter image description (alt text)"><br>
+         <input type="submit" value="Toot!">
+      </form>
+  </div>
+  <div class="scheduled-posts">
+    <h2>Scheduled Posts</h2>
+    <ul>
+        {% for status in scheduled_statuses %}
+            <li>
+                <!-- Display content -->
+                Content: {{ status['params']['text'] }}<br>
+                <!-- Display images with alt text as title -->
+                {% for media in status.get('media_attachments', []) %}
+                    <div class="image-container">
+                        <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
+                        {% if media.description %}
+                            <span class="alt-indicator">Alt</span>
+                        {% endif %}
+                    </div>
+                    <br>
+                {% endfor %}
+                <!-- Display content warning if available -->
+                {% if status['params']['spoiler_text'] %}
+                    <strong>Content Warning:</strong> {{ status['params']['spoiler_text'] }}<br>
+                {% endif %}
+                <strong>Scheduled for:</strong> {{ status['scheduled_at'] }}<br>
+                <!-- Cancel button -->
+                <form action="/cancel/{{ status['id'] }}" method="post">
+                    <input type="submit" value="Cancel">
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+EOF
 
-# Copy the HTML files
-cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
-cp $HOME/mastodon-scheduler/templates/edit_post.html $HOME/mastodon_app/templates
+# Create CSS
+mkdir static
+cat <<EOF > static/style.css
+body {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
 
-# Copy the static files
-cp $HOME/mastodon-scheduler/static/css/style.css $HOME/mastodon_app/static/css
-cp $HOME/mastodon-scheduler/static/js/script.js $HOME/mastodon_app/static/js
+.publisher,
+.scheduled-posts {
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.scheduled-posts ul {
+    padding-left: 0;
+}
+
+.scheduled-posts li {
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+.image-container {
+    position: relative;
+}
+
+.image-container .alt-indicator {
+    position: absolute;
+    bottom: .25rem;
+    left: .25rem;
+    background-color: #333;
+    color: white;
+}
+
+@media only screen and (max-width: 480px) {
+    body {
+        flex-direction: column;
+    }
+}
+EOF
+
+# Create JS
+cat <<EOF > static/script.js
+function validateForm() {
+    var scheduledTimeInput = document.getElementsByName("scheduled_at")[0];
+    if (scheduledTimeInput.value) {
+        var scheduledTime = new Date(scheduledTimeInput.value);
+        var currentTime = new Date();
+        var fiveMinutesLater = new Date(currentTime.getTime() + 5 * 60000); // Add 5 minutes
+
+        if (scheduledTime <= fiveMinutesLater) {
+            alert("Scheduled time must be at least 5 minutes in the future.");
+            return false;
+        }
+    }
+    return true;
+}
+EOF
 
 # Kill any process on port 5000
 kill_port_processes() {
@@ -106,69 +184,20 @@ After=network.target
 User=$USER
 Group=$USER
 WorkingDirectory=$HOME/mastodon_app
-ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 main:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
+ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd to apply new service
-systemctl daemon-reload
-
-# Enable the service to start on boot
-systemctl enable mastodon_app.service
-
-# Start the Mastodon app service
-kill_port_processes
-echo "Starting Mastodon app service..."
 sudo systemctl start mastodon_app.service
-
-echo "Configuring fail2ban..."
-
-systemctl start fail2ban
-systemctl enable fail2ban
-cp /etc/fail2ban/jail.{conf,local}
-
-# Configure fail2ban
-cp $HOME/mastodon-scheduler/assets/jail.local /etc/fail2ban
-
-systemctl restart fail2ban
-
-echo "✅ fail2ban configuration complete."
-
-# Configure UFW (Uncomplicated Firewall)
-
-echo "Configuring UFW..."
-
-# Default rules
-ufw default deny incoming
-ufw default allow outgoing
-ufw allow 5000 # Allow Flask app port
-
-# Allow SSH (modify as per your requirements)
-ufw allow ssh
-ufw limit ssh/tcp
-
-# Enable UFW non-interactively
-echo "y" | ufw enable
-
-echo "✅ UFW configuration complete."
-
-# Configure Unattended Upgrades
-cp $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
-cp $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
-
-systemctl restart unattended-upgrades
-
-echo "✅ Automatic updates have been installed and configured."
+sudo systemctl enable mastodon_app.service
+sleep 5
+sudo systemctl status mastodon_app.service
 
 # Change the hostname to mastodon-scheduler.local
 echo "Changing the hostname to mastodon-scheduler.local..."
 hostnamectl set-hostname mastodon-scheduler.local
 echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
 
-echo "✅ Mastodon app setup complete and service started."
-echo "After rebooting, you can access your scheduling app at https://mastodon-scheduler.local:5000"
-echo "⏲️ Rebooting your device in 3 seconds..."
-sleep 3
-reboot
+echo "Setup complete. Launching the server..."
