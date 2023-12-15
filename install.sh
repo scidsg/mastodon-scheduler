@@ -99,6 +99,8 @@ kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
-echo "Setup complete. Rebooting in 3 seconds..."
+echo "✅ Setup complete. Rebooting in 3 seconds..."
+echo "⏲️ Rebooting in 3 seconds..."
+echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
 sleep 3
 reboot
