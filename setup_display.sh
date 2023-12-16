@@ -20,7 +20,7 @@ pip3 install ./e-Paper/RaspberryPi_JetsonNano/python/
 pip3 install requests python-gnupg stem pytz
 
 # Install other Python packages
-pip3 install RPi.GPIO spidev
+pip3 install RPi.GPIO spidev pytz
 apt -y autoremove
 
 # Enable SPI interface
