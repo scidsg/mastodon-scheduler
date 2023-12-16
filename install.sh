@@ -34,7 +34,7 @@ mkdir static
 mkdir templates
 
 # Change the hostname to mastodon-scheduler.local
-echo "Changing the hostname to mastodon-scheduler.local..."
+echo "Changing the hostname to $LOCAL_ADDRESS..."
 hostnamectl set-hostname $LOCAL_ADDRESS
 echo "127.0.0.1 $LOCAL_ADDRESS" >> /etc/hosts
 
