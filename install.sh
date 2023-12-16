@@ -15,7 +15,6 @@ MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "htt
 CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-LOCAL_ADDRESS=$(whiptail --inputbox "Name your local address" 10 60 "mastodon-scheduler.local" --title "Local Address" 3>&1 1>&2 2>&3)
 
 # Clone the repo
 cd $HOME
@@ -34,9 +33,9 @@ mkdir static
 mkdir templates
 
 # Change the hostname to mastodon-scheduler.local
-echo "Changing the hostname to $LOCAL_ADDRESS..."
-hostnamectl set-hostname $LOCAL_ADDRESS
-echo "127.0.0.1 $LOCAL_ADDRESS" >> /etc/hosts
+echo "Changing the hostname to mastodon-scheduler.local..."
+hostnamectl set-hostname mastodon-scheduler.local
+echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
 
 # Create a Python virtual environment
 python3 -m venv venv
@@ -54,7 +53,7 @@ cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 SECRET_KEY=$(openssl rand -hex 24)
 
 # Generate local certificates using mkcert
-mkcert -key-file key.pem -cert-file cert.pem $LOCAL_ADDRESS
+mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
 # Modify app.py to directly use these variables
 sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
@@ -110,6 +109,6 @@ echo "✅ Automatic updates have been installed and configured."
 
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
-echo "👉 You can access your Mastodon Scheduler at https://$LOCAL_ADDRESS:5000"
+echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
 sleep 3
 reboot
