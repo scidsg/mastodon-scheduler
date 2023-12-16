@@ -52,7 +52,13 @@
         </form>
     </div>
     <div class="scheduled-posts">
-        <h2>{{ scheduled_statuses|length }} Scheduled Posts</h2>
+        <h2>
+            {% if scheduled_statuses|length == 1 %}
+                1 Scheduled Post
+            {% else %}
+                {{ scheduled_statuses|length }} Scheduled Posts
+            {% endif %}
+        </h2>
         <ul>
             {% if scheduled_statuses %}
                 {% for status in scheduled_statuses %}
