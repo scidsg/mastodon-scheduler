@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from mastodon import Mastodon
-import datetime
+from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 import mimetypes
 import pytz
@@ -57,8 +57,8 @@ def index():
 
         if scheduled_time and not error_message:
             try:
-                local_datetime = datetime.datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-                utc_datetime = local_datetime.astimezone(datetime.timezone.utc)
+                local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+                utc_datetime = local_datetime.astimezone(timezone.utc)
                 mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
                 flash("Toot scheduled successfully!", "success")
                 return redirect(url_for('index'))
@@ -116,6 +116,14 @@ def get_next_post():
             return jsonify({'message': 'No scheduled posts'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+def format_datetime(value, format='%b. %d, %Y at %-I:%M %p'):
+    """Format a date time to (Default): 'Dec. 1, 2023 at 7:33 PM'"""
+    if value is None:
+        return ""
+    return value.strftime(format)
+
+app.jinja_env.filters['datetime'] = format_datetime
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))

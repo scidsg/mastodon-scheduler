@@ -54,33 +54,34 @@
     <div class="scheduled-posts">
         <h2>{{ scheduled_statuses|length }} Scheduled Posts</h2>
         <ul>
-            {% for status in scheduled_statuses %}
-            <li>
-                <!-- Display content -->
-                {{ status['params']['text'] }}<br>
-                <!-- Display images with alt text as title -->
-                {% for media in status.get('media_attachments', []) %}
-                <div class="image-container">
-                    <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
-                    {% if media.description %}
-                    <span class="alt-indicator">Alt</span>
+            {% if scheduled_statuses %}
+                {% for status in scheduled_statuses %}
+                <li>
+                    <!-- Display content -->
+                    {{ status['params']['text'] }}<br>
+                    <!-- Display images with alt text as title -->
+                    {% for media in status.get('media_attachments', []) %}
+                    <div class="image-container">
+                        <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post" style="max-width: 100px; height: auto;">
+                        {% if media.description %}
+                        <span class="alt-indicator">Alt</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <!-- Display content warning if available -->
+                    {% if status['params']['spoiler_text'] %}
+                    <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
                     {% endif %}
-                </div>
+                    <span class="meta">Scheduled for {{ status['scheduled_at'] | datetime }}</span>
+                    <!-- Cancel button -->
+                    <form action="/cancel/{{ status['id'] }}" method="post">
+                        <input type="submit" value="Cancel">
+                    </form>
+                </li>
                 {% endfor %}
-                <!-- Display content warning if available -->
-                {% if status['params']['spoiler_text'] %}
-                <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
-                {% endif %}
-                <span class="meta">Scheduled for: {{ status['scheduled_at'] }}</span>
-                <!-- Cancel button -->
-                <form action="/cancel/{{ status['id'] }}" method="post">
-                    <input type="submit" value="Cancel">
-                </form>
-            </li>
-            {% endfor %}
-        {% else %}
-            <li>No posts scheduled</li>
-        {% endif %}
+            {% else %}
+                <li>No posts scheduled</li>
+            {% endif %}
         </ul>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
