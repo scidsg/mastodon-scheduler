@@ -118,10 +118,28 @@ def get_next_post():
         return jsonify({'error': str(e)}), 500
 
 def format_datetime(value, format='%b. %d, %Y at %-I:%M %p'):
-    """Format a date time to (Default): 'Dec. 1, 2023 at 7:33 PM'"""
+    """Format a date time to (Default): 'Dec. 1, 2023 at 1:30 PM'"""
     if value is None:
         return ""
-    return value.strftime(format)
+    
+    # Check if value is already a datetime object
+    if isinstance(value, datetime):
+        utc_datetime = value
+    else:
+        # If it's a string, parse it into a datetime object
+        try:
+            utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError as e:
+            return f"Invalid datetime format: {e}"
+
+    # Ensure the datetime is timezone-aware
+    utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
+
+    # Convert UTC to local timezone
+    local_timezone = pytz.timezone('America/Los_Angeles')  # Adjust to your timezone
+    local_datetime = utc_datetime.astimezone(local_timezone)
+
+    return local_datetime.strftime(format)
 
 app.jinja_env.filters['datetime'] = format_datetime
 
