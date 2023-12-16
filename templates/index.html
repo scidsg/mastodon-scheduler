@@ -52,7 +52,7 @@
         </form>
     </div>
     <div class="scheduled-posts">
-        <h2>Scheduled Posts</h2>
+        <h2>{{ scheduled_statuses|length }} Scheduled Posts</h2>
         <ul>
             {% for status in scheduled_statuses %}
             <li>
@@ -78,6 +78,9 @@
                 </form>
             </li>
             {% endfor %}
+        {% else %}
+            <li>No posts scheduled</li>
+        {% endif %}
         </ul>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
