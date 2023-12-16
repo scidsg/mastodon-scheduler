@@ -8,13 +8,14 @@ fi
 
 # Update and install necessary packages
 apt-get update
-apt-get install -y python3 python3-pip whiptail
+apt-get install -y python3 python3-pip whiptail unattended-upgrades
 
 # Use whiptail to collect Mastodon credentials and instance URL
 MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
+LOCAL_ADDRESS=$(whiptail --inputbox "Name your local address" 10 60 "mastodon-scheduler.local" --title "Local Address" 3>&1 1>&2 2>&3)
 
 # Clone the repo
 cd $HOME
@@ -34,8 +35,8 @@ mkdir templates
 
 # Change the hostname to mastodon-scheduler.local
 echo "Changing the hostname to mastodon-scheduler.local..."
-hostnamectl set-hostname mastodon-scheduler.local
-echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
+hostnamectl set-hostname $LOCAL_ADDRESS
+echo "127.0.0.1 $LOCAL_ADDRESS" >> /etc/hosts
 
 # Create a Python virtual environment
 python3 -m venv venv
@@ -53,7 +54,7 @@ cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 SECRET_KEY=$(openssl rand -hex 24)
 
 # Generate local certificates using mkcert
-mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
+mkcert -key-file key.pem -cert-file cert.pem $LOCAL_ADDRESS
 
 # Modify app.py to directly use these variables
 sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
@@ -99,8 +100,16 @@ kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
+# Configure Unattended Upgrades
+mv $HOME/mastodon_app/assets/50unattended-upgrades /etc/apt/apt.conf.d
+mv $HOME/mastodon_app/assets/20auto-upgrades /etc/apt/apt.conf.d
+
+systemctl restart unattended-upgrades
+
+echo "✅ Automatic updates have been installed and configured."
+
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
-echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
+echo "👉 You can access your Mastodon Scheduler at https://$LOCAL_ADDRESS:5000"
 sleep 3
 reboot

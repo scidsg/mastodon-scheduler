@@ -17,7 +17,7 @@ raspi-config nonint do_spi 0
 # Install Waveshare e-Paper library
 git clone https://github.com/waveshare/e-Paper.git
 pip3 install ./e-Paper/RaspberryPi_JetsonNano/python/
-pip3 install requests python-gnupg stem
+pip3 install requests python-gnupg stem pytz
 
 # Install other Python packages
 pip3 install RPi.GPIO spidev
