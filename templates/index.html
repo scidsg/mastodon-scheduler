@@ -35,19 +35,19 @@
     {% endwith %}
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
-            <label for="content">Your Message</label><br>
-            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()" required="required"></textarea><br>
+            <label for="content">Your Message</label>
+            <textarea id="content" name="content" maxlength="500" oninput="updateCharCount()" required="required"></textarea>
             <div id="charCount">0/500</div>
-            <label for="scheduled_at">Schedule Post</label><br>
-            <input type="datetime-local" id="scheduled_at" name="scheduled_at"><br>
-            <label for="image">Add an Image</label><br>
+            <label for="scheduled_at">Schedule Post</label>
+            <input type="datetime-local" id="scheduled_at" name="scheduled_at">
+            <label for="image">Add an Image</label>
             <input type="file" name="image" accept="image/*" onchange="toggleAltTextInput(this)">
             <div id="altTextContainer" style="display: none;">
                 <label for="alt_text">Alt Text</label>
                 <input type="text" name="alt_text">
             </div>
-            <label for="content_warning">Content Warning</label><br>
-            <input type="text" id="content_warning" name="content_warning"><br>
+            <label for="content_warning">Content Warning</label>
+            <input type="text" id="content_warning" name="content_warning">
             <input type="submit" value="Toot!">
         </form>
     </div>
