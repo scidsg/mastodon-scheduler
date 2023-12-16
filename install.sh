@@ -100,8 +100,8 @@ echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
 # Configure Unattended Upgrades
-mv $HOME/mastodon_app/assets/50unattended-upgrades /etc/apt/apt.conf.d
-mv $HOME/mastodon_app/assets/20auto-upgrades /etc/apt/apt.conf.d
+mv $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
+mv $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
 
 systemctl restart unattended-upgrades
 
