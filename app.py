@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from mastodon import Mastodon
 import datetime
 from werkzeug.utils import secure_filename
@@ -97,6 +97,25 @@ def cancel_post(status_id):
         flash("Error canceling scheduled post.", "error")
     
     return redirect(url_for('index'))
+
+@app.route('/api/next_post', methods=['GET'])
+def get_next_post():
+    try:
+        scheduled_statuses = mastodon.scheduled_statuses()
+        if scheduled_statuses:
+            next_post = scheduled_statuses[0]
+            post_data = {
+                'content': next_post['params']['text'],
+                'image_path': next_post['media_attachments'][0]['url'] if next_post['media_attachments'] else None,
+                'image_alt_text': next_post['media_attachments'][0]['description'] if next_post['media_attachments'] else None,
+                'cw_text': next_post['params']['spoiler_text'],
+                'schedule_time': next_post['scheduled_at']
+            }
+            return jsonify(post_data)
+        else:
+            return jsonify({'message': 'No scheduled posts'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
