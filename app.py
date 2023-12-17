@@ -116,7 +116,6 @@ def index():
                            error_message=error_message, user_avatar=user_avatar, 
                            username=username, profile_url=profile_url)
 
-
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
     try:
