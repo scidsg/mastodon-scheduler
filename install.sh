@@ -7,6 +7,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Update and install necessary packages
+export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
 apt-get install -y python3 python3-pip python3-venv whiptail unattended-upgrades
 
