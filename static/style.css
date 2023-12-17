@@ -12,7 +12,7 @@ header {
     position: fixed;
     top: .5rem;
     padding: 1rem 1.5rem;
-    background-color: white;
+    background-color: rgba(255,255,255,.8);
     left: .5rem;
     right: .5rem;
     justify-content: space-between;
@@ -23,6 +23,8 @@ header {
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 3px 3px 0px 0 rgba(99,100,255,.33);
     z-index: 2;
+    backdrop-filter: blur(1rem);
+    -webkit-backdrop-filter: blur(1rem);
 }
 
 #flash-messages {
