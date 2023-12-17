@@ -68,7 +68,8 @@ sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 cat > /etc/systemd/system/mastodon_app.service <<EOF
 [Unit]
 Description=Mastodon App Service
-After=network.target
+After=network.target network-online.target
+Wants=network-online.target
 
 [Service]
 User=$USER
