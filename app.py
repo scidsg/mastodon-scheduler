@@ -150,7 +150,7 @@ def get_next_post():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def format_datetime(value, format='%b. %d, %Y at %-I:%M %p'):
+def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
     """Format a date time to (Default): 'Dec. 1, 2023 at 1:30 PM'"""
     if value is None:
         return ""

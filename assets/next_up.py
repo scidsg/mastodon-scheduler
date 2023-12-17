@@ -59,7 +59,7 @@ def display_post(epd, post_data):
             local_schedule_time = schedule_time_obj.astimezone(local_timezone_obj)
             print(f"Converted to local timezone: {local_schedule_time}")
 
-            formatted_schedule_time = local_schedule_time.strftime('Scheduled for ' + '%b. %d, %Y at %-I:%M %p')
+            formatted_schedule_time = local_schedule_time.strftime('Scheduled for ' + '%b %d, %Y at %-I:%M %p')
             print(f"Formatted date string: {formatted_schedule_time}")
         except Exception as e:
             print(f"Error in date parsing/conversion with string '{schedule_time_str}': {e}")
