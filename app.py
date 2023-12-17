@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 import mimetypes
 import pytz
+import dateutil.parser
 
 app = Flask(__name__)
 
@@ -75,6 +76,34 @@ def index():
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
+
+        # Debug: Print original order
+        print("Original Order:")
+        for status in scheduled_statuses:
+            print(status['scheduled_at'])
+
+        # Sort the scheduled statuses by their scheduled time in ascending order
+        for status in scheduled_statuses:
+            if isinstance(status['scheduled_at'], str):
+                # Convert string to datetime object
+                try:
+                    status['scheduled_at_parsed'] = dateutil.parser.parse(status['scheduled_at'])
+                except Exception as e:
+                    print(f"Error parsing date string: {e}")
+                    status['scheduled_at_parsed'] = datetime.min
+            elif isinstance(status['scheduled_at'], datetime):
+                # If already a datetime object
+                status['scheduled_at_parsed'] = status['scheduled_at']
+            else:
+                status['scheduled_at_parsed'] = datetime.min
+
+        scheduled_statuses.sort(key=lambda x: x['scheduled_at_parsed'])
+
+        # Debug: Print sorted order
+        print("Sorted Order:")
+        for status in scheduled_statuses:
+            print(status['scheduled_at_parsed'])
+
         for status in scheduled_statuses:
             media_urls = [media['url'] for media in status.get('media_attachments', [])]
             status['media_urls'] = media_urls
@@ -86,6 +115,7 @@ def index():
     return render_template('index.html', scheduled_statuses=scheduled_statuses, 
                            error_message=error_message, user_avatar=user_avatar, 
                            username=username, profile_url=profile_url)
+
 
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
