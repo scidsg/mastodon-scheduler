@@ -22,17 +22,6 @@ function hideFlashMessages() {
     });
 }
 
-function updateCharCount() {
-    const textarea = document.querySelector('textarea[name="content"]');
-    const charCountDiv = document.getElementById('charCount');
-    
-    if (textarea) {
-        const currentLength = textarea.value.length;
-        const maxLength = textarea.getAttribute('maxlength');
-        charCountDiv.textContent = `${currentLength}/${maxLength}`;
-    }
-}
-
 function toggleAltTextInput(imageInput) {
     const altTextContainer = document.getElementById('altTextContainer');
 
@@ -45,8 +34,34 @@ function toggleAltTextInput(imageInput) {
     }
 }
 
+function updateCharCount() {
+    const contentTextarea = document.querySelector('textarea[name="content"]');
+    const cwInput = document.querySelector('input[name="content_warning"]');
+    const contentCharCountDiv = document.getElementById('charCount');
+
+    if (contentTextarea && cwInput && contentCharCountDiv) {
+        const totalLength = contentTextarea.value.length + cwInput.value.length;
+        const maxLength = contentTextarea.getAttribute('maxlength');
+        contentCharCountDiv.textContent = `${totalLength}/${maxLength}`;
+    }
+
+    const altTextInput = document.querySelector('textarea[name="alt_text"]');
+    const altTextCharCountDiv = document.getElementById('altTextCharCount');
+    updateFieldCharCount(altTextInput, altTextCharCountDiv);
+}
+
+function updateFieldCharCount(field, charCountDiv) {
+    if (field && charCountDiv) {
+        const currentLength = field.value.length;
+        const maxLength = field.getAttribute('maxlength');
+        charCountDiv.textContent = `${currentLength}/${maxLength}`;
+    }
+}
+
 window.onload = function() {
     hideFlashMessages();
     updateCharCount(); // Initialize character count
     document.querySelector('textarea[name="content"]').addEventListener('input', updateCharCount);
+    document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
+    document.querySelector('input[name="alt_text"]').addEventListener('input', () => updateFieldCharCount(document.querySelector('input[name="alt_text"]'), document.getElementById('altTextCharCount')));
 };
