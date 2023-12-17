@@ -90,7 +90,8 @@ def index():
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
     try:
-        mastodon.scheduled_status_delete(status_id)
+        response = mastodon.scheduled_status_delete(status_id)
+        app.logger.info(f"Response from Mastodon API: {response}")
         flash("Scheduled toot canceled successfully!", "success")
     except Exception as e:
         app.logger.error(f"Error canceling scheduled post: {e}")
