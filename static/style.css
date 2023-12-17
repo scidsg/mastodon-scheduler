@@ -233,6 +233,23 @@ h2, .publisher label {
     flex-direction: column;
 }
 
+.empty-list {
+    align-items: center;
+}
+
+.empty-list img {
+    width: 66%;
+    margin: 2rem 0 1rem 0;
+}
+
+.empty-list img {
+    width: 66%;
+}
+
+li.empty-list {
+    padding-bottom: 2.5rem;
+}
+
 @media only screen and (max-width: 640px) {
     body {
         flex-direction: column;
