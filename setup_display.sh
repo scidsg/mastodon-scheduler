@@ -63,4 +63,4 @@ systemctl start nextup.service
 echo "✅ E-ink display configuration complete. Rebooting your Raspberry Pi..."
 sleep 3
 
-# reboot
+reboot
