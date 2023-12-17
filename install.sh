@@ -48,6 +48,7 @@ cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/empty-state.png $HOME/mastodon_app/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
