@@ -86,7 +86,10 @@
                 </li>
                 {% endfor %}
             {% else %}
-                <li>No posts scheduled</li>
+                <li class="empty-list">
+                    <img src="{{ url_for('static', filename='empty-state.png') }}">
+                    No posts scheduled
+                </li>
             {% endif %}
         </ul>
     </div>
