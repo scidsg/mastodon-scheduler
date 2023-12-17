@@ -133,7 +133,10 @@ def get_next_post():
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
         if scheduled_statuses:
-            next_post = scheduled_statuses[0]
+            # Sort the posts by scheduled time
+            sorted_statuses = sorted(scheduled_statuses, key=lambda x: x['scheduled_at'])
+            next_post = sorted_statuses[0]  # Get the earliest scheduled post
+
             post_data = {
                 'content': next_post['params']['text'],
                 'image_path': next_post['media_attachments'][0]['url'] if next_post['media_attachments'] else None,
