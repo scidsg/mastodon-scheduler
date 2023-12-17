@@ -1,10 +1,12 @@
 import requests
 import time
 import sys
+import pytz
 from waveshare_epd import epd2in13_V3
 from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+import dateutil.parser
 
 def fetch_next_post():
     try:
@@ -43,12 +45,25 @@ def display_post(epd, post_data):
     metadata_height = draw.textsize(metadata, font=font_meta)[1]
 
     schedule_time_str = post_data.get('schedule_time', '')
+    print(f"Received schedule time string: {schedule_time_str}")  # Debug print
+
     if schedule_time_str:
         try:
-            schedule_time_obj = datetime.strptime(schedule_time_str, '%Y-%m-%d %H:%M:%S')
-            formatted_schedule_time = schedule_time_obj.strftime('%b %d, %Y at %-I:%M %p')
-        except ValueError:
-            formatted_schedule_time = schedule_time_str
+            print(f"Attempting to parse date string: {schedule_time_str}")
+            # Use dateutil.parser to handle various date formats
+            schedule_time_obj = dateutil.parser.parse(schedule_time_str)
+            print(f"Parsed date object: {schedule_time_obj}")
+
+            # Convert to local timezone (e.g., Pacific Time)
+            local_timezone_obj = pytz.timezone('America/Los_Angeles')
+            local_schedule_time = schedule_time_obj.astimezone(local_timezone_obj)
+            print(f"Converted to local timezone: {local_schedule_time}")
+
+            formatted_schedule_time = local_schedule_time.strftime('Scheduled for ' + '%b. %d, %Y at %-I:%M %p')
+            print(f"Formatted date string: {formatted_schedule_time}")
+        except Exception as e:
+            print(f"Error in date parsing/conversion with string '{schedule_time_str}': {e}")
+            formatted_schedule_time = 'Date conversion error'
     else:
         formatted_schedule_time = 'No schedule time'
     # schedule_time = "Scheduled for " + formatted_schedule_time
