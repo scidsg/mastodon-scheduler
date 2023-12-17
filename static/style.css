@@ -23,8 +23,8 @@ header {
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 3px 3px 0px 0 rgba(99,100,255,.33);
     z-index: 2;
-    backdrop-filter: blur(1rem);
-    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(.5rem);
+    -webkit-backdrop-filter: blur(.5rem);
 }
 
 #flash-messages {
