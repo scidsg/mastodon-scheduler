@@ -7,8 +7,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Update and install necessary packages
-apt-get update
-apt-get install -y python3 python3-pip whiptail unattended-upgrades
+apt-get update && apt -y dist-upgrade 
+apt-get install -y python3 python3-pip python3-venv whiptail unattended-upgrades
 
 # Use whiptail to collect Mastodon credentials and instance URL
 MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
