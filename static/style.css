@@ -137,13 +137,25 @@ h2, .publisher label {
     box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
 }
 
+.publisher form input:not([type='datetime-local']) {
+    margin-bottom: .75rem
+}
+
+.publisher form input[type='file'] {
+    margin-bottom: 1rem
+}
+
 .publisher form input:focus,
 .publisher form textarea:focus {
     outline: 3px double rgba(99,100,255,.75);
 }
 
 .publisher form textarea {
-    margin-bottom: .75rem;
+    margin-bottom: 1rem;
+    height: 200px;
+}
+
+form #altTextArea {
     height: 200px;
 }
 
@@ -167,7 +179,8 @@ h2, .publisher label {
     overflow-y: scroll;
 }
 
-#charCount {
+#charCount,
+#altTextCharCount {
     margin-bottom: 1rem;
     font-size: .825rem;
 }
