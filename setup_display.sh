@@ -20,7 +20,7 @@ pip3 install ./e-Paper/RaspberryPi_JetsonNano/python/
 pip3 install requests python-gnupg stem pytz
 
 # Install other Python packages
-pip3 install RPi.GPIO spidev pytz python-dateutil
+pip3 install RPi.GPIO spidev python-dateutil
 apt -y autoremove
 
 # Enable SPI interface
@@ -40,9 +40,8 @@ sed -i "s|local_ip|$local_ip|g" $HOME/mastodon_app/next_up.py
 
 cat > /etc/systemd/system/nextup.service << EOF
 [Unit]
-Description=Next Up Mastodon App Service
-After=network.target network-online.target
-Wants=network-online.target
+Description=Next Up Mastodon Post Display
+After=network.target
 
 [Service]
 ExecStart=/usr/bin/python3 /root/mastodon_app/next_up.py
