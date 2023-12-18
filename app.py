@@ -5,7 +5,10 @@ from werkzeug.utils import secure_filename
 import mimetypes
 import pytz
 import dateutil.parser
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 
+auth = HTTPBasicAuth()
 app = Flask(__name__)
 
 # Set a secret key for the Flask app
@@ -20,6 +23,7 @@ mastodon = Mastodon(
 )
 
 @app.route('/', methods=['GET', 'POST'])
+@auth.login_required
 def index():
     error_message = None
     media_id = None
@@ -175,6 +179,15 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
     return local_datetime.strftime(format)
 
 app.jinja_env.filters['datetime'] = format_datetime
+
+USERS = {
+    "admin": "HASHED_PASSWORD"
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in USERS and check_password_hash(USERS[username], password):
+        return username
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
