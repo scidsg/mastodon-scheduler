@@ -83,7 +83,7 @@ def display_post(epd, post_data):
 
     draw.text((5, y + 10), schedule_time, font=font_schedule, fill=0)
 
-    epd.display(epd.getbuffer(image.rotate(270, expand=True)))
+    epd.display(epd.getbuffer(image.rotate(90, expand=True)))
 
 def main():
     print("Starting Mastodon display script")
@@ -113,7 +113,7 @@ def display_no_posts_message(epd):
     font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf', 11)
     message = "No scheduled posts"
     draw.text((5, 50), message, font=font, fill=0)
-    epd.display(epd.getbuffer(image.rotate(270, expand=True)))
+    epd.display(epd.getbuffer(image.rotate(90, expand=True)))
 
 if __name__ == '__main__':
     main()
