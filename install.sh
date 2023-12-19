@@ -117,7 +117,9 @@ mv $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
 systemctl restart unattended-upgrades
 
 # Initializing database
+sleep 3
 python3 db_init.py
+sleep 3
 
 echo "✅ Automatic updates have been installed and configured."
 
