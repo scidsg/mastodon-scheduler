@@ -37,7 +37,7 @@ def index():
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-    
+
     # Check if user's API credentials are set
     if user and user.client_key and user.client_secret and user.access_token and user.api_base_url:
         # Initialize Mastodon with user's credentials
@@ -260,9 +260,12 @@ def settings():
         db.session.commit()
         flash('Settings updated successfully', 'success')
 
-    # Pass the current credentials to the template
-    return render_template('settings.html', user=user)
-
+    # Pass the current credentials to the template for display
+    return render_template('settings.html', user=user, 
+                           client_key=user.client_key, 
+                           client_secret=user.client_secret, 
+                           access_token=user.access_token, 
+                           api_base_url=user.api_base_url)
 
 if __name__ == '__main__':
     app.run()
