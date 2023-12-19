@@ -244,15 +244,6 @@ button {
     margin-bottom: 0;
 }
 
-.scheduled-posts form input {
-    font-family: 'Atkinson Hyperlegible', sans-serif;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #ac5252;
-}
-
 .scheduled-posts input:hover {
     text-decoration: underline;
 }
@@ -305,6 +296,20 @@ li.empty-list {
     width: 100%;
     margin: 1rem 0;
     font-size: 1rem;
+}
+
+.scheduled-posts form input {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    background-color: none;
+    min-width: initial;
+    color: #ac5252;
+    font-weight: normal;
+    font-size: .825rem;
+    margin-bottom: 0;
 }
 
 @media only screen and (max-width: 640px) {
