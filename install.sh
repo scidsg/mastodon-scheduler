@@ -120,6 +120,5 @@ echo "✅ Automatic updates have been installed and configured."
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
 echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
-echo "Your username to access the 🗓️ Mastodon Scheduler is: admin"
 sleep 3
 reboot
