@@ -16,6 +16,12 @@ body#login {
     height: 100vh;
 }
 
+#login img {
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+}
+
 #login form {
     display: flex;
     flex-direction: column;
@@ -23,6 +29,10 @@ body#login {
     width: 100%;
     padding: 1rem;
     margin-bottom: 4rem;
+}
+
+#login h1 {
+    text-align: center;
 }
 
 header {
