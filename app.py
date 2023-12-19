@@ -182,7 +182,6 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 hashed_password = 'HASHED_PASSWORD'
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
