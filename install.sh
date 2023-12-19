@@ -115,10 +115,13 @@ mv $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
 
 systemctl restart unattended-upgrades
 
+# Initializing database
+python3 db_init.py
+
 echo "✅ Automatic updates have been installed and configured."
 
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
 echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
 sleep 3
-reboot
+#reboot
