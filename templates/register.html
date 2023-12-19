@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - 🗓️ Mastodon Scheduler</title>
+    <title>Register - 🗓️ Mastodon Scheduler</title>
     <link rel="stylesheet" type="text/css" href="static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,12 +22,12 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <form action="{{ url_for('login') }}" method="post">
+    <form action="{{ url_for('register') }}" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-        <input type="submit" value="Login">
+        <input type="submit" value="Register">
     </form>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

@@ -6,11 +6,16 @@ import mimetypes
 import pytz
 import dateutil.parser
 from werkzeug.security import check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
 # Set a secret key for the Flask app
 app.secret_key = 'SECRET_KEY'
+
+# Configure the SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
+db = SQLAlchemy(app)
 
 # Initialize Mastodon
 mastodon = Mastodon(
@@ -180,8 +185,6 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
-hashed_password = 'HASHED_PASSWORD'
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -198,6 +201,28 @@ def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        # Check if user already exists
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists')
+            return redirect(url_for('register'))
+        # Create new user
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password_hash=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Account created successfully')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))

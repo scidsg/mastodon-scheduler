@@ -9,14 +9,13 @@ fi
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
-apt-get install -y python3 python3-pip python3-venv whiptail unattended-upgrades
+apt-get install -y python3 python3-pip python3-venv whiptail unattended-upgrades sqlite3
 
 # Use whiptail to collect Mastodon credentials and instance URL
 MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "https://mastodon.social" --title "Mastodon Instance URL" 3>&1 1>&2 2>&3)
 CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-PASSWORD=$(whiptail --inputbox "Since anyone on your local network can reach the Mastodon Scheduler app, we'll create a password so only you can access it." 10 60 --title "Create a Password" 3>&1 1>&2 2>&3)
 
 # Clone the repo
 cd $HOME
@@ -69,7 +68,6 @@ sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
-sed -i "s|HASHED_PASSWORD|$HASHED_PASSWORD|g" app.py
 
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
@@ -108,6 +106,9 @@ systemctl enable mastodon_app.service
 kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
+
+# Initialize the database
+python -c "from app import db; db.create_all()"
 
 # Configure Unattended Upgrades
 mv $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
