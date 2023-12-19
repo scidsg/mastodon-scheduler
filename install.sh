@@ -46,6 +46,7 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
 
 cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
+cp $HOME/mastodon-scheduler/db_init.py $HOME/mastodon_app
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/templates/login.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/templates/register.html $HOME/mastodon_app/templates
