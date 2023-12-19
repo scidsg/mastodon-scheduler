@@ -31,9 +31,13 @@ def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
+    # Initialize error_message and media_id
+    error_message = None
+    media_id = None
+
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-
+    
     # Check if user's API credentials are set
     if user and user.client_key and user.client_secret and user.access_token and user.api_base_url:
         # Initialize Mastodon with user's credentials
@@ -43,10 +47,6 @@ def index():
             access_token=user.access_token,
             api_base_url=user.api_base_url
         )
-
-    error_message = None
-    media_id = None
-
     else:
         # Handle case where user credentials are not set
         flash("Please set your Mastodon API credentials in settings.")
