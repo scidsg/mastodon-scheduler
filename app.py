@@ -20,7 +20,7 @@ mastodon = Mastodon(
     api_base_url='MASTODON_URL'
 )
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
