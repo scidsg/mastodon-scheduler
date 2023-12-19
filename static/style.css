@@ -8,6 +8,33 @@ body {
     padding-right: .5rem;
 }
 
+body#login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#login img {
+    max-width: 150px;
+    width: 100%;
+    height: auto;
+}
+
+#login form {
+    display: flex;
+    flex-direction: column;
+    max-width: 320px;
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 4rem;
+}
+
+#login h1 {
+    text-align: center;
+}
+
 header {
     position: fixed;
     top: .5rem;
@@ -108,17 +135,17 @@ h2 {
   scrollbar-width: none;  /* Firefox */
 } 
 
-.publisher form {
+form {
     display: flex;
     flex-direction: column;
 }
 
-.publisher input,
-.publisher textarea {
+input,
+textarea {
      margin-bottom: 1rem;
 }
 
-.publisher label {
+label {
     margin-bottom: .5rem;
     font-size: 1.125rem;
     font-weight: 700;
@@ -128,8 +155,8 @@ h2, .publisher label {
     font-size: 1rem;
 }
 
-.publisher form input:not([type='file']),
-.publisher form textarea {
+input:not([type='file']),
+textarea {
     padding: .75rem;
     font-family: 'Atkinson Hyperlegible', sans-serif;
     font-size: 1rem;
@@ -139,20 +166,20 @@ h2, .publisher label {
     box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
 }
 
-.publisher form input:not([type='datetime-local']) {
+input:not([type='datetime-local']) {
     margin-bottom: .75rem
 }
 
-.publisher form input[type='file'] {
+input[type='file'] {
     margin-bottom: 1rem
 }
 
-.publisher form input:focus,
-.publisher form textarea:focus {
+input:focus,
+textarea:focus {
     outline: 3px double rgba(99,100,255,.75);
 }
 
-.publisher form textarea {
+textarea {
     margin-bottom: 1rem;
     height: 200px;
 }
@@ -161,7 +188,8 @@ form #altTextArea {
     height: 200px;
 }
 
-.publisher input[type="submit"] {
+input[type="submit"],
+button {
     background: rgb(99,100,255);
     background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
     color: white;
@@ -169,6 +197,9 @@ form #altTextArea {
     box-shadow: none;
     width: fit-content;
     min-width: 120px;
+    border-radius: .25rem;
+    padding: .75rem;
+    border: none;
 }
 
 .publisher * {
@@ -211,15 +242,6 @@ form #altTextArea {
 }
 .scheduled-posts li:last-of-type {
     margin-bottom: 0;
-}
-
-.scheduled-posts form input {
-    font-family: 'Atkinson Hyperlegible', sans-serif;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: #ac5252;
 }
 
 .scheduled-posts input:hover {
@@ -268,6 +290,26 @@ form #altTextArea {
 
 li.empty-list {
     padding-bottom: 2.5rem;
+}
+
+#login button {
+    width: 100%;
+    margin: 1rem 0;
+    font-size: 1rem;
+}
+
+.scheduled-posts form input {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    background-color: none;
+    min-width: initial;
+    color: #ac5252;
+    font-weight: normal;
+    font-size: .825rem;
+    margin-bottom: 0;
 }
 
 @media only screen and (max-width: 640px) {

@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from mastodon import Mastodon
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
 import mimetypes
 import pytz
 import dateutil.parser
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 
@@ -21,6 +22,9 @@ mastodon = Mastodon(
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
     error_message = None
     media_id = None
 
@@ -175,6 +179,27 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
     return local_datetime.strftime(format)
 
 app.jinja_env.filters['datetime'] = format_datetime
+
+USERS = {
+    "admin": "HASHED_PASSWORD"
+}
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username in USERS and check_password_hash(USERS[username], password):
+            session['username'] = username
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
