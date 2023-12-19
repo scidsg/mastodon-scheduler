@@ -12,7 +12,7 @@
 </head>
 <body id="login">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
-    <h1>Register</h1>
+    <h1>Settings</h1>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="flashes">
@@ -22,12 +22,20 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <form action="{{ url_for('register') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <input type="submit" value="Register">
+    <form method="POST" action="{{ url_for('settings') }}">
+        <label for="client_key">Client Key</label>
+        <input type="text" name="client_key" id="client_key" required>
+
+        <label for="client_secret">Client Secret</label>
+        <input type="text" name="client_secret" id="client_secret" required>
+
+        <label for="access_token">Access Token</label>
+        <input type="text" name="access_token" id="access_token" required>
+
+        <label for="api_base_url">API Base URL</label>
+        <input type="text" name="api_base_url" id="api_base_url" required>
+
+        <input type="submit" value="Save Settings">
     </form>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
