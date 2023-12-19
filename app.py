@@ -65,7 +65,7 @@ def index():
                 local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
                 utc_datetime = local_datetime.astimezone(timezone.utc)
                 mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
-                flash("Toot scheduled successfully!", "success")
+                flash("👍 Toot scheduled successfully!", "success")
                 return redirect(url_for('index'))
             except ValueError:
                 error_message = "Invalid date format."
@@ -73,7 +73,7 @@ def index():
         elif not scheduled_time and not error_message:
             try:
                 mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
-                flash("Toot posted successfully!", "success")
+                flash("👍 Toot posted successfully!", "success")
                 return redirect(url_for('index'))
             except Exception as e:
                 error_message = f"Error posting to Mastodon: {e}"
@@ -114,7 +114,7 @@ def index():
     except Exception as e:
         scheduled_statuses = []
         error_message = f"Error fetching scheduled statuses: {e}"
-        flash("Error fetching scheduled posts.", "error")
+        flash("⚠️ Error fetching scheduled posts.", "error")
 
     return render_template('index.html', scheduled_statuses=scheduled_statuses, 
                            error_message=error_message, user_avatar=user_avatar, 
@@ -125,10 +125,10 @@ def cancel_post(status_id):
     try:
         response = mastodon.scheduled_status_delete(status_id)
         app.logger.info(f"Response from Mastodon API: {response}")
-        flash("Scheduled toot canceled successfully!", "success")
+        flash("👍 Scheduled toot canceled successfully!", "success")
     except Exception as e:
         app.logger.error(f"Error canceling scheduled post: {e}")
-        flash("Error canceling scheduled post.", "error")
+        flash("⚠️ Error canceling scheduled post.", "error")
     
     return redirect(url_for('index'))
 
@@ -191,7 +191,7 @@ def login():
             session['authenticated'] = True
             return redirect(url_for('index'))
         else:
-            flash('Incorrect password')
+            flash('⛔️ Incorrect password')
     return render_template('login.html')
 
 @app.route('/logout')
