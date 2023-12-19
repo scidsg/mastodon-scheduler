@@ -107,9 +107,6 @@ kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
-# Initialize the database
-python -c "from app import app, db; with app.app_context(): db.create_all()"
-
 # Configure Unattended Upgrades
 mv $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
 mv $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
