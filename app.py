@@ -26,14 +26,21 @@ class User(db.Model):
     access_token = db.Column(db.String(128))
     api_base_url = db.Column(db.String(128))
 
-@app.before_first_request
-def initialize_database():
-    db.create_all()
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+
+    # Initialize Mastodon with user's credentials
+    mastodon = Mastodon(
+        client_id=user.client_key,
+        client_secret=user.client_secret,
+        access_token=user.access_token,
+        api_base_url=user.api_base_url
+    )
 
     error_message = None
     media_id = None
@@ -193,12 +200,17 @@ app.jinja_env.filters['datetime'] = format_datetime
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        username = request.form['username']
         password = request.form['password']
-        if check_password_hash(hashed_password, password):
+
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password_hash, password):
             session['authenticated'] = True
+            session['user_id'] = user.id  # Store user ID in session
             return redirect(url_for('index'))
         else:
-            flash('⛔️ Incorrect password')
+            flash('Invalid username or password')
+
     return render_template('login.html')
 
 @app.route('/logout')
@@ -229,7 +241,7 @@ def settings():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
-    user_id = session.get('user_id')  # Assuming user ID is stored in session upon login
+    user_id = session.get('user_id')
     user = User.query.get(user_id)
 
     if request.method == 'POST':
@@ -240,9 +252,8 @@ def settings():
 
         db.session.commit()
         flash('Settings updated successfully', 'success')
-        return redirect(url_for('settings'))
 
     return render_template('settings.html', user=user)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
+    app.run()
