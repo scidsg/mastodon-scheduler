@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 import mimetypes
 import pytz
 import dateutil.parser
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -17,13 +17,14 @@ app.secret_key = 'SECRET_KEY'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
 db = SQLAlchemy(app)
 
-# Initialize Mastodon
-mastodon = Mastodon(
-    client_id='CLIENT_KEY',
-    client_secret='CLIENT_SECRET',
-    access_token='ACCESS_TOKEN',
-    api_base_url='MASTODON_URL'
-)
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
+    client_key = db.Column(db.String(128))
+    client_secret = db.Column(db.String(128))
+    access_token = db.Column(db.String(128))
+    api_base_url = db.Column(db.String(128))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -219,35 +220,26 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
+    user_id = session.get('user_id')  # Assuming user ID is stored in session upon login
+    user = User.query.get(user_id)
+
     if request.method == 'POST':
-        client_key = request.form.get('client_key')
-        client_secret = request.form.get('client_secret')
-        access_token = request.form.get('access_token')
-        api_base_url = request.form.get('api_base_url')
+        user.client_key = request.form.get('client_key')
+        user.client_secret = request.form.get('client_secret')
+        user.access_token = request.form.get('access_token')
+        user.api_base_url = request.form.get('api_base_url')
 
-        # Save the settings for the user (pseudo code)
-        # user = get_current_user()
-        # user.update_mastodon_credentials(client_key, client_secret, access_token, api_base_url)
-
+        db.session.commit()
         flash('Settings updated successfully', 'success')
         return redirect(url_for('settings'))
 
-    # Load existing settings for displaying in the form (pseudo code)
-    # user = get_current_user()
-    # existing_settings = user.mastodon_credentials()
-
-    return render_template('settings.html')
-
+    return render_template('settings.html', user=user)
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
