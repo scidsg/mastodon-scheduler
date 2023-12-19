@@ -64,7 +64,7 @@ header {
 
 .flash-message,
 .flashes li {
-      background-color: #b5eeb5;
+      background-color: white;
       padding: 1rem;
       z-index: 2;
       border-radius: .25rem;
