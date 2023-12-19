@@ -20,10 +20,11 @@ mastodon = Mastodon(
     api_base_url='MASTODON_URL'
 )
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if 'username' not in session:
+    if not session.get('authenticated'):
         return redirect(url_for('login'))
+    return 'You are logged in!'
 
     error_message = None
     media_id = None
@@ -180,20 +181,18 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
-USERS = {
-    "admin": "HASHED_PASSWORD"
-}
+hashed_password = 'HASHED_PASSWORD'
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
         password = request.form['password']
-        if username in USERS and check_password_hash(USERS[username], password):
-            session['username'] = username
+        if check_password_hash(hashed_password, password):
+            session['authenticated'] = True
             return redirect(url_for('index'))
         else:
-            flash('Invalid username or password')
+            flash('Incorrect password')
     return render_template('login.html')
 
 @app.route('/logout')
