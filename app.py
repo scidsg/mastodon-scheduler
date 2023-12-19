@@ -26,6 +26,10 @@ class User(db.Model):
     access_token = db.Column(db.String(128))
     api_base_url = db.Column(db.String(128))
 
+@app.before_first_request
+def initialize_database():
+    db.create_all()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
@@ -241,5 +245,4 @@ def settings():
     return render_template('settings.html', user=user)
 
 if __name__ == '__main__':
-    db.create_all()
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
