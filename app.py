@@ -196,8 +196,9 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
+    session.pop('authenticated', None)  # Clear the 'authenticated' session key
+    return redirect(url_for('login'))   # Redirect to the login page
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'))
