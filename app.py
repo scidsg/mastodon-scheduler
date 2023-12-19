@@ -251,6 +251,29 @@ def settings():
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
+    # Initialize Mastodon with user's credentials
+    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
+        mastodon = Mastodon(
+            client_id=user.client_key,
+            client_secret=user.client_secret,
+            access_token=user.access_token,
+            api_base_url=user.api_base_url
+        )
+
+        try:
+            user_info = mastodon.account_verify_credentials()
+            user_avatar = user_info['avatar']
+            username = user_info['username']
+            profile_url = user_info['url']
+        except Exception as e:
+            user_avatar = None
+            username = "User"
+            profile_url = "#"
+    else:
+        user_avatar = None
+        username = "User"
+        profile_url = "#"
+
     if request.method == 'POST':
         user.client_key = request.form.get('client_key')
         user.client_secret = request.form.get('client_secret')
@@ -260,8 +283,7 @@ def settings():
         db.session.commit()
         flash('Settings updated successfully', 'success')
 
-    # Ensure the variables are passed to the template
-    return render_template('settings.html', user=user)
+    return render_template('settings.html', user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
 if __name__ == '__main__':
     app.run()

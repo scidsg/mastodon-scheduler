@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
 </head>
-<body id="login">
+<body id="form">
     <header>
         <h1>🗓️ Mastodon Scheduler</h1>
         <nav>
@@ -30,7 +30,6 @@
             </ul>
         </nav>
     </header>
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
     <h1>Settings</h1>
     {% with messages = get_flashed_messages() %}
       {% if messages %}

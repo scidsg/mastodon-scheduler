@@ -8,7 +8,7 @@ body {
     padding-right: .5rem;
 }
 
-body#login {
+body#form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,13 +16,13 @@ body#login {
     height: 100vh;
 }
 
-#login img {
+#form img {
     max-width: 150px;
     width: 100%;
     height: auto;
 }
 
-#login form {
+#form form {
     display: flex;
     flex-direction: column;
     max-width: 320px;
@@ -31,7 +31,7 @@ body#login {
     margin-bottom: 1rem;
 }
 
-#login h1 {
+#form h1 {
     text-align: center;
 }
 
