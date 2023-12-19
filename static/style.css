@@ -54,6 +54,27 @@ header {
     -webkit-backdrop-filter: blur(.5rem);
 }
 
+nav ul {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: .875rem;
+    margin: 0;
+}
+
+nav li {
+    list-style: none;
+}
+
+nav li a {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+    font-size: .875rem;
+    color: #595959;
+    text-decoration: none;
+}
+
 #flash-messages,
 .flashes {
       position: absolute;
@@ -78,12 +99,9 @@ header {
     align-items: center;
     display: flex;
     gap: .5rem;
-    font-size: .875rem;
-    color: #595959;
-    text-decoration: none;
 }
 
-.user-info a:hover {
+nav a:hover {
     text-decoration: underline;
 }
 
