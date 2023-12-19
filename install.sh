@@ -16,14 +16,11 @@ MASTODON_URL=$(whiptail --inputbox "Enter your Mastodon instance URL" 10 60 "htt
 CLIENT_KEY=$(whiptail --inputbox "Enter your Client Key" 10 60 --title "Mastodon Client Key" 3>&1 1>&2 2>&3)
 CLIENT_SECRET=$(whiptail --inputbox "Enter your Client Secret" 10 60 --title "Mastodon Client Secret" 3>&1 1>&2 2>&3)
 ACCESS_TOKEN=$(whiptail --inputbox "Enter your Access Token" 10 60 --title "Mastodon Access Token" 3>&1 1>&2 2>&3)
-PASSWORD=$(whiptail --inputbox "Create a password for accessing your web app. Your username is: admin" 10 60 --title "Create a Password" 3>&1 1>&2 2>&3)
+PASSWORD=$(whiptail --inputbox "Since anyone on your local network can reach the Mastodon Scheduler app, we'll create a password so only you can access it." 10 60 --title "Create a Password" 3>&1 1>&2 2>&3)
 
 # Clone the repo
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-cd mastodon-scheduler
-git switch password
-cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
@@ -54,9 +51,11 @@ HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_has
 
 cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
+cp $HOME/mastodon-scheduler/templates/login.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/empty-state.png $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/logo.png $HOME/mastodon_app/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)

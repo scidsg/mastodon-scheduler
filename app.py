@@ -24,7 +24,6 @@ mastodon = Mastodon(
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
-    return 'You are logged in!'
 
     error_message = None
     media_id = None
