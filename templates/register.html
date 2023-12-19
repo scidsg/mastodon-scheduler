@@ -12,7 +12,7 @@
 </head>
 <body id="login">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
-    <h1>Register</h1>
+    <h1>Create an Account</h1>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="flashes">
@@ -29,6 +29,7 @@
         <input type="password" id="password" name="password" required>
         <input type="submit" value="Register">
     </form>
+    <a href="/login">Log In</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

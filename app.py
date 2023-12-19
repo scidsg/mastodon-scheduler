@@ -260,12 +260,8 @@ def settings():
         db.session.commit()
         flash('Settings updated successfully', 'success')
 
-    # Pass the current credentials to the template for display
-    return render_template('settings.html', user=user, 
-                           client_key=user.client_key, 
-                           client_secret=user.client_secret, 
-                           access_token=user.access_token, 
-                           api_base_url=user.api_base_url)
+    # Ensure the variables are passed to the template
+    return render_template('settings.html', user=user)
 
 if __name__ == '__main__':
     app.run()

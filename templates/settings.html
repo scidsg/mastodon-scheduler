@@ -4,13 +4,32 @@
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register - 🗓️ Mastodon Scheduler</title>
+    <title>Settings - 🗓️ Mastodon Scheduler</title>
     <link rel="stylesheet" type="text/css" href="static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body id="login">
+    <header>
+        <h1>🗓️ Mastodon Scheduler</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Scheduler</a></li>
+                <li><a href="/logout">Logout</a></li>
+                <li>
+                    <div class="user-info">
+                        <a href="{{ profile_url }}" class="user-profile-link">
+                            {% if user_avatar %}
+                                <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                            {% endif %}
+                            <span class="username">{{ username }}</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
     <h1>Settings</h1>
     {% with messages = get_flashed_messages() %}

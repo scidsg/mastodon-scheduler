@@ -12,7 +12,7 @@
 </head>
 <body id="login">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
-    <h1>Mastodon Scheduler Login</h1>
+    <h1>Login to the Mastodon Scheduler</h1>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="flashes">
@@ -23,12 +23,13 @@
       {% endif %}
     {% endwith %}
     <form action="{{ url_for('login') }}" method="post">
-        <label for="username">Username:</label>
+        <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
+        <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
         <input type="submit" value="Login">
     </form>
+    <a href="/register">Register</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
