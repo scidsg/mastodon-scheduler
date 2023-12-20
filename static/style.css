@@ -127,7 +127,8 @@ nav a:hover {
 
 header h1 {
     margin: 0;
-    font-size: 1.125rem
+    font-size: 1.125rem;
+    font-family: 'Atkinson Bold', sans-serif;
 }
 
 .user-info img {
@@ -190,7 +191,7 @@ textarea {
 label {
     margin-bottom: .5rem;
     font-size: 1.125rem;
-    font-weight: 700;
+    font-family: 'Atkinson Bold', sans-serif;
 }
 
 h2, .publisher label {
@@ -235,7 +236,8 @@ button {
     background: rgb(99,100,255);
     background: linear-gradient(135deg, rgba(99,100,255,1) 0%, rgba(91,92,236,1) 100%);
     color: white;
-    font-weight: 700;
+    font-family: 'Atkinson Bold', sans-serif;
+    font-size: 1.125rem;
     box-shadow: none;
     width: fit-content;
     min-width: 120px;
@@ -311,7 +313,7 @@ button {
     text-transform: uppercase;
     font-size: .75rem;
     border-radius: .25rem;
-    font-weight: 700;
+    font-family: 'Atkinson Bold', sans-serif;
 }
 
 #altTextContainer {
