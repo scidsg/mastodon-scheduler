@@ -11,6 +11,15 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
 apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools certutil
 
+# Function to display error message and exit
+error_exit() {
+    echo "An error occurred during installation. Please check the output above for more details."
+    exit 1
+}
+
+# Trap any errors and call the error_exit function
+trap error_exit ERR
+
 # Clone the repo
 cd $HOME
 git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
@@ -54,6 +63,7 @@ cp $HOME/mastodon-scheduler/static/style.css /var/www/html/mastodon-scheduler.ap
 cp $HOME/mastodon-scheduler/static/script.js /var/www/html/mastodon-scheduler.app/static
 cp $HOME/mastodon-scheduler/static/empty-state.png /var/www/html/mastodon-scheduler.app/static
 cp $HOME/mastodon-scheduler/static/logo.png /var/www/html/mastodon-scheduler.app/static
+cp $HOME/mastodon-scheduler/assets/nginx.conf /var/www/html/mastodon-scheduler.app/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
@@ -79,57 +89,22 @@ Wants=network-online.target
 User=$USER
 Group=$USER
 WorkingDirectory=/var/www/html/mastodon-scheduler.app
-ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app --certfile=/var/www/html/mastodon-scheduler.app/cert.pem --keyfile=/var/www/html/mastodon-scheduler.app/key.pem
+ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Configure Nginx
-cat >/etc/nginx/sites-available/mastodon-scheduler.nginx <<EOL
-server {
-    listen 80;
-    server_name mastodon-scheduler.app;
-    location / {
-        proxy_pass http://127.0.0.1:5000;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_connect_timeout 300s;
-        proxy_send_timeout 300s;
-        proxy_read_timeout 300s;
-    }
-    
-        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
-        add_header X-Frame-Options DENY;
-        add_header Onion-Location http://rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion\$request_uri;
-        add_header X-Content-Type-Options nosniff;
-        add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none'";
-        add_header Permissions-Policy "geolocation=(), midi=(), notifications=(), push=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), speaker=(), vibrate=(), fullscreen=(), payment=(), interest-cohort=()";
-        add_header Referrer-Policy "no-referrer";
-        add_header X-XSS-Protection "1; mode=block";
-}
-server {
-    listen 80;
-    server_name rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion.mastodon-scheduler.app;
-
-    location / {
-        proxy_pass http://localhost:5000;
-    }
-}
-EOL
-
 # Configure Nginx with privacy-preserving logging
 cp $HOME/mastodon-scheduler/assets/nginx.conf /etc/nginx
 
-ln -sf /etc/nginx/sites-available/mastodon-scheduler.nginx /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
 
 if [ -e "/etc/nginx/sites-enabled/default" ]; then
     rm /etc/nginx/sites-enabled/default
 fi
-ln -sf /etc/nginx/sites-available/hushline.nginx /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 (nginx -t && systemctl restart nginx) || error_exit
 
 # Kill any process on port 5000
