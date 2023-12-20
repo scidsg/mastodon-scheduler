@@ -4,4 +4,4 @@
 python3 -m venv venv
 source venv/bin/activate
 
-python3 /var/www/html/mastodon-scheduler.app/assets/generate_codes.py
+python3 /var/www/html/mastodon-scheduler.app/generate_codes.py
