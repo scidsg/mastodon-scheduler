@@ -73,6 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     mobileNavButton.addEventListener('click', function() {
         var isExpanded = mobileNavButton.getAttribute('aria-expanded') === 'true';
         mobileNavButton.setAttribute('aria-expanded', !isExpanded);
-        mobileNavMenu.style.display = isExpanded ? 'none' : 'block';
+        mobileNavMenu.style.display = isExpanded ? 'none' : 'flex';
     });
 });
