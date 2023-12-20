@@ -6,12 +6,15 @@ if [[ $EUID -ne 0 ]]; then
   exec sudo /bin/bash "$0" "$@"
 fi
 
-APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
-
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
 apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools
+
+# Create a new site
+curl https://raw.githubusercontent.com/scidsg/tools/main/new-site.sh | bash
+
+APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
 
 # Function to display error message and exit
 error_exit() {
@@ -23,14 +26,12 @@ error_exit() {
 trap error_exit ERR
 
 # Clone the repo
-cd $HOME
-git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
-cd mastodon-scheduler
+cd $APP_DIR
 git switch hosted
 cd ..
 
 # Create a directory for the app
-cd /var/www/html/mastodon-scheduler.app
+cd $APP_DIR
 mkdir -p static
 mkdir -p templates
 
@@ -43,18 +44,6 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 
 # Generate hashed password
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
-
-cp $HOME/mastodon-scheduler/app.py $APP_DIR
-cp $HOME/mastodon-scheduler/db_init.py $APP_DIR
-cp $HOME/mastodon-scheduler/templates/index.html $APP_DIR/templates
-cp $HOME/mastodon-scheduler/templates/login.html $APP_DIR/templates
-cp $HOME/mastodon-scheduler/templates/register.html $APP_DIR/templates
-cp $HOME/mastodon-scheduler/templates/settings.html $APP_DIR/templates
-cp $HOME/mastodon-scheduler/static/style.css $APP_DIR/static
-cp $HOME/mastodon-scheduler/static/script.js $APP_DIR/static
-cp $HOME/mastodon-scheduler/static/empty-state.png $APP_DIR/static
-cp $HOME/mastodon-scheduler/static/logo.png $APP_DIR/static
-cp $HOME/mastodon-scheduler/assets/nginx.conf $APP_DIR/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
@@ -82,9 +71,6 @@ ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0
 [Install]
 WantedBy=multi-user.target
 EOF
-
-# Configure Nginx with privacy-preserving logging
-cp $HOME/mastodon-scheduler/assets/nginx.conf /etc/nginx
 
 ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
@@ -116,14 +102,9 @@ kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
-# Configure Unattended Upgrades
-mv $HOME/mastodon-scheduler/assets/50unattended-upgrades /etc/apt/apt.conf.d
-mv $HOME/mastodon-scheduler/assets/20auto-upgrades /etc/apt/apt.conf.d
-
-systemctl restart unattended-upgrades
-
 # Initializing database
 sleep 3
+cd $APP_DIR
 python3 db_init.py
 sleep 3
 
