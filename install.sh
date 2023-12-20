@@ -112,7 +112,7 @@ server {
 }
 server {
     listen 80;
-    server_name rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion.mastodon-scheduler.app
+    server_name rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion.mastodon-scheduler.app;
 
     location / {
         proxy_pass http://localhost:5000;
@@ -121,7 +121,7 @@ server {
 EOL
 
 # Configure Nginx with privacy-preserving logging
-mv $HOME/mastodon-scheduler/assets/nginx.conf /etc/nginx
+cp $HOME/mastodon-scheduler/assets/nginx.conf /etc/nginx
 
 ln -sf /etc/nginx/sites-available/mastodon-scheduler.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
