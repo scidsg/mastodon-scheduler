@@ -216,7 +216,7 @@ def login():
             session['user_id'] = user.id  # Store user ID in session
             return redirect(url_for('index'))
         else:
-            flash('Invalid username or password')
+            flash('⛔️ Invalid username or password')
 
     return render_template('login.html')
 
@@ -235,12 +235,12 @@ def register():
         # Validate invite code
         code = InviteCode.query.filter_by(code=invite_code, used=False).first()
         if not code or code.is_expired:
-            flash('Invalid or expired invite code', 'error')
+            flash('⛔️ Invalid or expired invite code', 'error')
             return redirect(url_for('register'))
 
         # Check if user already exists
         if User.query.filter_by(username=username).first():
-            flash('Username already exists', 'error')
+            flash('💔 Username already exists', 'error')
             return redirect(url_for('register'))
 
         # Create new user
@@ -252,7 +252,7 @@ def register():
         code.used = True
         db.session.commit()
 
-        flash('Account created successfully', 'success')
+        flash('👍 Account created successfully', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html')
@@ -295,7 +295,7 @@ def settings():
         user.api_base_url = request.form.get('api_base_url')
 
         db.session.commit()
-        flash('Settings updated successfully', 'success')
+        flash('👍 Settings updated successfully', 'success')
 
     return render_template('settings.html', user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
