@@ -1,3 +1,21 @@
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("fonts/sans/AtkinsonHyperlegible-Regular.woff") format("woff"),
+       url("fonts/sans/AtkinsonHyperlegible-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Atkinson Bold";
+  src: url("fonts/sans/AtkinsonHyperlegible-Bold.woff") format("woff"),
+       url("fonts/sans/AtkinsonHyperlegible-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Mono";
+  src: url("fonts/mono/IBMPlexMono-Regular.woff") format("woff"),
+       url("fonts/mono/IBMPlexMono-Regular.woff2") format("woff2");
+}
+
 body {
     display: flex;
     font-family: 'Atkinson Hyperlegible', sans-serif;
