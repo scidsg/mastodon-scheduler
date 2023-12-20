@@ -22,13 +22,18 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <form action="{{ url_for('register') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <input type="submit" value="Register">
-    </form>
+    <form method="post" action="/register">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+      
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="invite_code">Invite Code</label>
+      <input type="text" id="invite_code" name="invite_code" required>
+
+      <button type="submit">Register</button>
+  </form>
     <a href="/login">Log In</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

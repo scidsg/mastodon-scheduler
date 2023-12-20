@@ -225,22 +225,41 @@ def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
+class InviteCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        invite_code = request.form['invite_code']
+
+        # Validate invite code
+        code = InviteCode.query.filter_by(code=invite_code, used=False).first()
+        if not code or code.is_expired:
+            flash('Invalid or expired invite code', 'error')
+            return redirect(url_for('register'))
+
         # Check if user already exists
         if User.query.filter_by(username=username).first():
-            flash('Username already exists')
+            flash('Username already exists', 'error')
             return redirect(url_for('register'))
+
         # Create new user
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password_hash=hashed_password)
         db.session.add(new_user)
+
+        # Mark invite code as used
+        code.used = True
         db.session.commit()
-        flash('Account created successfully')
+
+        flash('Account created successfully', 'success')
         return redirect(url_for('login'))
+
     return render_template('register.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -284,6 +303,19 @@ def settings():
         flash('Settings updated successfully', 'success')
 
     return render_template('settings.html', user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
+
+class InviteCode(db.Model):
+    __tablename__ = 'invite_code'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(16), unique=True, nullable=False)
+    expiration_date = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False, nullable=False)
+
+    __table_args__ = {'extend_existing': True}
+
+    @property
+    def is_expired(self):
+        return datetime.utcnow() > self.created_at + timedelta(days=365)
 
 if __name__ == '__main__':
     app.run()
