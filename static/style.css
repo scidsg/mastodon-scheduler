@@ -11,7 +11,7 @@
 }
 
 @font-face {
-  font-family: "Mono";
+  font-family: "IBM Plex Mono";
   src: url("fonts/mono/IBMPlexMono-Regular.woff") format("woff"),
        url("fonts/mono/IBMPlexMono-Regular.woff2") format("woff2");
 }
