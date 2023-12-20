@@ -9,7 +9,7 @@ fi
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
-apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools
+apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools ufw fail2ban
 
 # Create a new site
 curl https://raw.githubusercontent.com/scidsg/tools/main/new-site.sh | bash
@@ -72,6 +72,47 @@ ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0
 WantedBy=multi-user.target
 EOF
 
+# Enable the "security" and "updates" repositories
+cp $APP_DIR/assets/50unattended-upgrades /etc/apt/apt.conf.d
+cp $APP_DIR/assets/20auto-upgrades /etc/apt/apt.conf.d
+
+systemctl restart unattended-upgrades
+
+echo "Automatic updates have been installed and configured."
+
+# Configure Fail2Ban
+
+echo "Configuring fail2ban..."
+
+systemctl start fail2ban
+systemctl enable fail2ban
+cp /etc/fail2ban/jail.{conf,local}
+
+# Configure fail2ban
+cp $APP_DIR/assets/jail.local /etc/fail2ban
+
+systemctl restart fail2ban
+
+# Configure UFW (Uncomplicated Firewall)
+
+echo "Configuring UFW..."
+
+# Default rules
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 80/tcp
+ufw allow 443/tcp
+
+# Allow SSH (modify as per your requirements)
+ufw allow ssh
+ufw limit ssh/tcp
+
+# Enable UFW non-interactively
+echo "y" | ufw enable
+
+echo "UFW configuration complete."
+
+# Configure Nginx
 ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
 
