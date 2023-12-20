@@ -11,8 +11,8 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
 apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools ufw fail2ban
 
-# Create a new site
-curl https://raw.githubusercontent.com/scidsg/tools/main/new-site.sh | bash
+# Install nginx, clone repo, request HTTPS certs
+curl https://raw.githubusercontent.com/scidsg/tools/main/new-web-app.sh | bash
 
 APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
 
@@ -153,6 +153,5 @@ echo "✅ Automatic updates have been installed and configured."
 
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
-echo "👉 Access the Mastodon Scheduler at https://mastodon-scheduler.local:5000"
 sleep 3
-#reboot
+reboot
