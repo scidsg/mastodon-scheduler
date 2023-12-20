@@ -121,7 +121,7 @@ server {
 EOL
 
 # Configure Nginx with privacy-preserving logging
-mv $HOME/mastodon-scheduler/assets/nginx/nginx.conf /etc/nginx
+mv $HOME/mastodon-scheduler/assets/nginx.conf /etc/nginx
 
 ln -sf /etc/nginx/sites-available/mastodon-scheduler.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
