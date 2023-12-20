@@ -401,7 +401,7 @@ li.empty-list {
     }
 
     header {
-        padding: 1rem;
+        padding: .75rem 1rem;
     }
 
     header h1 {
