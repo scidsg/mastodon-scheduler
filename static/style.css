@@ -59,6 +59,10 @@ h1, h2, h3 {
     text-align: center;
 }
 
+a {
+    color: rgb(71, 73, 184);
+}
+
 header {
     position: fixed;
     top: .5rem;
