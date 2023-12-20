@@ -65,3 +65,14 @@ window.onload = function() {
     document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
     document.querySelector('textarea[name="alt_text"]').addEventListener('textarea', () => updateFieldCharCount(document.querySelector('textarea[name="alt_text"]'), document.getElementById('altTextCharCount')));
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+    var mobileNavButton = document.getElementById('mobileNavButton');
+    var mobileNavMenu = document.getElementById('mobileNavMenu');
+
+    mobileNavButton.addEventListener('click', function() {
+        var isExpanded = mobileNavButton.getAttribute('aria-expanded') === 'true';
+        mobileNavButton.setAttribute('aria-expanded', !isExpanded);
+        mobileNavMenu.style.display = isExpanded ? 'none' : 'block';
+    });
+});

@@ -38,6 +38,7 @@ body#form {
 
 h1, h2, h3 {
     font-family: 'Atkinson Bold', sans-serif;
+    font-weight: normal;
 }
 
 #form img:not(header img) {
