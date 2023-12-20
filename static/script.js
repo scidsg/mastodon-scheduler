@@ -61,7 +61,7 @@ function updateFieldCharCount(field, charCountDiv) {
 window.onload = function() {
     hideFlashMessages();
     updateCharCount(); // Initialize character count
-    document.querySelector('textarea[name="content"]').addEventListener('input', updateCharCount);
+    document.querySelector('textarea[name="content"]').addEventListener('textarea', updateCharCount);
     document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
-    document.querySelector('input[name="alt_text"]').addEventListener('input', () => updateFieldCharCount(document.querySelector('input[name="alt_text"]'), document.getElementById('altTextCharCount')));
+    document.querySelector('textarea[name="alt_text"]').addEventListener('textarea', () => updateFieldCharCount(document.querySelector('textarea[name="alt_text"]'), document.getElementById('altTextCharCount')));
 };
