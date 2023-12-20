@@ -9,7 +9,7 @@ fi
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
-apt-get install -y python3 python3-pip python3-venv unattended-upgrades sqlite3 libnss3-tools certutil
+apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools certutil
 
 # Clone the repo
 cd $HOME
@@ -19,14 +19,13 @@ git switch hosted
 cd ..
 
 # Install mkcert
-wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
-chmod +x mkcert-v1.4.3-linux-arm
-mv mkcert-v1.4.3-linux-arm /usr/local/bin/mkcert
+wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+chmod +x mkcert-v1.4.4-linux-amd64
+mv mkcert-v1.4.4-linux-amd64 /usr/local/bin/mkcert
 mkcert -install
 
 # Create a directory for the app
-mkdir mastodon_app
-cd mastodon_app
+cd /var/www/html/mastodon-scheduler.app
 mkdir static
 mkdir templates
 
@@ -45,16 +44,16 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 # Generate hashed password
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
 
-cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
-cp $HOME/mastodon-scheduler/db_init.py $HOME/mastodon_app
-cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
-cp $HOME/mastodon-scheduler/templates/login.html $HOME/mastodon_app/templates
-cp $HOME/mastodon-scheduler/templates/register.html $HOME/mastodon_app/templates
-cp $HOME/mastodon-scheduler/templates/settings.html $HOME/mastodon_app/templates
-cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
-cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
-cp $HOME/mastodon-scheduler/static/empty-state.png $HOME/mastodon_app/static
-cp $HOME/mastodon-scheduler/static/logo.png $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/app.py /var/www/html/mastodon-scheduler.app
+cp $HOME/mastodon-scheduler/db_init.py /var/www/html/mastodon-scheduler.app
+cp $HOME/mastodon-scheduler/templates/index.html /var/www/html/mastodon-scheduler.app/templates
+cp $HOME/mastodon-scheduler/templates/login.html /var/www/html/mastodon-scheduler.app/templates
+cp $HOME/mastodon-scheduler/templates/register.html /var/www/html/mastodon-scheduler.app/templates
+cp $HOME/mastodon-scheduler/templates/settings.html /var/www/html/mastodon-scheduler.app/templates
+cp $HOME/mastodon-scheduler/static/style.css /var/www/html/mastodon-scheduler.app/static
+cp $HOME/mastodon-scheduler/static/script.js /var/www/html/mastodon-scheduler.app/static
+cp $HOME/mastodon-scheduler/static/empty-state.png /var/www/html/mastodon-scheduler.app/static
+cp $HOME/mastodon-scheduler/static/logo.png /var/www/html/mastodon-scheduler.app/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
@@ -79,12 +78,59 @@ Wants=network-online.target
 [Service]
 User=$USER
 Group=$USER
-WorkingDirectory=$HOME/mastodon_app
-ExecStart=$HOME/mastodon_app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app --certfile=$HOME/mastodon_app/cert.pem --keyfile=$HOME/mastodon_app/key.pem
+WorkingDirectory=/var/www/html/mastodon-scheduler.app
+ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 0.0.0.0:5000 app:app --certfile=/var/www/html/mastodon-scheduler.app/cert.pem --keyfile=/var/www/html/mastodon-scheduler.app/key.pem
 
 [Install]
 WantedBy=multi-user.target
 EOF
+
+# Configure Nginx
+cat >/etc/nginx/sites-available/mastodon-scheduler.nginx <<EOL
+server {
+    listen 80;
+    server_name mastodon-scheduler.app;
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_connect_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
+    }
+    
+        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+        add_header X-Frame-Options DENY;
+        add_header Onion-Location http://rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion\$request_uri;
+        add_header X-Content-Type-Options nosniff;
+        add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none'";
+        add_header Permissions-Policy "geolocation=(), midi=(), notifications=(), push=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), speaker=(), vibrate=(), fullscreen=(), payment=(), interest-cohort=()";
+        add_header Referrer-Policy "no-referrer";
+        add_header X-XSS-Protection "1; mode=block";
+}
+server {
+    listen 80;
+    server_name rqmbnke3cevftmsiiicmfpvppodunwmseeokl234bnapxhi7pz2g7qid.onion.mastodon-scheduler.app
+
+    location / {
+        proxy_pass http://localhost:5000;
+    }
+}
+EOL
+
+# Configure Nginx with privacy-preserving logging
+mv $HOME/mastodon-scheduler/assets/nginx/nginx.conf /etc/nginx
+
+ln -sf /etc/nginx/sites-available/mastodon-scheduler.nginx /etc/nginx/sites-enabled/
+nginx -t && systemctl restart nginx
+
+if [ -e "/etc/nginx/sites-enabled/default" ]; then
+    rm /etc/nginx/sites-enabled/default
+fi
+ln -sf /etc/nginx/sites-available/hushline.nginx /etc/nginx/sites-enabled/
+(nginx -t && systemctl restart nginx) || error_exit
 
 # Kill any process on port 5000
 kill_port_processes() {
