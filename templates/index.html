@@ -13,20 +13,19 @@
     <header>
         <h1>🗓️ Mastodon Scheduler</h1>
         <nav>
+            <button class="mobileNav btnIcon" aria-label="Expand mobile navigation" aria-expanded="false"></button>
             <ul>
                 <li><a href="/settings">Settings</a></li>
                 <li><a href="/logout">Logout</a></li>
-                <li>
-                    <div class="user-info">
-                        <a href="{{ profile_url }}" class="user-profile-link">
-                            {% if user_avatar %}
-                                <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
-                            {% endif %}
-                            <span class="username">{{ username }}</span>
-                        </a>
-                    </div>
-                </li>
             </ul>
+            <div class="user-info">
+                <a href="{{ profile_url }}" class="user-profile-link">
+                    {% if user_avatar %}
+                        <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                    {% endif %}
+                    <span class="username">{{ username }}</span>
+                </a>
+            </div>
         </nav>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}

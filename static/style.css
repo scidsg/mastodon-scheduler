@@ -82,25 +82,47 @@ header {
     -webkit-backdrop-filter: blur(.5rem);
 }
 
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 nav ul {
     display: inline-flex;
     align-items: center;
     gap: 1rem;
     font-size: .875rem;
     margin: 0;
+    padding-left: 0;
 }
 
 nav li {
     list-style: none;
 }
 
-nav li a {
+nav a {
     align-items: center;
     display: flex;
     gap: .5rem;
     font-size: .875rem;
     color: #595959;
     text-decoration: none;
+}
+
+.btnIcon {
+  display: flex;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  background-image: url('icon-menu.png');
+  min-width: 0;
+  display: none;
 }
 
 #flash-messages,
@@ -366,6 +388,10 @@ li.empty-list {
     width: min-content;
 }
 
+.publisher form input[type="submit"] {
+    max-width: 120px;
+}
+
 @media only screen and (max-width: 640px) {
     body {
         flex-direction: column;
@@ -375,6 +401,14 @@ li.empty-list {
 
     header {
         padding: 1rem;
+    }
+
+    .btnIcon {
+        display: initial;
+    }
+
+    nav ul {
+        display: none;
     }
     
     .scheduled-posts,
