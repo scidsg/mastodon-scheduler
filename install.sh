@@ -6,10 +6,12 @@ if [[ $EUID -ne 0 ]]; then
   exec sudo /bin/bash "$0" "$@"
 fi
 
+APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
+
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
-apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools certutil
+apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools
 
 # Function to display error message and exit
 error_exit() {
@@ -27,21 +29,10 @@ cd mastodon-scheduler
 git switch hosted
 cd ..
 
-# Install mkcert
-wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
-chmod +x mkcert-v1.4.4-linux-amd64
-mv mkcert-v1.4.4-linux-amd64 /usr/local/bin/mkcert
-mkcert -install
-
 # Create a directory for the app
 cd /var/www/html/mastodon-scheduler.app
-mkdir static
-mkdir templates
-
-# Change the hostname to mastodon-scheduler.local
-echo "Changing the hostname to mastodon-scheduler.local..."
-hostnamectl set-hostname mastodon-scheduler.local
-echo "127.0.0.1 mastodon-scheduler.local" >> /etc/hosts
+mkdir -p static
+mkdir -p templates
 
 # Create a Python virtual environment
 python3 -m venv venv
@@ -53,23 +44,20 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 # Generate hashed password
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
 
-cp $HOME/mastodon-scheduler/app.py /var/www/html/mastodon-scheduler.app
-cp $HOME/mastodon-scheduler/db_init.py /var/www/html/mastodon-scheduler.app
-cp $HOME/mastodon-scheduler/templates/index.html /var/www/html/mastodon-scheduler.app/templates
-cp $HOME/mastodon-scheduler/templates/login.html /var/www/html/mastodon-scheduler.app/templates
-cp $HOME/mastodon-scheduler/templates/register.html /var/www/html/mastodon-scheduler.app/templates
-cp $HOME/mastodon-scheduler/templates/settings.html /var/www/html/mastodon-scheduler.app/templates
-cp $HOME/mastodon-scheduler/static/style.css /var/www/html/mastodon-scheduler.app/static
-cp $HOME/mastodon-scheduler/static/script.js /var/www/html/mastodon-scheduler.app/static
-cp $HOME/mastodon-scheduler/static/empty-state.png /var/www/html/mastodon-scheduler.app/static
-cp $HOME/mastodon-scheduler/static/logo.png /var/www/html/mastodon-scheduler.app/static
-cp $HOME/mastodon-scheduler/assets/nginx.conf /var/www/html/mastodon-scheduler.app/static
+cp $HOME/mastodon-scheduler/app.py $APP_DIR
+cp $HOME/mastodon-scheduler/db_init.py $APP_DIR
+cp $HOME/mastodon-scheduler/templates/index.html $APP_DIR/templates
+cp $HOME/mastodon-scheduler/templates/login.html $APP_DIR/templates
+cp $HOME/mastodon-scheduler/templates/register.html $APP_DIR/templates
+cp $HOME/mastodon-scheduler/templates/settings.html $APP_DIR/templates
+cp $HOME/mastodon-scheduler/static/style.css $APP_DIR/static
+cp $HOME/mastodon-scheduler/static/script.js $APP_DIR/static
+cp $HOME/mastodon-scheduler/static/empty-state.png $APP_DIR/static
+cp $HOME/mastodon-scheduler/static/logo.png $APP_DIR/static
+cp $HOME/mastodon-scheduler/assets/nginx.conf $APP_DIR/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
-
-# Generate local certificates using mkcert
-mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
 # Modify app.py to directly use these variables
 sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
