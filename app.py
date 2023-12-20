@@ -49,7 +49,7 @@ def index():
         )
     else:
         # Handle case where user credentials are not set
-        flash("Please set your Mastodon API credentials in settings.")
+        flash("👇 Please set your Mastodon API credentials.")
         return redirect(url_for('settings'))
 
     # Retrieve user information
@@ -225,11 +225,6 @@ def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
-class InviteCode(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(20), unique=True, nullable=False)
-    used = db.Column(db.Boolean, default=False)
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -315,7 +310,7 @@ class InviteCode(db.Model):
 
     @property
     def is_expired(self):
-        return datetime.utcnow() > self.created_at + timedelta(days=365)
+        return datetime.utcnow() > self.expiration_date
 
 if __name__ == '__main__':
     app.run()
