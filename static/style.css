@@ -36,6 +36,10 @@ body#form {
     box-sizing: border-box;
 }
 
+h1, h2, h3 {
+    font-family: 'Atkinson Bold', sans-serif;
+}
+
 #form img:not(header img) {
     max-width: 150px;
     width: 100%;
