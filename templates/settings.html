@@ -42,16 +42,16 @@
     {% endwith %}
     <form method="POST" action="{{ url_for('settings') }}">
         <label for="client_key">Client Key</label>
-        <input type="text" name="client_key" id="client_key" required>
+        <input type="text" name="client_key" value="{{ user.client_key if user.client_key else '' }}" required>
 
         <label for="client_secret">Client Secret</label>
-        <input type="text" name="client_secret" id="client_secret" required>
+        <input type="text" name="client_secret" value="{{ user.client_secret if user.client_secret else '' }}" required>
 
         <label for="access_token">Access Token</label>
-        <input type="text" name="access_token" id="access_token" required>
+        <input type="text" name="access_token" value="{{ user.access_token if user.access_token else '' }}" required>
 
         <label for="api_base_url">API Base URL</label>
-        <input type="text" name="api_base_url" id="api_base_url" required>
+        <input type="text" name="api_base_url" value="{{ user.api_base_url if user.api_base_url else '' }}" required>
 
         <input type="submit" value="Save Settings">
     </form>

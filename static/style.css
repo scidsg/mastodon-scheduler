@@ -16,7 +16,7 @@ body#form {
     height: 100vh;
 }
 
-#form img {
+#form img:not(header img) {
     max-width: 150px;
     width: 100%;
     height: auto;
