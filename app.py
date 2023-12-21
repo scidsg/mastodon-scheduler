@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from mastodon import Mastodon
 from datetime import datetime, timezone
@@ -10,15 +11,21 @@ import os
 from encryption_utils import encrypt_data, decrypt_data, generate_key
 from flask_sqlalchemy import SQLAlchemy
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 def load_key(filename):
+    logging.debug(f"Loading key from {filename}")
     with open(filename, 'rb') as file:
         return file.read()
 
 # Load the key
 key_path = os.environ.get('ENCRYPTION_KEY_PATH')
 if key_path:
-    SECRET_KEY = load_key(key_path)  # Ensure this line is properly indented
+    logging.debug(f"Found key path: {key_path}")
+    SECRET_KEY = load_key(key_path)
 else:
+    logging.error("Encryption key path not found in environment variables")
     raise ValueError("Encryption key path not found in environment variables")
 
 app = Flask(__name__)
@@ -366,4 +373,5 @@ class InviteCode(db.Model):
         return datetime.utcnow() > self.expiration_date
 
 if __name__ == '__main__':
-    app.run()
+    logging.info("Starting application")
+    app.run(debug=True)  # Running the app with debug=True
