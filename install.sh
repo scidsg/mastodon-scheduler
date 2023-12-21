@@ -46,7 +46,6 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
 
 # Modify app.py to directly use these variables
-sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
