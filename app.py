@@ -7,7 +7,7 @@ import pytz
 import dateutil.parser
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
-from .encryption_utils import encrypt_data, decrypt_data, generate_key
+from encryption_utils import encrypt_data, decrypt_data, generate_key
 from flask_sqlalchemy import SQLAlchemy
 
 def load_key(filename):
