@@ -67,6 +67,22 @@ window.onload = function() {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Validate form on submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', validateForm);
+
+    // Update character count on input
+    const contentTextarea = document.querySelector('textarea[name="content"]');
+    const cwInput = document.querySelector('input[name="content_warning"]');
+    const altTextInput = document.querySelector('textarea[name="alt_text"]');
+
+    contentTextarea.addEventListener('input', updateCharCount);
+    cwInput.addEventListener('input', updateCharCount);
+    altTextInput.addEventListener('input', function() {
+        updateFieldCharCount(altTextInput, document.getElementById('altTextCharCount'));
+    });
+
+    // Mobile navigation
     var mobileNavButton = document.getElementById('mobileNavButton');
     var mobileNavMenu = document.getElementById('mobileNavMenu');
 
@@ -75,4 +91,17 @@ document.addEventListener('DOMContentLoaded', function() {
         mobileNavButton.setAttribute('aria-expanded', !isExpanded);
         mobileNavMenu.style.display = isExpanded ? 'none' : 'flex';
     });
+
+    // Toggle alt text input on image selection
+    const imageInput = document.querySelector('input[type="file"][name="image"]');
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            toggleAltTextInput(this);
+        });
+    }
+
+    // Additional onLoad functions
+    hideFlashMessages();
+    updateCharCount();
 });
+

@@ -327,6 +327,8 @@ button {
 .image-container {
     position: relative;
     margin-top: .325rem;
+    max-width: 100px;
+    height: auto;
 }
 
 .image-container img {
@@ -349,6 +351,7 @@ button {
 
 #altTextContainer {
     flex-direction: column;
+    display: none;
 }
 
 .empty-list {

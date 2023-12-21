@@ -27,7 +27,7 @@ trap error_exit ERR
 
 # Clone the repo
 cd $APP_DIR
-git switch hosted
+git switch rest
 cd ..
 
 # Create a directory for the app
@@ -40,13 +40,12 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install Flask and Mastodon.py
-pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy
+pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
 
-# Generate a secret key
-SECRET_KEY=$(openssl rand -hex 24)
+# Generate and save the key
+python3 -c "from encryption_utils import generate_key; generate_key()"
 
 # Modify app.py to directly use these variables
-sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
