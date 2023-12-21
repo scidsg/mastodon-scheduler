@@ -17,13 +17,15 @@ def load_key(filename):
 # Load the key
 key_path = os.environ.get('ENCRYPTION_KEY_PATH')
 if key_path:
-    print(key_path)
-    SECRET_KEY = load_key(key_path)
+    SECRET_KEY = load_key(key_path)  # Ensure this line is properly indented
 else:
     raise ValueError("Encryption key path not found in environment variables")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
+
+# Set a secret key for the Flask app
+app.secret_key = 'SECRET_KEY'  # This might be redundant if you are already setting app.config['SECRET_KEY']
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
