@@ -31,9 +31,6 @@ else:
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
-# Set a secret key for the Flask app
-app.secret_key = 'SECRET_KEY'  # This might be redundant if you are already setting app.config['SECRET_KEY']
-
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
 db = SQLAlchemy(app)

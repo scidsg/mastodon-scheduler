@@ -46,9 +46,13 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
 
 # Modify app.py to directly use these variables
+echo "Updating Client Key..."
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
+echo "Updating Client Secret..."
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
+echo "Updating Access Token..."
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
+echo "Updating Mastodon URL..."
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 
 # Create a systemd service file for the application
