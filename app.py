@@ -17,6 +17,7 @@ def load_key(filename):
 # Load the key
 key_path = os.environ.get('ENCRYPTION_KEY_PATH')
 if key_path:
+    print(key_path)
     SECRET_KEY = load_key(key_path)
 else:
     raise ValueError("Encryption key path not found in environment variables")

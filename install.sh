@@ -147,7 +147,7 @@ python3 db_init.py
 python3 generate_key.py
 
 # Set the ENCRYPTION_KEY environment variable in a secure way
-echo "export ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/encryption_key.key" >> /etc/environment
+echo "export ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key" >> /etc/environment
 
 sleep 3
 
