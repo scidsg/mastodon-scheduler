@@ -84,6 +84,19 @@ After installation, the Mastodon App will run as a service on your machine. You 
 
 To post a status or schedule a post, fill in the form on the main page and submit.
 
+## Security
+
+### Passwords
+When creating an account and setting a password, a password hash is created. At no point is your password ever stored in plaintext.
+
+### Database Encryption at Rest
+Data at rest is encrypted, and only decrypted as needed. Below is an example of a row of data from the `user` table. 
+
+```
+sqlite> SELECT * FROM user;
+1|gs|scrypt:32768:8:1$Y0MAydnXNHr3EHgL$210c702d4fcb1f8c57b53b84d7dd5928c39eec4200d1390379c67b6c46d47bf414a13d94b570d281a7c2001843886906bbac930926fac965b47c144d6d524054|gAAAAABlg-qz9i1uGHmDxFLNExq_Rv_T2ek8L9KLmflNjOHwm9JLYarNBGq_xYyCPrMV-Z7WNYeo8BoW0Vqiz05L2ZX2JKV5SqW9GD4URwzZhSZe6W406d8-lNGCLipLHOPwCGcsjCBC|gAAAAABlg-qzbLP4HYFCVwYqoPKdSwRhKYMt9lsiYDcNwcqlHobt-CIa6cLrwtAug3bUF9Wq43T9td4FV1OKPS76acw0S3aNX2ZFIoIsceCoPpZn_y2rSUUEmg00lVnww-TkInDK8Wsh|gAAAAABlg-qzNzNjShzecNO8_nuWlpuEv70chOmvT4n1cQ0Mx6rz0segY2qUcG80kgftwJ1jfq_xonx81MOV5fnhONvk0ELdjzMTNwtySO6MejLwRcrZqvPZ3GId0SnbvTudsNRdkIvk|gAAAAABlg-qzZBQLMghwOipWfBYkxiFYMIe9lJszcD3b2BMjnDqBQQ9hKMIIXHWlFqWWW3uA4zw3oDaa8PUOSA8d1a1eXUN9gNng9UClEdEPdN5onEYJjxQ=
+```
+
 ## Contributing
 
 Contributions to this project are welcome. To contribute, please follow these steps:
