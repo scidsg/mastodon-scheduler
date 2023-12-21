@@ -1,4 +1,3 @@
-import logging
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from mastodon import Mastodon
 from datetime import datetime, timezone
@@ -7,30 +6,12 @@ import mimetypes
 import pytz
 import dateutil.parser
 from werkzeug.security import check_password_hash, generate_password_hash
-import os
-from encryption_utils import encrypt_data, decrypt_data, generate_key
 from flask_sqlalchemy import SQLAlchemy
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-print("Encryption Key Path:", os.environ.get('ENCRYPTION_KEY_PATH'))
-
-def load_key(filename):
-    logging.debug(f"Loading key from {filename}")
-    with open(filename, 'rb') as file:
-        return file.read()
-
-# Load the key
-key_path = os.environ.get('ENCRYPTION_KEY_PATH')
-if key_path:
-    logging.debug(f"Found key path: {key_path}")
-    SECRET_KEY = load_key(key_path)
-else:
-    logging.error("Encryption key path not found in environment variables")
-    raise ValueError("Encryption key path not found in environment variables")
-
 app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
+
+# Set a secret key for the Flask app
+app.secret_key = 'SECRET_KEY'
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
@@ -39,50 +20,11 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    _client_key = db.Column('client_key', db.LargeBinary)
-    _client_secret = db.Column('client_secret', db.LargeBinary)
-    _access_token = db.Column('access_token', db.LargeBinary)
-
-    # Password hashing remains unchanged
-    _password_hash = db.Column('password_hash', db.String(128))
-
-    @property
-    def client_key(self):
-        if self._client_key:
-            return decrypt_data(self._client_key, app.config['SECRET_KEY'])
-        return None
-
-    @client_key.setter
-    def client_key(self, value):
-        self._client_key = encrypt_data(value, app.config['SECRET_KEY'])
-
-    @property
-    def client_secret(self):
-        if self._client_secret:
-            return decrypt_data(self._client_secret, app.config['SECRET_KEY'])
-        return None
-
-    @client_secret.setter
-    def client_secret(self, value):
-        self._client_secret = encrypt_data(value, app.config['SECRET_KEY'])
-
-    @property
-    def access_token(self):
-        if self._access_token:
-            return decrypt_data(self._access_token, app.config['SECRET_KEY'])
-        return None
-
-    @access_token.setter
-    def access_token(self, value):
-        self._access_token = encrypt_data(value, app.config['SECRET_KEY'])
-
-    @property
-    def password_hash(self):
-        return self._password_hash
-
-    @password_hash.setter
-    def password_hash(self, plaintext_password):
-        self._password_hash = generate_password_hash(plaintext_password)
+    password_hash = db.Column(db.String(128))
+    client_key = db.Column(db.String(128))
+    client_secret = db.Column(db.String(128))
+    access_token = db.Column(db.String(128))
+    api_base_url = db.Column(db.String(128))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -269,17 +211,11 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username).first()
-        if user:
-            if check_password_hash(user.password_hash, password):
-                # Authentication successful
-                session['authenticated'] = True
-                session['user_id'] = user.id
-                return redirect(url_for('index'))
-            else:
-                # Password is incorrect
-                flash('⛔️ Invalid username or password')
+        if user and check_password_hash(user.password_hash, password):
+            session['authenticated'] = True
+            session['user_id'] = user.id  # Store user ID in session
+            return redirect(url_for('index'))
         else:
-            # Username does not exist
             flash('⛔️ Invalid username or password')
 
     return render_template('login.html')
@@ -377,5 +313,4 @@ class InviteCode(db.Model):
         return datetime.utcnow() > self.expiration_date
 
 if __name__ == '__main__':
-    logging.info("Starting application")
-    app.run(debug=True)  # Running the app with debug=True
+    app.run()

@@ -40,19 +40,19 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install Flask and Mastodon.py
-pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
+pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy
+
+# Generate hashed password
+HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
+
+# Generate a secret key
+SECRET_KEY=$(openssl rand -hex 24)
 
 # Modify app.py to directly use these variables
-echo "Updating Client Key..."
+sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
-
-echo "Updating Client Secret..."
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
-
-echo "Updating Access Token..."
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
-
-echo "Updating Mastodon URL..."
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 
 # Create a systemd service file for the application
@@ -63,7 +63,6 @@ After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
-Environment="ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key"
 User=$USER
 Group=$USER
 WorkingDirectory=/var/www/html/mastodon-scheduler.app
@@ -144,13 +143,10 @@ kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
 
-# Initializing database and create encryption keys
+# Initializing database
 sleep 3
 cd $APP_DIR
-mkdir /etc/mastodon-scheduler
-chmod +x generate_key.sh && ./generate_key.sh
-chmod +x db_init.sh && ./db_init.sh
-
+python3 db_init.py
 sleep 3
 
 echo "✅ Automatic updates have been installed and configured."
@@ -158,4 +154,4 @@ echo "✅ Automatic updates have been installed and configured."
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
 sleep 3
-#reboot
+reboot
