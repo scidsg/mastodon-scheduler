@@ -14,6 +14,3 @@ def decrypt_data(encrypted_data, key):
     """Decrypt data using the provided key."""
     f = Fernet(key)
     return f.decrypt(encrypted_data).decode()
-
-# Call this function to generate and save the key
-generate_key()
