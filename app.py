@@ -7,11 +7,16 @@ import pytz
 import dateutil.parser
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from encryption_utils import encrypt_data, decrypt_data
 
 app = Flask(__name__)
 
-# Set a secret key for the Flask app
-app.secret_key = 'SECRET_KEY'
+def load_key():
+    # Load key from file or environment variable
+    with open('/etc/mastodon-scheduler/encryption.key', 'rb') as key_file:
+        return key_file.read()
+
+app.config['SECRET_KEY'] = load_key()
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
@@ -21,10 +26,54 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    client_key = db.Column(db.String(128))
-    client_secret = db.Column(db.String(128))
-    access_token = db.Column(db.String(128))
-    api_base_url = db.Column(db.String(128))
+    _client_key_encrypted = db.Column('client_key', db.LargeBinary)
+    _client_secret_encrypted = db.Column('client_secret', db.LargeBinary)
+    _access_token_encrypted = db.Column('access_token', db.LargeBinary)
+    _api_base_url_encrypted = db.Column('aapi_base_url', db.LargeBinary)   
+
+    # Client key encrypted field and its getter and setter
+    @property
+    def client_key(self):
+        if self._client_key_encrypted:
+            return decrypt_data(self._client_key_encrypted, app.config['SECRET_KEY'])
+        return None
+
+    @client_key.setter
+    def client_key(self, value):
+        self._client_key_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
+
+    # Client secret encrypted field and its getter and setter
+    @property
+    def client_secret(self):
+        if self._client_secret_encrypted:
+            return decrypt_data(self._client_secret_encrypted, app.config['SECRET_KEY'])
+        return None
+
+    @client_secret.setter
+    def client_secret(self, value):
+        self._client_secret_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
+
+    # Access token encrypted field and its getter and setter
+    @property
+    def access_token(self):
+        if self._access_token_encrypted:
+            return decrypt_data(self._access_token_encrypted, app.config['SECRET_KEY'])
+        return None
+
+    @access_token.setter
+    def access_token(self, value):
+        self._access_token_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
+
+    # API base URL encrypted field and its getter and setter
+    @property
+    def api_base_url(self):
+        if self._api_base_url_encrypted:
+            return decrypt_data(self._api_base_url_encrypted, app.config['SECRET_KEY'])
+        return None
+
+    @api_base_url.setter
+    def api_base_url(self, value):
+        self._api_base_url_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

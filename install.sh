@@ -40,7 +40,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install Flask and Mastodon.py
-pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy
+pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
@@ -139,6 +139,9 @@ systemctl enable mastodon_app.service
 kill_port_processes
 echo "Starting Mastodon app service..."
 systemctl start mastodon_app.service
+
+# Generate and save the key
+python3 -c "from encryption_utils import generate_key; key = generate_key(); print(key)" > /etc/mastodon-scheduler/encryption.key
 
 # Initializing database
 sleep 3
