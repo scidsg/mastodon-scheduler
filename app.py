@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 def load_key(filename):
     with open(filename, 'rb') as file:
         return file.read()
-
+c
 # Load the key
 key_path = os.environ.get('ENCRYPTION_KEY_PATH')
 if key_path:
