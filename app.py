@@ -29,7 +29,7 @@ class User(db.Model):
     _client_key_encrypted = db.Column('client_key', db.LargeBinary)
     _client_secret_encrypted = db.Column('client_secret', db.LargeBinary)
     _access_token_encrypted = db.Column('access_token', db.LargeBinary)
-    _api_base_url_encrypted = db.Column('aapi_base_url', db.LargeBinary)   
+    _api_base_url_encrypted = db.Column('api_base_url', db.LargeBinary)   
 
     # Client key encrypted field and its getter and setter
     @property
