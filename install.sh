@@ -64,6 +64,7 @@ User=$USER
 Group=$USER
 WorkingDirectory=/var/www/html/mastodon-scheduler.app
 ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
+Environment="ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key"
 
 [Install]
 WantedBy=multi-user.target
@@ -143,11 +144,9 @@ systemctl start mastodon_app.service
 # Initializing database and create encryption keys
 sleep 3
 cd $APP_DIR
-python3 db_init.py
-python3 generate_key.py
-
-# Set the ENCRYPTION_KEY environment variable in a secure way
-echo "export ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key" >> /etc/environment
+mkdir /etc/mastodon-scheduler
+chmod +x generate_key.sh && ./generate_key.sh
+chmod +x db_init.sh && ./db_init.sh
 
 sleep 3
 

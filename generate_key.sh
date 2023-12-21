@@ -1,3 +1,12 @@
+#!/bin/bash
+
+# Create a Python virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Enter and test SMTP credentials
+generate_key() {
+    python3 << END
 # generate_key.py
 
 from cryptography.fernet import Fernet
@@ -18,3 +27,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+END
+}
+
+generate_key
