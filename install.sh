@@ -42,9 +42,6 @@ source venv/bin/activate
 # Install Flask and Mastodon.py
 pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy
 
-# Generate hashed password
-HASHED_PASSWORD=$(python -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('$PASSWORD'))")
-
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)
 
