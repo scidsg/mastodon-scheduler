@@ -45,10 +45,13 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 # Modify app.py to directly use these variables
 echo "Updating Client Key..."
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
+
 echo "Updating Client Secret..."
 sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
+
 echo "Updating Access Token..."
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
+
 echo "Updating Mastodon URL..."
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 
@@ -60,11 +63,11 @@ After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
+Environment="ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key"
 User=$USER
 Group=$USER
 WorkingDirectory=/var/www/html/mastodon-scheduler.app
 ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
-Environment="ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key"
 
 [Install]
 WantedBy=multi-user.target

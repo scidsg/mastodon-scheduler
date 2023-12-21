@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set the path to the encryption key
+export ENCRYPTION_KEY_PATH="/etc/mastodon-scheduler/keyfile.key"
+
 # Create a Python virtual environment
 python3 -m venv venv
 source venv/bin/activate

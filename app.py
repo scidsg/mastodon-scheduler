@@ -13,6 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
+print("Encryption Key Path:", os.environ.get('ENCRYPTION_KEY_PATH'))
 
 def load_key(filename):
     logging.debug(f"Loading key from {filename}")
@@ -268,11 +269,17 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password_hash, password):
-            session['authenticated'] = True
-            session['user_id'] = user.id  # Store user ID in session
-            return redirect(url_for('index'))
+        if user:
+            if check_password_hash(user.password_hash, password):
+                # Authentication successful
+                session['authenticated'] = True
+                session['user_id'] = user.id
+                return redirect(url_for('index'))
+            else:
+                # Password is incorrect
+                flash('⛔️ Invalid username or password')
         else:
+            # Username does not exist
             flash('⛔️ Invalid username or password')
 
     return render_template('login.html')
