@@ -156,4 +156,4 @@ echo "✅ Automatic updates have been installed and configured."
 echo "✅ Setup complete. Rebooting in 3 seconds..."
 echo "⏲️ Rebooting in 3 seconds..."
 sleep 3
-reboot
+#reboot
