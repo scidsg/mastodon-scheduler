@@ -40,6 +40,7 @@ Before you begin the installation of Mastodon Scheduler, ensure you have:
 - **Internet Connection**: An active internet connection to download required packages and dependencies.
 - **Mastodon Account**: A Mastodon account and your generated API credentials (Client Key, Client Secret, Access Token) with the following scopes:
   -  `read:accounts`
+  -  `read:statuses`
   -  `write:media`
   -  `write:statuses`
   -  `crypto`
