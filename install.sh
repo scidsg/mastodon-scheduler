@@ -27,7 +27,7 @@ trap error_exit ERR
 
 # Clone the repo
 cd $APP_DIR
-git switch rest
+git switch hosted
 cd ..
 
 # Create a directory for the app
