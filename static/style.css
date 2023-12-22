@@ -32,8 +32,13 @@ body#form {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 6rem 2rem 2rem 2rem;
+    padding: 2rem;
     box-sizing: border-box;
+}
+
+body#form.withHeader {
+    justify-content: flex-start;
+    padding-top: 8rem;
 }
 
 h1, h2, h3 {
@@ -428,7 +433,6 @@ li.empty-list {
         flex-direction: column;
         align-items: start;
     }
-    
     
     .scheduled-posts,
     .publisher {
