@@ -36,6 +36,10 @@ body#form {
     box-sizing: border-box;
 }
 
+body#form form + a + a {
+    margin-top: .5rem;
+}
+
 body#form.withHeader {
     justify-content: flex-start;
     padding-top: 8rem;
