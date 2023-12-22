@@ -327,13 +327,13 @@ button {
 .image-container {
     position: relative;
     margin-top: .325rem;
-    max-width: 100px;
-    height: auto;
 }
 
 .image-container img {
     outline: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
+    max-width: 100px;
+    height: auto;
 }
 
 .image-container .alt-indicator {
