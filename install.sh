@@ -43,6 +43,7 @@ source venv/bin/activate
 pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
 
 # Generate and save the key
+mkdir /etc/mastodon-scheduler
 python3 -c "from encryption_utils import generate_key; generate_key()"
 
 # Modify app.py to directly use these variables
