@@ -325,6 +325,13 @@ def register():
 
     return render_template('register.html', form=form)
 
+class SettingsForm(FlaskForm):
+    client_key = StringField('Client Key', validators=[DataRequired()])
+    client_secret = StringField('Client Secret', validators=[DataRequired()])
+    access_token = StringField('Access Token', validators=[DataRequired()])
+    api_base_url = StringField('API Base URL', validators=[DataRequired()])
+    submit = SubmitField('Save Settings')
+
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
     if not session.get('authenticated'):
@@ -332,15 +339,17 @@ def settings():
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
+    form = SettingsForm(obj=user)
 
-    # Initialize Mastodon with user's credentials
-    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        mastodon = Mastodon(
-            client_id=user.client_key,
-            client_secret=user.client_secret,
-            access_token=user.access_token,
-            api_base_url=user.api_base_url
-        )
+    if form.validate_on_submit():
+        user.client_key = form.client_key.data
+        user.client_secret = form.client_secret.data
+        user.access_token = form.access_token.data
+        user.api_base_url = form.api_base_url.data
+
+        db.session.commit()
+        flash('👍 Settings updated successfully', 'success')
+        return redirect(url_for('settings'))
 
         try:
             user_info = mastodon.account_verify_credentials()
@@ -365,8 +374,8 @@ def settings():
         db.session.commit()
         flash('👍 Settings updated successfully', 'success')
 
-    return render_template('settings.html', user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
-
+    return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
+    
 class InviteCode(db.Model):
     __tablename__ = 'invite_code'
     id = db.Column(db.Integer, primary_key=True)

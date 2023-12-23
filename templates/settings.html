@@ -45,20 +45,35 @@
       {% endif %}
     {% endwith %}
     <form method="POST" action="{{ url_for('settings') }}">
+        {{ form.hidden_tag() }}
+        
         <label for="client_key">Client Key</label>
-        <input type="text" name="client_key" value="{{ user.client_key if user.client_key else '' }}" required>
-
+        {{ form.client_key(id='client_key') }}
+        {% for error in form.client_key.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        
         <label for="client_secret">Client Secret</label>
-        <input type="text" name="client_secret" value="{{ user.client_secret if user.client_secret else '' }}" required>
-
+        {{ form.client_secret(id='client_secret') }}
+        {% for error in form.client_secret.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        
         <label for="access_token">Access Token</label>
-        <input type="text" name="access_token" value="{{ user.access_token if user.access_token else '' }}" required>
-
+        {{ form.access_token(id='access_token') }}
+        {% for error in form.access_token.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        
         <label for="api_base_url">API Base URL</label>
-        <input type="text" name="api_base_url" value="{{ user.api_base_url if user.api_base_url else '' }}" required>
-
-        <input type="submit" value="Save Settings">
+        {{ form.api_base_url(id='api_base_url') }}
+        {% for error in form.api_base_url.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        
+        {{ form.submit() }}
     </form>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
