@@ -7,10 +7,10 @@ function validateForm() {
 
         if (scheduledTime <= fiveMinutesLater) {
             alert("Scheduled time must be at least 5 minutes in the future.");
-            return false; // Prevent form submission
+            return false;
         }
     }
-    return true; // Allow form submission
+    return true;
 }
 
 function hideFlashMessages() {
@@ -69,11 +69,7 @@ window.onload = function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Validate form on submit
     const form = document.querySelector('form');
-    form.addEventListener('submit', function(event) {
-        if (!validateForm()) {
-            event.preventDefault(); // Prevent form submission
-        }
-    });
+    form.addEventListener('submit', validateForm);
 
     // Update character count on input
     const contentTextarea = document.querySelector('textarea[name="content"]');
@@ -104,7 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Hide flash messages and update character count
+    // Additional onLoad functions
     hideFlashMessages();
     updateCharCount();
 });
+
