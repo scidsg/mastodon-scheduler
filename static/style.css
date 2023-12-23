@@ -130,7 +130,8 @@ nav a:hover {
 header h1 {
     margin: 0;
     font-size: 1.125rem;
-    font-family: 'Atkinson Bold', sans-serif;
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-weight: 700;
 }
 
 .user-info img {
