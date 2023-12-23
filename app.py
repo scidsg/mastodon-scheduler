@@ -360,22 +360,18 @@ def settings():
             user_avatar = None
             username = "User"
             profile_url = "#"
-    else:
+    try:
+        user_info = mastodon.account_verify_credentials()
+        user_avatar = user_info['avatar']
+        username = user_info['username']
+        profile_url = user_info['url']
+    except Exception as e:
         user_avatar = None
         username = "User"
         profile_url = "#"
 
-    if request.method == 'POST':
-        user.client_key = request.form.get('client_key')
-        user.client_secret = request.form.get('client_secret')
-        user.access_token = request.form.get('access_token')
-        user.api_base_url = request.form.get('api_base_url')
-
-        db.session.commit()
-        flash('👍 Settings updated successfully', 'success')
-
     return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
-    
+
 class InviteCode(db.Model):
     __tablename__ = 'invite_code'
     id = db.Column(db.Integer, primary_key=True)
