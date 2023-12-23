@@ -78,6 +78,14 @@ class User(db.Model):
     def api_base_url(self, value):
         self._api_base_url_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
 
+def get_mastodon_client(user):
+    return Mastodon(
+        client_id=user.client_key,
+        client_secret=user.client_secret,
+        access_token=user.access_token,
+        api_base_url=user.api_base_url
+    )
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
@@ -198,6 +206,18 @@ def index():
 
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("⚠️ You need to be logged in to cancel a post.", "error")
+        return redirect(url_for('login'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash("⚠️ User not found.", "error")
+        return redirect(url_for('index'))
+
+    mastodon = get_mastodon_client(user)
+
     try:
         response = mastodon.scheduled_status_delete(status_id)
         app.logger.info(f"Response from Mastodon API: {response}")
@@ -370,7 +390,7 @@ def settings():
         username = "User"
         profile_url = "#"
 
-    return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
+    return render_template('settings.html', form=form, user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
 class InviteCode(db.Model):
     __tablename__ = 'invite_code'
