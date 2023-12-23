@@ -14,7 +14,7 @@ apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unatten
 # Install nginx, clone repo, request HTTPS certs
 curl https://raw.githubusercontent.com/scidsg/tools/main/new-web-app.sh | bash
 
-APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
+APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "/var/www/html/dev.mastodon-scheduler.app" --title "App Directory" 3>&1 1>&2 2>&3)
 
 # Function to display error message and exit
 error_exit() {
@@ -43,7 +43,7 @@ source venv/bin/activate
 pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
 
 # Generate and save the key
-mkdir /etc/mastodon-scheduler
+mkdir -p /etc/mastodon-scheduler
 python3 -c "from encryption_utils import generate_key; generate_key()"
 
 # Modify app.py to directly use these variables
@@ -62,8 +62,9 @@ Wants=network-online.target
 [Service]
 User=$USER
 Group=$USER
-WorkingDirectory=/var/www/html/mastodon-scheduler.app
-ExecStart=/var/www/html/mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
+WorkingDirectory=/var/www/html/dev.mastodon-scheduler.app
+ExecStart=/var/www/html/dev.mastodon-scheduler.app/venv/bin/gunicorn -w 1 -b 127.0.0.1:5000 app:app
+Environment="ENCRYPTION_KEY_PATH=/etc/mastodon-scheduler/keyfile.key"
 
 [Install]
 WantedBy=multi-user.target
@@ -110,13 +111,13 @@ echo "y" | ufw enable
 echo "UFW configuration complete."
 
 # Configure Nginx
-ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/dev.mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 nginx -t && systemctl restart nginx
 
 if [ -e "/etc/nginx/sites-enabled/default" ]; then
     rm /etc/nginx/sites-enabled/default
 fi
-ln -sf /etc/nginx/sites-available/mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/dev.mastodon-scheduler.app.nginx /etc/nginx/sites-enabled/
 (nginx -t && systemctl restart nginx) || error_exit
 
 # Kill any process on port 5000
