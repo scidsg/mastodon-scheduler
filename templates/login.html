@@ -30,12 +30,22 @@
         {{ form.hidden_tag() }}
         <label for="username">Username</label>
         {{ form.username(size=32, class_="input-field") }}
-        {{ form.username.errors }}
-        
+        {% if form.username.errors %}
+            <ul class="errors">
+                {% for error in form.username.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <label for="password">Password</label>
         {{ form.password(size=32, class_="input-field") }}
-        {{ form.password.errors }}
-        
+        {% if form.password.errors %}
+            <ul class="errors">
+                {% for error in form.password.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}  
         <input type="submit" value="Login">
     </form>
     <a href="/register">Register</a>

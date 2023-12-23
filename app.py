@@ -284,12 +284,21 @@ def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
+# Define the RegistrationForm class
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    invite_code = StringField('Invite Code', validators=[DataRequired(), Length(min=4, max=80)])
+    submit = SubmitField('Register')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        invite_code = request.form['invite_code']
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        invite_code = form.invite_code.data
 
         # Validate invite code
         code = InviteCode.query.filter_by(code=invite_code, used=False).first()
@@ -314,7 +323,7 @@ def register():
         flash('👍 Account created successfully', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html')
+    return render_template('register.html', form=form)
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
