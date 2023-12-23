@@ -22,14 +22,21 @@
 <body>
     <header>
         <h1>🗓️ Mastodon Scheduler</h1>
-        <div class="user-info">
-            <a href="{{ profile_url }}" class="user-profile-link">
-                {% if user_avatar %}
-                    <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
-                {% endif %}
-                <span class="username">{{ username }}</span>
-            </a>
-        </div>
+        <nav>
+            <button class="mobileNav btnIcon" aria-label="Expand mobile navigation" aria-expanded="false" id="mobileNavButton"></button>
+            <ul id="mobileNavMenu">
+                <li><a href="https://opencollective.com/scidsg/contribute/mastodon-scheduler-supporter-69294">❤️ Donate</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+            <div class="user-info">
+                <a href="{{ profile_url }}" class="user-profile-link">
+                    {% if user_avatar %}
+                        <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                    {% endif %}
+                    <span class="username">{{ username }}</span>
+                </a>
+            </div>
+        </nav>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
