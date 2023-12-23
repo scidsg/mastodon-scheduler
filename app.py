@@ -359,6 +359,10 @@ def settings():
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
+    if not user:
+        flash("User not found.", "error")
+        return redirect(url_for('index'))
+
     form = SettingsForm(obj=user)
 
     if form.validate_on_submit():
@@ -367,30 +371,42 @@ def settings():
         user.access_token = form.access_token.data
         user.api_base_url = form.api_base_url.data
 
-        db.session.commit()
-        flash('👍 Settings updated successfully', 'success')
-        return redirect(url_for('settings'))
+        # Create a Mastodon instance here with the new settings
+        mastodon = get_mastodon_client(user)
 
+        try:
+            # Verify the credentials with Mastodon
+            user_info = mastodon.account_verify_credentials()
+            user_avatar = user_info['avatar']
+            username = user_info['username']
+            profile_url = user_info['url']
+            # If we reach this point, the credentials are good
+            db.session.commit()
+            flash('👍 Settings updated successfully', 'success')
+            # You might want to redirect to a different page on success,
+            # For example, back to the profile page or dashboard
+            return redirect(url_for('settings'))
+        except Exception as e:
+            # If the new credentials are not valid, do not commit to the database
+            flash(f"Failed to verify Mastodon credentials: {e}", "error")
+
+    # If not form.validate_on_submit() i.e., either GET request or form submission failure
+    user_avatar = None
+    username = "User"
+    profile_url = "#"
+    
+    # Optional: if you want to display the current user info, regardless of form submission
+    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
+        mastodon = get_mastodon_client(user)
         try:
             user_info = mastodon.account_verify_credentials()
             user_avatar = user_info['avatar']
             username = user_info['username']
             profile_url = user_info['url']
         except Exception as e:
-            user_avatar = None
-            username = "User"
-            profile_url = "#"
-    try:
-        user_info = mastodon.account_verify_credentials()
-        user_avatar = user_info['avatar']
-        username = user_info['username']
-        profile_url = user_info['url']
-    except Exception as e:
-        user_avatar = None
-        username = "User"
-        profile_url = "#"
+            flash(f"Error retrieving Mastodon profile: {e}", "error")
 
-    return render_template('settings.html', form=form, user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
+    return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
 class InviteCode(db.Model):
     __tablename__ = 'invite_code'
