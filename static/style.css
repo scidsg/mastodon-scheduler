@@ -206,6 +206,11 @@ button {
     border: none;
 }
 
+body#login form,
+body#login form input {
+    text-align: center;
+}
+
 .publisher * {
     width: 100%;
     box-sizing: border-box;
