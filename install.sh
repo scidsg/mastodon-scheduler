@@ -6,6 +6,9 @@ if [[ $EUID -ne 0 ]]; then
   exec sudo /bin/bash "$0" "$@"
 fi
 
+# Set time zone
+dpkg-reconfigure tzdata
+
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
