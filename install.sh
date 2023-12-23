@@ -43,7 +43,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install Flask and Mastodon.py
-pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography
+pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAlchemy cryptography Flask-WTF
 
 # Generate and save the key
 mkdir -p /etc/mastodon-scheduler
