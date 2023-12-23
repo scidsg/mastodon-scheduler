@@ -1,4 +1,4 @@
-![cover](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/70627355-728a-41fb-b976-b4f330c089ad)# 🗓️ Mastodon Scheduler
+# 🗓️ Mastodon Scheduler
 
 This project is a Flask-based web application that allows users to post statuses (toots) to Mastodon. It supports both immediate posting and scheduling posts for future times. It also includes image upload functionality.
 
