@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField
+from wtforms.validators import DataRequired, Length, Optional
+from flask_wtf.file import FileAllowed
 from mastodon import Mastodon
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
@@ -86,21 +87,28 @@ def get_mastodon_client(user):
         api_base_url=user.api_base_url
     )
 
+# Define the form class
+class PostForm(FlaskForm):
+    content = TextAreaField('What\'s on Your Mind?', validators=[DataRequired(), Length(max=500)])
+    content_warning = StringField('Content Warning', validators=[Optional(), Length(max=500)])
+    image = FileField('Add an Image', validators=[Optional(), FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Images only!')])
+    alt_text = TextAreaField('Alt Text', validators=[Optional(), Length(max=1500)])
+    scheduled_at = StringField('Schedule Post', validators=[Optional()])
+    submit = SubmitField('Toot!')
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
-    # Initialize error_message and media_id
+    form = PostForm()
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
     error_message = None
     media_id = None
 
-    user_id = session.get('user_id')
-    user = User.query.get(user_id)
-
-    # Check if user's API credentials are set
-    if user and user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        # Initialize Mastodon with user's credentials
+    # Initialize Mastodon with user's credentials
+    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
         mastodon = Mastodon(
             client_id=user.client_key,
             client_secret=user.client_secret,
@@ -108,7 +116,6 @@ def index():
             api_base_url=user.api_base_url
         )
     else:
-        # Handle case where user credentials are not set
         flash("👇 Please set your Mastodon API credentials.")
         return redirect(url_for('settings'))
 
@@ -200,7 +207,7 @@ def index():
         error_message = f"Error fetching scheduled statuses: {e}"
         flash("⚠️ Error fetching scheduled posts.", "error")
 
-    return render_template('index.html', scheduled_statuses=scheduled_statuses, 
+    return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
                            error_message=error_message, user_avatar=user_avatar, 
                            username=username, profile_url=profile_url)
 
