@@ -98,6 +98,15 @@ header nav {
     gap: 1rem;
 }
 
+header h1 a {
+    text-decoration: none;
+    color: black;
+}
+
+header h1 a:hover {
+    text-decoration: underline;
+}
+
 nav ul {
     display: inline-flex;
     align-items: center;
