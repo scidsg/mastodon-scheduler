@@ -21,7 +21,7 @@ dpkg-reconfigure tzdata
 # Update and install necessary packages
 export DEBIAN_FRONTEND=noninteractive
 apt-get update && apt -y dist-upgrade 
-apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools ufw fail2ban python3-certbot-nginx libssl-dev certbot nginx whiptail tor libnginx-mod-http-geoip geoip-database cron
+apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unattended-upgrades sqlite3 libnss3-tools ufw fail2ban python3-certbot-nginx libssl-dev certbot nginx whiptail tor libnginx-mod-http-geoip geoip-database cron git
 
 ############################
 # Server, Nginx, HTTPS setup
