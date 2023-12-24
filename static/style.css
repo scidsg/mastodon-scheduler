@@ -284,6 +284,11 @@ textarea:focus {
     outline: 3px double rgba(99,100,255,.75);
 }
 
+#form input ~ .error {
+    font-size: .875rem;
+    color: darkred;
+}
+
 textarea {
     margin-bottom: 1rem;
     height: 200px;
