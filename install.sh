@@ -240,12 +240,13 @@ WantedBy=multi-user.target
 EOF
 
 # Enable the "security" and "updates" repositories
+echo "Configuring unattended-upgrades..."
 cp assets/50unattended-upgrades /etc/apt/apt.conf.d
 cp assets/20auto-upgrades /etc/apt/apt.conf.d
 
 systemctl restart unattended-upgrades
 
-echo "Automatic updates have been installed and configured."
+echo "✅ Automatic updates have been installed and configured."
 
 # Configure Fail2Ban
 
@@ -259,6 +260,8 @@ cp /etc/fail2ban/jail.{conf,local}
 cp assets/jail.local /etc/fail2ban
 
 systemctl restart fail2ban
+
+echo "✅ Fail2Ban configuration complete."
 
 # Configure UFW (Uncomplicated Firewall)
 
@@ -277,7 +280,7 @@ ufw limit ssh/tcp
 # Enable UFW non-interactively
 echo "y" | ufw enable
 
-echo "UFW configuration complete."
+echo "✅ UFW configuration complete."
 
 # Configure Nginx
 ln -sf /etc/nginx/sites-available/$DOMAIN.nginx /etc/nginx/sites-enabled/
@@ -307,13 +310,15 @@ systemctl enable mastodon_app.service
 
 # Start the Mastodon app service
 kill_port_processes
-echo "Starting Mastodon app service..."
+echo "Starting Mastodon service..."
 systemctl start mastodon_app.service
+echo "✅ Mastodon service started."
 
 # Initializing database
 sleep 3
 echo "Initializing database..."
 python3 db_init.py
+echo "✅ Database initialized."
 sleep 3
 
 echo "✅ Automatic updates have been installed and configured."
