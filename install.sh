@@ -46,7 +46,7 @@ echo "Domain: $DOMAIN"
 sudo tee /etc/tor/torrc << EOL
 RunAsDaemon 1
 HiddenServiceDir /var/lib/tor/$DOMAIN/
-HiddenServicePort 80 127.0.0.1:80
+HiddenServicePort 80 127.0.0.1:5000
 EOL
 
 # Restart Tor service
@@ -103,10 +103,6 @@ server {
 server {
     listen 80;
     server_name $SAUTEED_ONION_ADDRESS.$DOMAIN;
-
-    location / {
-        root /var/www/html/$DOMAIN;
-    }
 }
 EOL
 
