@@ -190,14 +190,6 @@ certbot --nginx -d $DOMAIN,$SAUTEED_ONION_ADDRESS.$DOMAIN --agree-tos --non-inte
 # Set up cron job to renew SSL certificate
 (crontab -l 2>/dev/null; echo "30 2 * * 1 /usr/bin/certbot renew --quiet") | crontab -
 
-echo "
-✅ Installation complete!
-                                               
-https://$DOMAIN
-https://$SAUTEED_ONION_ADDRESS.$DOMAIN;
-http://$ONION_ADDRESS
-"
-
 ####################################
 ####################################
 
@@ -326,7 +318,13 @@ sleep 3
 
 echo "✅ Automatic updates have been installed and configured."
 
-echo "✅ Setup complete. Rebooting in 3 seconds..."
+echo "
+✅ Mastodon Scheduler installation complete! Access your site at these addresses:
+                                               
+https://$DOMAIN
+https://$SAUTEED_ONION_ADDRESS.$DOMAIN;
+http://$ONION_ADDRESS
+"
 echo "⏲️ Rebooting in 3 seconds..."
 sleep 3
 reboot
