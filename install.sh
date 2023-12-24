@@ -103,6 +103,10 @@ server {
 server {
     listen 80;
     server_name $SAUTEED_ONION_ADDRESS.$DOMAIN;
+
+    location / {
+        proxy_pass http://localhost:5000;
+    }
 }
 EOL
 
