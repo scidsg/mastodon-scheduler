@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField, ValidationError
+import re
+from wtforms.validators import DataRequired, Length, Optional, EqualTo
 from flask_wtf.file import FileAllowed
 from mastodon import Mastodon
 from datetime import datetime, timezone
@@ -293,10 +294,46 @@ def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
+# Password Requirements
+def password_length(min=-1, max=-1):
+    def _password_length(form, field):
+        if len(field.data) < min or (max != -1 and len(field.data) > max):
+            raise ValidationError(f'Password must be between {min} and {max} characters long.')
+    return _password_length
+
+def password_contains_number():
+    def _password_contains_number(form, field):
+        if not re.search(r'\d', field.data):
+            raise ValidationError('Password must contain at least one number.')
+    return _password_contains_number
+
+def password_contains_uppercase():
+    def _password_contains_uppercase(form, field):
+        if not re.search(r'[A-Z]', field.data):
+            raise ValidationError('Password must contain at least one uppercase letter.')
+    return _password_contains_uppercase
+
+def password_contains_special():
+    def _password_contains_special(form, field):
+        if not re.search(r'[\W_]', field.data):  # \W matches any non-word character, _ is included as it's not covered by \W
+            raise ValidationError('Password must contain at least one special character.')
+    return _password_contains_special
+
 # Define the RegistrationForm class
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        password_length(min=8, max=50),
+        password_contains_number(),
+        password_contains_uppercase(),
+        password_contains_special()
+    ])
+    confirm_password = PasswordField('Confirm Password', validators=[
+        DataRequired(),
+        EqualTo('password', message='Passwords must match.')
+    ])
     invite_code = StringField('Invite Code', validators=[DataRequired(), Length(min=4, max=80)])
     submit = SubmitField('Register')
 
