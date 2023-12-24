@@ -205,7 +205,7 @@ APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "$DOMAIN" --title 
 
 # Clone the repo
 cd $APP_DIR
-git switch sanitize
+git switch hosted
 cd ..
 
 # Create a directory for the app
