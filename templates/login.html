@@ -27,10 +27,25 @@
       {% endif %}
     {% endwith %}
     <form action="{{ url_for('login') }}" method="post">
+        {{ form.hidden_tag() }}
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+        {{ form.username(size=32, class_="input-field") }}
+        {% if form.username.errors %}
+            <ul class="errors">
+                {% for error in form.username.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+        {{ form.password(size=32, class_="input-field") }}
+        {% if form.password.errors %}
+            <ul class="errors">
+                {% for error in form.password.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}  
         <input type="submit" value="Login">
     </form>
     <a href="/register">Register</a>

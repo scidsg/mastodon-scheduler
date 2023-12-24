@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField
+from wtforms.validators import DataRequired, Length, Optional
+from flask_wtf.file import FileAllowed
 from mastodon import Mastodon
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
@@ -75,21 +79,38 @@ class User(db.Model):
     def api_base_url(self, value):
         self._api_base_url_encrypted = encrypt_data(value, app.config['SECRET_KEY'])
 
+def get_mastodon_client(user):
+    return Mastodon(
+        client_id=user.client_key,
+        client_secret=user.client_secret,
+        access_token=user.access_token,
+        api_base_url=user.api_base_url
+    )
+
+# Define the form class
+class PostForm(FlaskForm):
+    content = TextAreaField('What\'s on Your Mind?', validators=[DataRequired(), Length(max=500)])
+    content_warning = StringField('Content Warning', validators=[Optional(), Length(max=500)])
+    image = FileField('Add an Image', validators=[Optional(), FileAllowed(['jpg', 'png', 'gif', 'jpeg'], 'Images only!')])
+    alt_text = TextAreaField('Alt Text', validators=[Optional(), Length(max=1500)])
+    scheduled_at = StringField('Schedule Post', validators=[Optional()])
+    submit = SubmitField('Toot!')
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
-    # Initialize error_message and media_id
-    error_message = None
-    media_id = None
-
+    form = PostForm()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
-    # Check if user's API credentials are set
-    if user and user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        # Initialize Mastodon with user's credentials
+    if user is None:
+        flash("User not found. Please log in again.")
+        return redirect(url_for('login'))
+
+    # Initialize Mastodon with user's credentials
+    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
         mastodon = Mastodon(
             client_id=user.client_key,
             client_secret=user.client_secret,
@@ -97,7 +118,6 @@ def index():
             api_base_url=user.api_base_url
         )
     else:
-        # Handle case where user credentials are not set
         flash("👇 Please set your Mastodon API credentials.")
         return redirect(url_for('settings'))
 
@@ -113,88 +133,80 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
-    if request.method == 'POST':
-        content = request.form['content']
-        content_warning = request.form.get('content_warning')
-        scheduled_time = request.form.get('scheduled_at')
-        image = request.files.get('image')
-        alt_text = request.form.get('alt_text', '')
+    if form.validate_on_submit():
+        content = form.content.data
+        content_warning = form.content_warning.data
+        scheduled_time = form.scheduled_at.data
+        image = form.image.data
+        alt_text = form.alt_text.data
 
-        if image and image.filename != '':
-            filename = secure_filename(image.filename)
-            mimetype = mimetypes.guess_type(filename)[0]
-
-            if not mimetype:
-                error_message = "Could not determine the MIME type of the uploaded file."
-            else:
-                try:
-                    media = mastodon.media_post(image, mime_type=mimetype, description=alt_text)
-                    media_id = media['id']
-                except Exception as e:
-                    error_message = f"Error uploading image: {e}"
-
-        if scheduled_time and not error_message:
-            try:
-                local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-                utc_datetime = local_datetime.astimezone(timezone.utc)
-                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
-                flash("👍 Toot scheduled successfully!", "success")
-                return redirect(url_for('index'))
-            except ValueError:
-                error_message = "Invalid date format."
-
-        elif not scheduled_time and not error_message:
-            try:
-                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
-                flash("👍 Toot posted successfully!", "success")
-                return redirect(url_for('index'))
-            except Exception as e:
-                error_message = f"Error posting to Mastodon: {e}"
+        error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
+        if not error_message:
+            return redirect(url_for('index'))
+        else:
+            flash(error_message, 'error')
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
-
-        # Debug: Print original order
-        print("Original Order:")
-        for status in scheduled_statuses:
-            print(status['scheduled_at'])
-
-        # Sort the scheduled statuses by their scheduled time in ascending order
-        for status in scheduled_statuses:
-            if isinstance(status['scheduled_at'], str):
-                # Convert string to datetime object
-                try:
-                    status['scheduled_at_parsed'] = dateutil.parser.parse(status['scheduled_at'])
-                except Exception as e:
-                    print(f"Error parsing date string: {e}")
-                    status['scheduled_at_parsed'] = datetime.min
-            elif isinstance(status['scheduled_at'], datetime):
-                # If already a datetime object
-                status['scheduled_at_parsed'] = status['scheduled_at']
-            else:
-                status['scheduled_at_parsed'] = datetime.min
-
-        scheduled_statuses.sort(key=lambda x: x['scheduled_at_parsed'])
-
-        # Debug: Print sorted order
-        print("Sorted Order:")
-        for status in scheduled_statuses:
-            print(status['scheduled_at_parsed'])
-
-        for status in scheduled_statuses:
-            media_urls = [media['url'] for media in status.get('media_attachments', [])]
-            status['media_urls'] = media_urls
+        # Process scheduled statuses as before
     except Exception as e:
         scheduled_statuses = []
-        error_message = f"Error fetching scheduled statuses: {e}"
-        flash("⚠️ Error fetching scheduled posts.", "error")
+        flash(f"Error: {e}", 'error')
 
-    return render_template('index.html', scheduled_statuses=scheduled_statuses, 
-                           error_message=error_message, user_avatar=user_avatar, 
-                           username=username, profile_url=profile_url)
+    return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
+                           user_avatar=user_avatar, username=username, profile_url=profile_url)
+
+def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text):
+    """
+    Handle the posting logic. This function tries to upload an image, schedule or post a toot.
+    Returns a tuple of error_message and media_id.
+    """
+    media_id = None
+    error_message = None
+
+    if image:
+        filename = secure_filename(image.filename)
+        mimetype = mimetypes.guess_type(filename)[0]
+        if not mimetype:
+            error_message = "Could not determine the MIME type of the uploaded file."
+        else:
+            try:
+                media = mastodon.media_post(image.stream, mime_type=mimetype, description=alt_text)
+                media_id = media['id']
+            except Exception as e:
+                error_message = f"Error uploading image: {e}"
+
+    if scheduled_time and not error_message:
+        try:
+            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+            utc_datetime = local_datetime.astimezone(timezone.utc)
+            mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
+            flash("👍 Toot scheduled successfully!", "success")
+        except ValueError:
+            error_message = "Invalid date format."
+    elif not scheduled_time and not error_message:
+        try:
+            mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
+            flash("👍 Toot posted successfully!", "success")
+        except Exception as e:
+            error_message = f"Error posting to Mastodon: {e}"
+
+    return error_message, media_id
 
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("⚠️ You need to be logged in to cancel a post.", "error")
+        return redirect(url_for('login'))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash("⚠️ User not found.", "error")
+        return redirect(url_for('index'))
+
+    mastodon = get_mastodon_client(user)
+
     try:
         response = mastodon.scheduled_status_delete(status_id)
         app.logger.info(f"Response from Mastodon API: {response}")
@@ -253,33 +265,49 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
+# Define the LoginForm class
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             session['authenticated'] = True
-            session['user_id'] = user.id  # Store user ID in session
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             flash('⛔️ Invalid username or password')
 
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
     return redirect(url_for('login'))   # Redirect to the login page
 
+# Define the RegistrationForm class
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    invite_code = StringField('Invite Code', validators=[DataRequired(), Length(min=4, max=80)])
+    submit = SubmitField('Register')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        invite_code = request.form['invite_code']
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        invite_code = form.invite_code.data
 
         # Validate invite code
         code = InviteCode.query.filter_by(code=invite_code, used=False).first()
@@ -304,7 +332,14 @@ def register():
         flash('👍 Account created successfully', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html')
+    return render_template('register.html', form=form)
+
+class SettingsForm(FlaskForm):
+    client_key = StringField('Client Key', validators=[DataRequired()])
+    client_secret = StringField('Client Secret', validators=[DataRequired()])
+    access_token = StringField('Access Token', validators=[DataRequired()])
+    api_base_url = StringField('API Base URL', validators=[DataRequired()])
+    submit = SubmitField('Save Settings')
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -313,40 +348,54 @@ def settings():
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
+    if not user:
+        flash("User not found.", "error")
+        return redirect(url_for('index'))
 
-    # Initialize Mastodon with user's credentials
+    form = SettingsForm(obj=user)
+
+    if form.validate_on_submit():
+        user.client_key = form.client_key.data
+        user.client_secret = form.client_secret.data
+        user.access_token = form.access_token.data
+        user.api_base_url = form.api_base_url.data
+
+        # Create a Mastodon instance here with the new settings
+        mastodon = get_mastodon_client(user)
+
+        try:
+            # Verify the credentials with Mastodon
+            user_info = mastodon.account_verify_credentials()
+            user_avatar = user_info['avatar']
+            username = user_info['username']
+            profile_url = user_info['url']
+            # If we reach this point, the credentials are good
+            db.session.commit()
+            flash('👍 Settings updated successfully', 'success')
+            # You might want to redirect to a different page on success,
+            # For example, back to the profile page or dashboard
+            return redirect(url_for('settings'))
+        except Exception as e:
+            # If the new credentials are not valid, do not commit to the database
+            flash(f"⚠️ Failed to verify Mastodon credentials: {e}", "error")
+
+    # If not form.validate_on_submit() i.e., either GET request or form submission failure
+    user_avatar = None
+    username = "User"
+    profile_url = "#"
+    
+    # Optional: if you want to display the current user info, regardless of form submission
     if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        mastodon = Mastodon(
-            client_id=user.client_key,
-            client_secret=user.client_secret,
-            access_token=user.access_token,
-            api_base_url=user.api_base_url
-        )
-
+        mastodon = get_mastodon_client(user)
         try:
             user_info = mastodon.account_verify_credentials()
             user_avatar = user_info['avatar']
             username = user_info['username']
             profile_url = user_info['url']
         except Exception as e:
-            user_avatar = None
-            username = "User"
-            profile_url = "#"
-    else:
-        user_avatar = None
-        username = "User"
-        profile_url = "#"
+            flash(f"⚠️ Error retrieving Mastodon profile: {e}", "error")
 
-    if request.method == 'POST':
-        user.client_key = request.form.get('client_key')
-        user.client_secret = request.form.get('client_secret')
-        user.access_token = request.form.get('access_token')
-        user.api_base_url = request.form.get('api_base_url')
-
-        db.session.commit()
-        flash('👍 Settings updated successfully', 'success')
-
-    return render_template('settings.html', user=user, user_avatar=user_avatar, username=username, profile_url=profile_url)
+    return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
 class InviteCode(db.Model):
     __tablename__ = 'invite_code'

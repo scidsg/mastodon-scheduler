@@ -26,18 +26,31 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <form method="post" action="/register">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required>
-      
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required>
+    <form method="post" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}
+        
+        <label for="username">Username</label>
+        {{ form.username(id="username") }}
+        {% for error in form.username.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        
+        <label for="password">Password</label>
+        {{ form.password(id="password") }}
+        {% for error in form.password.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
 
-      <label for="invite_code">Invite Code</label>
-      <input type="text" id="invite_code" name="invite_code" required>
+        <label for="invite_code">Invite Code</label>
+        {{ form.invite_code(id="invite_code") }}
+        {% for error in form.invite_code.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
 
-      <button type="submit">Register</button>
-  </form>
+        {{ form.submit() }}
+    </form>
+
+
     <a href="/login">Log In</a>
     <a href="https://github.com/glenn-sorrentino/mastodon-scheduler/blob/hosted/privacy-policy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
