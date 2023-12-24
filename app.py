@@ -320,7 +320,6 @@ def password_contains_special():
     return _password_contains_special
 
 # Define the RegistrationForm class
-
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
     password = PasswordField('Password', validators=[
@@ -344,6 +343,7 @@ def register():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
+        confirm_password = form.confirm_password.data
         invite_code = form.invite_code.data
 
         # Validate invite code

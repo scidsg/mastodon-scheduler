@@ -41,6 +41,12 @@
             <span class="error">{{ error }}</span>
         {% endfor %}
 
+        <label for="confirm_password">Confirm Password</label>
+        {{ form.confirm_password(id="confirm_password") }}
+        {% for error in form.confirm_password.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+
         <label for="invite_code">Invite Code</label>
         {{ form.invite_code(id="invite_code") }}
         {% for error in form.invite_code.errors %}
@@ -49,8 +55,6 @@
 
         {{ form.submit() }}
     </form>
-
-
     <a href="/login">Log In</a>
     <a href="https://github.com/glenn-sorrentino/mastodon-scheduler/blob/hosted/privacy-policy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
