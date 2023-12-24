@@ -58,14 +58,6 @@ function updateFieldCharCount(field, charCountDiv) {
     }
 }
 
-window.onload = function() {
-    hideFlashMessages();
-    updateCharCount(); // Initialize character count
-    document.querySelector('textarea[name="content"]').addEventListener('textarea', updateCharCount);
-    document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
-    document.querySelector('textarea[name="alt_text"]').addEventListener('textarea', () => updateFieldCharCount(document.querySelector('textarea[name="alt_text"]'), document.getElementById('altTextCharCount')));
-};
-
 document.addEventListener('DOMContentLoaded', function() {
     // Validate form on submit
     const form = document.querySelector('form');
@@ -90,11 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var mobileNavButton = document.getElementById('mobileNavButton');
     var mobileNavMenu = document.getElementById('mobileNavMenu');
 
-    mobileNavButton.addEventListener('click', function() {
-        var isExpanded = mobileNavButton.getAttribute('aria-expanded') === 'true';
-        mobileNavButton.setAttribute('aria-expanded', !isExpanded);
-        mobileNavMenu.style.display = isExpanded ? 'none' : 'flex';
-    });
+    if (mobileNavButton && mobileNavMenu) {
+        mobileNavButton.addEventListener('click', function() {
+            var isExpanded = mobileNavButton.getAttribute('aria-expanded') === 'true';
+            mobileNavButton.setAttribute('aria-expanded', !isExpanded);
+            mobileNavMenu.style.display = isExpanded ? 'none' : 'flex';
+        });
+    }
 
     // Toggle alt text input on image selection
     const imageInput = document.querySelector('input[type="file"][name="image"]');
@@ -103,6 +97,12 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleAltTextInput(this);
         });
     }
+
+    hideFlashMessages();
+    updateCharCount(); // Initialize character count
+    document.querySelector('textarea[name="content"]').addEventListener('textarea', updateCharCount);
+    document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
+    document.querySelector('textarea[name="alt_text"]').addEventListener('textarea', () => updateFieldCharCount(document.querySelector('textarea[name="alt_text"]'), document.getElementById('altTextCharCount')));
 
     // Additional onLoad functions
     hideFlashMessages();
