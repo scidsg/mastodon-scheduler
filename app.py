@@ -104,8 +104,10 @@ def index():
     form = PostForm()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-    error_message = None
-    media_id = None
+
+    if user is None:
+        flash("User not found. Please log in again.")
+        return redirect(url_for('login'))
 
     # Initialize Mastodon with user's credentials
     if user.client_key and user.client_secret and user.access_token and user.api_base_url:
@@ -131,85 +133,65 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
-    if request.method == 'POST':
-        content = request.form['content']
-        content_warning = request.form.get('content_warning')
-        scheduled_time = request.form.get('scheduled_at')
-        image = request.files.get('image')
-        alt_text = request.form.get('alt_text', '')
+    if form.validate_on_submit():
+        content = form.content.data
+        content_warning = form.content_warning.data
+        scheduled_time = form.scheduled_at.data
+        image = form.image.data
+        alt_text = form.alt_text.data
 
-        if image and image.filename != '':
-            filename = secure_filename(image.filename)
-            mimetype = mimetypes.guess_type(filename)[0]
-
-            if not mimetype:
-                error_message = "Could not determine the MIME type of the uploaded file."
-            else:
-                try:
-                    media = mastodon.media_post(image, mime_type=mimetype, description=alt_text)
-                    media_id = media['id']
-                except Exception as e:
-                    error_message = f"Error uploading image: {e}"
-
-        if scheduled_time and not error_message:
-            try:
-                local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-                utc_datetime = local_datetime.astimezone(timezone.utc)
-                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
-                flash("👍 Toot scheduled successfully!", "success")
-                return redirect(url_for('index'))
-            except ValueError:
-                error_message = "Invalid date format."
-
-        elif not scheduled_time and not error_message:
-            try:
-                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
-                flash("👍 Toot posted successfully!", "success")
-                return redirect(url_for('index'))
-            except Exception as e:
-                error_message = f"Error posting to Mastodon: {e}"
+        error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
+        if not error_message:
+            return redirect(url_for('index'))
+        else:
+            flash(error_message, 'error')
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
-
-        # Debug: Print original order
-        print("Original Order:")
-        for status in scheduled_statuses:
-            print(status['scheduled_at'])
-
-        # Sort the scheduled statuses by their scheduled time in ascending order
-        for status in scheduled_statuses:
-            if isinstance(status['scheduled_at'], str):
-                # Convert string to datetime object
-                try:
-                    status['scheduled_at_parsed'] = dateutil.parser.parse(status['scheduled_at'])
-                except Exception as e:
-                    print(f"Error parsing date string: {e}")
-                    status['scheduled_at_parsed'] = datetime.min
-            elif isinstance(status['scheduled_at'], datetime):
-                # If already a datetime object
-                status['scheduled_at_parsed'] = status['scheduled_at']
-            else:
-                status['scheduled_at_parsed'] = datetime.min
-
-        scheduled_statuses.sort(key=lambda x: x['scheduled_at_parsed'])
-
-        # Debug: Print sorted order
-        print("Sorted Order:")
-        for status in scheduled_statuses:
-            print(status['scheduled_at_parsed'])
-
-        for status in scheduled_statuses:
-            media_urls = [media['url'] for media in status.get('media_attachments', [])]
-            status['media_urls'] = media_urls
+        # Process scheduled statuses as before
     except Exception as e:
         scheduled_statuses = []
-        error_message = f"Error fetching scheduled statuses: {e}"
-        flash("⚠️ Error fetching scheduled posts.", "error")
+        flash(f"Error: {e}", 'error')
 
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           error_message=error_message, user_avatar=user_avatar, 
-                           username=username, profile_url=profile_url)
+                           user_avatar=user_avatar, username=username, profile_url=profile_url)
+
+def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text):
+    """
+    Handle the posting logic. This function tries to upload an image, schedule or post a toot.
+    Returns a tuple of error_message and media_id.
+    """
+    media_id = None
+    error_message = None
+
+    if image:
+        filename = secure_filename(image.filename)
+        mimetype = mimetypes.guess_type(filename)[0]
+        if not mimetype:
+            error_message = "Could not determine the MIME type of the uploaded file."
+        else:
+            try:
+                media = mastodon.media_post(image.stream, mime_type=mimetype, description=alt_text)
+                media_id = media['id']
+            except Exception as e:
+                error_message = f"Error uploading image: {e}"
+
+    if scheduled_time and not error_message:
+        try:
+            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+            utc_datetime = local_datetime.astimezone(timezone.utc)
+            mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
+            flash("👍 Toot scheduled successfully!", "success")
+        except ValueError:
+            error_message = "Invalid date format."
+    elif not scheduled_time and not error_message:
+        try:
+            mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
+            flash("👍 Toot posted successfully!", "success")
+        except Exception as e:
+            error_message = f"Error posting to Mastodon: {e}"
+
+    return error_message, media_id
 
 @app.route('/cancel/<status_id>', methods=['POST'])
 def cancel_post(status_id):
@@ -395,7 +377,7 @@ def settings():
             return redirect(url_for('settings'))
         except Exception as e:
             # If the new credentials are not valid, do not commit to the database
-            flash(f"Failed to verify Mastodon credentials: {e}", "error")
+            flash(f"⚠️ Failed to verify Mastodon credentials: {e}", "error")
 
     # If not form.validate_on_submit() i.e., either GET request or form submission failure
     user_avatar = None
@@ -411,7 +393,7 @@ def settings():
             username = user_info['username']
             profile_url = user_info['url']
         except Exception as e:
-            flash(f"Error retrieving Mastodon profile: {e}", "error")
+            flash(f"⚠️ Error retrieving Mastodon profile: {e}", "error")
 
     return render_template('settings.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
 

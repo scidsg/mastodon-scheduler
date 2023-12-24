@@ -141,6 +141,9 @@ nav a {
       top: 1.5rem;
       z-index: 3;
       padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 }
 
 .flash-message,
@@ -154,6 +157,10 @@ nav a {
       width: max-content;
       list-style: none;
       max-width: 80vw;
+}
+
+.flashes li + li {
+    margin-top: .5rem;
 }
 
 .user-info a {

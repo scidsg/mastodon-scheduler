@@ -69,7 +69,11 @@ window.onload = function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Validate form on submit
     const form = document.querySelector('form');
-    form.addEventListener('submit', validateForm);
+    form.addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission
+        }
+    });
 
     // Update character count on input
     const contentTextarea = document.querySelector('textarea[name="content"]');
