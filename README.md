@@ -67,55 +67,6 @@ chmod +x install.sh
 
 This script will set up a Python virtual environment, install necessary dependencies, create a Flask app, and set up a systemd service for the app.
 
-## Privacy and Security Features
-
-Our Mastodon Scheduler app prioritizes privacy and security right from the installation process. The install.sh script, designed to be run with root privileges, ensures a secure setup by performing tasks such as:
-
-- **Tor Integration:** We configure Tor to offer users an additional layer of anonymity. The torrc configuration includes running Tor as a daemon and setting up a hidden service for your domain, allowing access through an Onion address.
-- **HTTPS Setup:** We use Certbot for SSL/TLS certificate management, ensuring all data transmitted between the server and clients is encrypted.
-- **Secure Server Settings:** Nginx is configured with security headers like `Strict-Transport-Security` and `X-Content-Type-Options`, enhancing protection against common web vulnerabilities.
-
-- **Encryption of Sensitive Data:** We encrypt sensitive user information such as API keys and tokens using `encryption_utils`. This prevents unauthorized access to user credentials.
-```
-sqlite> SELECT * FROM user;
-1|gs|scrypt:32768:8:1$Y0MAydnXNHr3EHgL$210c702d4fcb1f8c57b53b84d7dd5928c39eec4200d1390379c67b6c46d47bf414a13d94b570d281a7c2001843886906bbac930926fac965b47c144d6d524054|gAAAAABlg-qz9i1uGHmDxFLNExq_Rv_T2ek8L9KLmflNjOHwm9JLYarNBGq_xYyCPrMV-Z7WNYeo8BoW0Vqiz05L2ZX2JKV5SqW9GD4URwzZhSZe6W406d8-lNGCLipLHOPwCGcsjCBC|gAAAAABlg-qzbLP4HYFCVwYqoPKdSwRhKYMt9lsiYDcNwcqlHobt-CIa6cLrwtAug3bUF9Wq43T9td4FV1OKPS76acw0S3aNX2ZFIoIsceCoPpZn_y2rSUUEmg00lVnww-TkInDK8Wsh|gAAAAABlg-qzNzNjShzecNO8_nuWlpuEv70chOmvT4n1cQ0Mx6rz0segY2qUcG80kgftwJ1jfq_xonx81MOV5fnhONvk0ELdjzMTNwtySO6MejLwRcrZqvPZ3GId0SnbvTudsNRdkIvk|gAAAAABlg-qzZBQLMghwOipWfBYkxiFYMIe9lJszcD3b2BMjnDqBQQ9hKMIIXHWlFqWWW3uA4zw3oDaa8PUOSA8d1a1eXUN9gNng9UClEdEPdN5onEYJjxQ=
-```
-- **Secure Authentication**: Passwords are hashed using Werkzeug's `generate_password_hash`, ensuring they are stored securely. Login verification is done using `check_password_hash`.
-- **SQLAlchemy for Database Interaction:** By using SQLAlchemy, we reduce the risk of SQL injection attacks. It abstracts database queries and uses parameterized statements.
-- **Flask-WTF for Forms:** This tool provides CSRF protection for our forms, safeguarding against Cross-Site Request Forgery attacks.
-- **Data Validation and Sanitization:** Input validation is implemented using WTForms validators, ensuring that only properly formatted data is accepted.
-
-### System-Level Security
-
-- **Fail2Ban and UFW:** These tools protect against brute force attacks and unauthorized access. Fail2Ban monitors log files for suspicious activity and bans IPs that show malicious signs, while UFW (Uncomplicated Firewall) manages network traffic rules.
-- **Unattended Upgrades:** The system is configured to automatically apply security updates, ensuring that the server is protected against known vulnerabilities.
-- **Privacy-Preserving Logging:** Nginx is configured to log requests in a way that respects user privacy. The logs are sanitized to prevent storing IP addresses.
-
-### Data Privacy
-
-We handle user data with the utmost respect for privacy:
-
-- **Minimal Data Collection:** The app collects only the data necessary for functionality.
-- **Transparency:** Users are informed about the data collected and its usage.
-- **User Control:** Users have control over their data, with the ability to modify or delete their information.
-
-### Minimum Password Requirements
-
-- **Length:** Passwords must be between 16 to 128 characters long. This range ensures passwords are complex enough to resist brute-force attacks while still being manageable for users.
-- **Numeric Characters:** At least one number is required in each password. The inclusion of numbers increases the complexity of the password, making it harder to guess.
-- **Uppercase Letters:** Each password must contain at least one uppercase letter. This requirement adds an extra layer of complexity, further securing the password against common attack strategies.
-- **Special Characters:** Passwords must include at least one special character (such as !, @, #, etc.). Special characters greatly increase the number of possible password permutations, making them more resilient to cracking attempts.
-
-#### Implementation and Validation
-
-The password requirements are enforced through validators in the Flask-WTF forms:
-
-- `password_contains_number()`: Validates the presence of numeric characters.
-- `password_contains_uppercase()`: Checks for uppercase letters.
-- `password_contains_special()`: Ensures special characters are included.
-
-These validators are applied in the RegistrationForm class in the app.py file, ensuring that all new passwords created by users adhere to these security standards.
-
 ## Contributing
 
 Contributions to this project are welcome. To contribute, please follow these steps:
