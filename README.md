@@ -19,18 +19,6 @@ curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/hoste
 - **View Scheduled Posts**: Review all your scheduled posts in one place.
 - **Cancel Scheduled Posts**: Cancel scheduled posts before publication.
 
-## Love E-Paper?
-
-Waveshare's 2.13" e-paper display is supported! 
-
-### Easy Insall
-
-```bash
-curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/display.sh | bash
-```
-
-![IMG_8299](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/304e3381-f573-4179-95b3-925b2138c44e)
-
 ## Prerequisites
 
 Before you begin the installation of Mastodon Scheduler, ensure you have:
