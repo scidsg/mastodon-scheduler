@@ -67,12 +67,6 @@ chmod +x install.sh
 
 This script will set up a Python virtual environment, install necessary dependencies, create a Flask app, and set up a systemd service for the app.
 
-## Usage
-
-After installation, the Mastodon App will run as a service on your machine. You can access the web interface by navigating to `https://mastodon-scheduler.local:5000` in your web browser.
-
-To post a status or schedule a post, fill in the form on the main page and submit.
-
 ## Privacy and Security Features
 
 Our Mastodon Scheduler app prioritizes privacy and security right from the installation process. The install.sh script, designed to be run with root privileges, ensures a secure setup by performing tasks such as:
