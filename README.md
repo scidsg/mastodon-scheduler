@@ -7,7 +7,7 @@ This project is a Flask-based web application that allows users to post statuses
 curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/hosted/install.sh | bash
 ```
 
-![beta-cover](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/0a3d9717-1e2b-443d-ac7d-5c94b4f51dc9)
+![beta-cover](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/c684905e-f4b5-4654-b766-04ad9ad7fe09)
 
 ## Features
 
@@ -85,18 +85,40 @@ After installation, the Mastodon App will run as a service on your machine. You 
 
 To post a status or schedule a post, fill in the form on the main page and submit.
 
-## Security
+## Privacy and Security Features
 
-### Passwords
-When creating an account and setting a password, a password hash is created. At no point is your password ever stored in plaintext.
+Our Mastodon Scheduler app prioritizes privacy and security right from the installation process. The install.sh script, designed to be run with root privileges, ensures a secure setup by performing tasks such as:
 
-### Database Encryption at Rest
-Data at rest is encrypted, and only decrypted as needed. Below is an example of a row of data from the `user` table. 
+- **Tor Integration:** We configure Tor to offer users an additional layer of anonymity. The torrc configuration includes running Tor as a daemon and setting up a hidden service for your domain, allowing access through an Onion address.
+- **HTTPS Setup:** We use Certbot for SSL/TLS certificate management, ensuring all data transmitted between the server and clients is encrypted.
+- **Secure Server Settings:** Nginx is configured with security headers like `Strict-Transport-Security` and `X-Content-Type-Options`, enhancing protection against common web vulnerabilities.
 
+- **Encryption of Sensitive Data:** We encrypt sensitive user information such as API keys and tokens using `encryption_utils`. This prevents unauthorized access to user credentials.
 ```
 sqlite> SELECT * FROM user;
 1|gs|scrypt:32768:8:1$Y0MAydnXNHr3EHgL$210c702d4fcb1f8c57b53b84d7dd5928c39eec4200d1390379c67b6c46d47bf414a13d94b570d281a7c2001843886906bbac930926fac965b47c144d6d524054|gAAAAABlg-qz9i1uGHmDxFLNExq_Rv_T2ek8L9KLmflNjOHwm9JLYarNBGq_xYyCPrMV-Z7WNYeo8BoW0Vqiz05L2ZX2JKV5SqW9GD4URwzZhSZe6W406d8-lNGCLipLHOPwCGcsjCBC|gAAAAABlg-qzbLP4HYFCVwYqoPKdSwRhKYMt9lsiYDcNwcqlHobt-CIa6cLrwtAug3bUF9Wq43T9td4FV1OKPS76acw0S3aNX2ZFIoIsceCoPpZn_y2rSUUEmg00lVnww-TkInDK8Wsh|gAAAAABlg-qzNzNjShzecNO8_nuWlpuEv70chOmvT4n1cQ0Mx6rz0segY2qUcG80kgftwJ1jfq_xonx81MOV5fnhONvk0ELdjzMTNwtySO6MejLwRcrZqvPZ3GId0SnbvTudsNRdkIvk|gAAAAABlg-qzZBQLMghwOipWfBYkxiFYMIe9lJszcD3b2BMjnDqBQQ9hKMIIXHWlFqWWW3uA4zw3oDaa8PUOSA8d1a1eXUN9gNng9UClEdEPdN5onEYJjxQ=
 ```
+ 
+- **Secure Authentication**: Passwords are hashed using Werkzeug's `generate_password_hash`, ensuring they are stored securely. Login verification is done using `check_password_hash`.
+- **SQLAlchemy for Database Interaction:** By using SQLAlchemy, we reduce the risk of SQL injection attacks. It abstracts database queries and uses parameterized statements.
+- **Flask-WTF for Forms:** This tool provides CSRF protection for our forms, safeguarding against Cross-Site Request Forgery attacks.
+- **Data Validation and Sanitization:** Input validation is implemented using WTForms validators, ensuring that only properly formatted data is accepted.
+
+### System-Level Security
+
+Back in install.sh, system-level security measures are employed:
+
+- **Fail2Ban and UFW:** These tools protect against brute force attacks and unauthorized access. Fail2Ban monitors log files for suspicious activity and bans IPs that show malicious signs, while UFW (Uncomplicated Firewall) manages network traffic rules.
+- **Unattended Upgrades:** The system is configured to automatically apply security updates, ensuring that the server is protected against known vulnerabilities.
+- **Privacy-Preserving Logging:** Nginx is configured to log requests in a way that respects user privacy. The logs are sanitized to prevent storing IP addresses.
+
+### Data Privacy
+
+We handle user data with the utmost respect for privacy:
+
+- **Minimal Data Collection:** The app collects only the data necessary for functionality.
+- **Transparency:** Users are informed about the data collected and its usage.
+- **User Control:** Users have control over their data, with the ability to modify or delete their information.
 
 ## Contributing
 
