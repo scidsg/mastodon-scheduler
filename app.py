@@ -324,7 +324,7 @@ class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=80)])
     password = PasswordField('Password', validators=[
         DataRequired(),
-        password_length(min=8, max=50),
+        password_length(min=16, max=128),
         password_contains_number(),
         password_contains_uppercase(),
         password_contains_special()
