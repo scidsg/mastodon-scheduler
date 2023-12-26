@@ -328,7 +328,7 @@ http://$ONION_ADDRESS
 # Create your first invite code
 echo "To create a new user, enter the invite code below:"
 chmod +x generate_codes.sh && ./generate_codes.sh
-echo "To create new invite codes, enter: ./var/www/html/$DOMAIN/generate_codes.py"
+echo "To create new invite codes, enter: cd /var/www/html/$DOMAIN && ./generate_codes.py"
 
 echo "⏲️ Rebooting in 3 seconds..."
 sleep 3
