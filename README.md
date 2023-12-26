@@ -4,7 +4,7 @@ This project is a Flask-based web application that allows users to post statuses
 
 ## Easy Install
 ```bash
-curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/hosted/install.sh | bash
+curl https://raw.githubusercontent.com/scidsg/mastodon-scheduler/hosted/install.sh | bash
 ```
 
 ![beta-cover](https://github.com/scidsg/mastodon-scheduler/assets/28545431/63834369-4613-48d4-bc92-158055e8bda6)
