@@ -187,8 +187,10 @@ whiptail --msgbox --title "Instructions" "\nPlease ensure that your DNS records 
 # Request the certificates
 certbot --nginx -d $DOMAIN,$SAUTEED_ONION_ADDRESS.$DOMAIN --agree-tos --non-interactive --no-eff-email --email ${EMAIL}
 
+echo "Configuring automatic renewing certificates..."
 # Set up cron job to renew SSL certificate
 (crontab -l 2>/dev/null; echo "30 2 * * 1 /usr/bin/certbot renew --quiet") | crontab -
+echo "✅ Automatic HTTPS certificates configured."
 
 ####################################
 ####################################
