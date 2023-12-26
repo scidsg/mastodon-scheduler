@@ -193,7 +193,7 @@ certbot --nginx -d $DOMAIN,$SAUTEED_ONION_ADDRESS.$DOMAIN --agree-tos --non-inte
 ####################################
 ####################################
 
-APP_DIR=$(whiptail --inputbox "Enter your app directory" 8 60 "$DOMAIN" --title "App Directory" 3>&1 1>&2 2>&3)
+APP_DIR=$DOMAIN
 
 # Clone the repo
 cd $APP_DIR
@@ -215,12 +215,6 @@ pip3 install Flask Mastodon.py pytz gunicorn flask_httpauth Werkzeug Flask-SQLAl
 # Generate and save the key
 mkdir -p /etc/mastodon-scheduler
 python3 -c "from encryption_utils import generate_key; generate_key()"
-
-# Modify app.py to directly use these variables
-sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
-sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
-sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
-sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
