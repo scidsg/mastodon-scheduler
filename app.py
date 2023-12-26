@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField, ValidationError
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField, SelectField, ValidationError
 import re
 from wtforms.validators import DataRequired, Length, Optional, EqualTo
 from flask_wtf.file import FileAllowed
@@ -34,7 +34,8 @@ class User(db.Model):
     _client_key_encrypted = db.Column('client_key', db.LargeBinary)
     _client_secret_encrypted = db.Column('client_secret', db.LargeBinary)
     _access_token_encrypted = db.Column('access_token', db.LargeBinary)
-    _api_base_url_encrypted = db.Column('api_base_url', db.LargeBinary)   
+    _api_base_url_encrypted = db.Column('api_base_url', db.LargeBinary)
+    timezone = db.Column(db.String(50), default='UTC')  # Default to UTC
 
     # Client key encrypted field and its getter and setter
     @property
@@ -99,63 +100,76 @@ class PostForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    form = PostForm()
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
-    form = PostForm()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
-    if user is None:
+    if not user:
         flash("User not found. Please log in again.")
         return redirect(url_for('login'))
 
-    # Initialize Mastodon with user's credentials
-    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        mastodon = Mastodon(
-            client_id=user.client_key,
-            client_secret=user.client_secret,
-            access_token=user.access_token,
-            api_base_url=user.api_base_url
-        )
-    else:
-        flash("👇 Please set your Mastodon API credentials.")
-        return redirect(url_for('settings'))
+    if request.method == 'POST':
+        local_timezone = pytz.timezone(user.timezone if user.timezone else 'UTC')
 
-    # Retrieve user information
-    try:
-        user_info = mastodon.account_verify_credentials()
-        user_avatar = user_info['avatar']
-        username = user_info['username']
-        profile_url = user_info['url']
-    except Exception as e:
-        user_avatar = None
-        username = "User"
-        profile_url = "#" 
-        print(f"Error fetching user information: {e}")
-
-    if form.validate_on_submit():
-        content = form.content.data
-        content_warning = form.content_warning.data
         scheduled_time = form.scheduled_at.data
-        image = form.image.data
-        alt_text = form.alt_text.data
+        if scheduled_time:
+            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+            local_datetime = local_timezone.localize(local_datetime)
+            utc_datetime = local_datetime.astimezone(pytz.utc)
 
-        error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
-        if not error_message:
-            return redirect(url_for('index'))
+        if user is None:
+            flash("User not found. Please log in again.")
+            return redirect(url_for('login'))
+
+        # Initialize Mastodon with user's credentials
+        if user.client_key and user.client_secret and user.access_token and user.api_base_url:
+            mastodon = Mastodon(
+                client_id=user.client_key,
+                client_secret=user.client_secret,
+                access_token=user.access_token,
+                api_base_url=user.api_base_url
+            )
         else:
-            flash(error_message, 'error')
+            flash("👇 Please set your Mastodon API credentials.")
+            return redirect(url_for('settings'))
 
-    try:
-        scheduled_statuses = mastodon.scheduled_statuses()
-        # Process scheduled statuses as before
-    except Exception as e:
-        scheduled_statuses = []
-        flash(f"Error: {e}", 'error')
+        # Retrieve user information
+        try:
+            user_info = mastodon.account_verify_credentials()
+            user_avatar = user_info['avatar']
+            username = user_info['username']
+            profile_url = user_info['url']
+        except Exception as e:
+            user_avatar = None
+            username = "User"
+            profile_url = "#" 
+            print(f"Error fetching user information: {e}")
+
+        if form.validate_on_submit():
+            content = form.content.data
+            content_warning = form.content_warning.data
+            scheduled_time = form.scheduled_at.data
+            image = form.image.data
+            alt_text = form.alt_text.data
+
+            error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
+            if not error_message:
+                return redirect(url_for('index'))
+            else:
+                flash(error_message, 'error')
+
+        try:
+            scheduled_statuses = mastodon.scheduled_statuses()
+            # Process scheduled statuses as before
+        except Exception as e:
+            scheduled_statuses = []
+            flash(f"Error: {e}", 'error')
 
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           user_avatar=user_avatar, username=username, profile_url=profile_url)
+                           user_avatar=user_avatar, username=username, profile_url=profile_url, timezones=timezones)
 
 def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text):
     """
@@ -376,6 +390,7 @@ class SettingsForm(FlaskForm):
     client_secret = StringField('Client Secret', validators=[DataRequired()])
     access_token = StringField('Access Token', validators=[DataRequired()])
     api_base_url = StringField('API Base URL', validators=[DataRequired()])
+    timezone = SelectField('Timezone', choices=[(tz, tz) for tz in pytz.all_timezones], default='UTC')
     submit = SubmitField('Save Settings')
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -396,6 +411,7 @@ def settings():
         user.client_secret = form.client_secret.data
         user.access_token = form.access_token.data
         user.api_base_url = form.api_base_url.data
+        user.timezone = form.timezone.data
 
         # Create a Mastodon instance here with the new settings
         mastodon = get_mastodon_client(user)
