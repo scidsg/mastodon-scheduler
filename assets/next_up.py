@@ -99,7 +99,7 @@ def main():
             else:
                 print("No upcoming posts. Displaying message on screen...")
                 display_no_posts_message(epd)
-            time.sleep(60)  # Update interval
+            time.sleep(3600)  # Update interval
     except KeyboardInterrupt:
         print('Exiting...')
         sys.exit(0)
