@@ -27,9 +27,9 @@ apt-get install -y python3 python3-pip python3-venv python3.11-venv lsof unatten
 # Server, Nginx, HTTPS setup
 ############################
 
-DOMAIN=$(whiptail --inputbox "Enter your domain name:" 8 60 3>&1 1>&2 2>&3)
-EMAIL=$(whiptail --inputbox "Enter your email:" 8 60 3>&1 1>&2 2>&3)
-GIT=$(whiptail --inputbox "Enter your git repo:" 8 60 3>&1 1>&2 2>&3)
+DOMAIN=$(whiptail --inputbox "Enter your domain name:" 8 60 "mastodon-scheduler.app" 3>&1 1>&2 2>&3)
+EMAIL=$(whiptail --inputbox "Enter your email:" 8 60 "mastodon@scidsg.org" 3>&1 1>&2 2>&3)
+GIT=$(whiptail --inputbox "Enter your git repo's URL:" 8 60 "https://github.com/scidsg/mastodon-scheduler" 3>&1 1>&2 2>&3)
 
 # Check for valid domain name format
 until [[ $DOMAIN =~ ^[a-zA-Z0-9][a-zA-Z0-9\.-]*\.[a-zA-Z]{2,}$ ]]; do
