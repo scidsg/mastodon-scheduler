@@ -3,16 +3,19 @@
   src: url("fonts/sans/AtkinsonHyperlegible-Regular.woff") format("woff"),
        url("fonts/sans/AtkinsonHyperlegible-Regular.woff2") format("woff2");
 }
+
 @font-face {
   font-family: "Atkinson Bold";
   src: url("fonts/sans/AtkinsonHyperlegible-Bold.woff") format("woff"),
        url("fonts/sans/AtkinsonHyperlegible-Bold.woff2") format("woff2");
 }
+
 @font-face {
   font-family: "IBM Plex Mono";
   src: url("fonts/mono/IBMPlexMono-Regular.woff") format("woff"),
        url("fonts/mono/IBMPlexMono-Regular.woff2") format("woff2");
 }
+
 body {
     display: flex;
     font-family: 'Atkinson Hyperlegible', sans-serif;
@@ -22,6 +25,7 @@ body {
     padding-left: .5rem;
     padding-right: .5rem;
 }
+
 body#form {
     display: flex;
     flex-direction: column;
@@ -31,20 +35,27 @@ body#form {
     padding: 2rem;
     box-sizing: border-box;
 }
-body#form form + a + a {margin-top: .5rem;}
+
+body#form form + a + a {
+    margin-top: .5rem;
+}
+
 body#form.withHeader {
     justify-content: flex-start;
     padding-top: 8rem;
 }
+
 h1, h2, h3 {
     font-family: 'Atkinson Bold', sans-serif;
     font-weight: normal;
 }
+
 #form img:not(header img) {
     max-width: 150px;
     width: 100%;
     height: auto;
 }
+
 #form form {
     display: flex;
     flex-direction: column;
@@ -53,8 +64,15 @@ h1, h2, h3 {
     padding: 1rem;
     margin-bottom: 1rem;
 }
-#form h1 {text-align: center;}
-a {color: rgb(71, 73, 184);}
+
+#form h1 {
+    text-align: center;
+}
+
+a {
+    color: rgb(71, 73, 184);
+}
+
 header {
     position: fixed;
     top: .5rem;
@@ -73,18 +91,22 @@ header {
     backdrop-filter: blur(.5rem);
     -webkit-backdrop-filter: blur(.5rem);
 }
+
 header nav {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
+
 header h1 a {
     text-decoration: none;
     color: black;
 }
+
 header h1 a:hover {
     text-decoration: underline;
 }
+
 nav ul {
     display: inline-flex;
     align-items: center;
@@ -93,7 +115,11 @@ nav ul {
     margin: 0;
     padding-left: 0;
 }
-nav li {list-style: none;}
+
+nav li {
+    list-style: none;
+}
+
 nav a {
     align-items: center;
     display: flex;
@@ -102,6 +128,7 @@ nav a {
     color: #595959;
     text-decoration: none;
 }
+
 .btnIcon {
   display: flex;
   align-items: center;
@@ -116,6 +143,7 @@ nav a {
   min-width: 0;
   display: none;
 }
+
 #flash-messages,
 .flashes {
       position: absolute;
@@ -126,6 +154,7 @@ nav a {
       flex-direction: column;
       align-items: center;
 }
+
 .flash-message,
 .flashes li {
       background-color: white;
@@ -138,29 +167,43 @@ nav a {
       list-style: none;
       max-width: 80vw;
 }
-.flashes li + li {margin-top: .5rem;}
+
+.flashes li + li {
+    margin-top: .5rem;
+}
+
 .user-info a {
     align-items: center;
     display: flex;
     gap: .5rem;
 }
-nav a:hover {text-decoration: underline;}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
 header h1 {
     margin: 0;
     font-size: 1.125rem;
     font-family: 'Atkinson Bold', sans-serif;
     text-align: left;
 }
-#form header h1 {text-align: left;}
+
+#form header h1 {
+    text-align: left;
+}
+
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
     outline: 1px solid rgba(0,0,0,.15);
 }
+
 h2 {
     font-size: 1.125rem;
     margin: 0 0 .25rem 0;
 }
+
 .meta {
     font-size: .75rem;
     font-family: 'IBM Plex Mono', monospace;
@@ -169,6 +212,7 @@ h2 {
     font-size: .875rem;
     font-family: 'Atkinson Hyperlegible', sans-serif;
 }
+
 .publisher,
 .scheduled-posts {
     padding: 1rem;
@@ -182,31 +226,40 @@ h2 {
     margin-top: 0;
     padding-top: calc(73px + 2rem);
 }
+
  /* Hide scrollbar for Chrome, Safari and Opera */
 .publisher::-webkit-scrollbar,
 .scheduled-posts::-webkit-scrollbar {
   display: none;
 }
+
 /* Hide scrollbar for IE, Edge and Firefox */
 .publisher,
 .scheduled-posts {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 } 
+
 form {
     display: flex;
     flex-direction: column;
 }
+
 input,
-textarea {margin-bottom: 1rem;}
+textarea {
+     margin-bottom: 1rem;
+}
+
 label {
     margin-bottom: .5rem;
     font-size: 1.125rem;
     font-family: 'Atkinson Bold', sans-serif;
 }
+
 h2, .publisher label {
     font-size: 1rem;
 }
+
 input:not([type='file']),
 textarea {
     padding: .75rem;
@@ -218,12 +271,18 @@ textarea {
     box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
 }
 
-input:not([type='datetime-local']) { margin-bottom: .75rem }
+input:not([type='datetime-local']) {
+    margin-bottom: .75rem
+}
 
-input[type='file'] { margin-bottom: 1rem }
+input[type='file'] {
+    margin-bottom: 1rem
+}
 
 input:focus,
-textarea:focus { outline: 3px double rgba(99,100,255,.75); }
+textarea:focus {
+    outline: 3px double rgba(99,100,255,.75);
+}
 
 #form input ~ .error {
     font-size: .875rem;
@@ -235,7 +294,9 @@ textarea {
     height: 200px;
 }
 
-form #altTextArea { height: 200px; }
+form #altTextArea {
+    height: 200px;
+}
 
 input[type="submit"],
 button {
@@ -259,7 +320,9 @@ button {
 }
 
 .scheduled-posts,
-.publisher {overflow-y: scroll;}
+.publisher {
+    overflow-y: scroll;
+}
 
 #charCount,
 #altTextCharCount {
@@ -267,7 +330,9 @@ button {
     font-size: .825rem;
 }
 
-.scheduled-posts h2 {margin-bottom: .5rem;}
+.scheduled-posts h2 {
+    margin-bottom: .5rem;
+}
 
 .scheduled-posts ul {
     padding-left: 0;
@@ -287,9 +352,13 @@ button {
     flex-direction: column;
     gap: .5rem;
 }
-.scheduled-posts li:last-of-type {margin-bottom: 0;}
+.scheduled-posts li:last-of-type {
+    margin-bottom: 0;
+}
 
-.scheduled-posts input:hover {text-decoration: underline;}
+.scheduled-posts input:hover {
+    text-decoration: underline;
+}
 
 .image-container {
     position: relative;
@@ -321,16 +390,22 @@ button {
     display: none;
 }
 
-.empty-list {align-items: center;}
+.empty-list {
+    align-items: center;
+}
 
 .empty-list img {
     width: 66%;
     margin: 2rem 0 1rem 0;
 }
 
-.empty-list img {width: 66%;}
+.empty-list img {
+    width: 66%;
+}
 
-li.empty-list {padding-bottom: 2.5rem;}
+li.empty-list {
+    padding-bottom: 2.5rem;
+}
 
 #login button {
     width: 100%;
@@ -353,7 +428,9 @@ li.empty-list {padding-bottom: 2.5rem;}
     width: min-content;
 }
 
-.publisher form input[type="submit"] {max-width: 120px;}
+.publisher form input[type="submit"] {
+    max-width: 120px;
+}
 
 @media only screen and (max-width: 768px) {
     body {
@@ -362,11 +439,17 @@ li.empty-list {padding-bottom: 2.5rem;}
         padding: 0 1rem;
     }
 
-    header {padding: .75rem 1rem;}
+    header {
+        padding: .75rem 1rem;
+    }
 
-    header h1 {font-size: 1.125rem;}
+    header h1 {
+        font-size: 1.125rem;
+    }
 
-    .btnIcon {display: initial;}
+    .btnIcon {
+        display: initial;
+    }
 
     nav ul {
         display: none;
