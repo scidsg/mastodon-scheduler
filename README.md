@@ -26,10 +26,10 @@ Waveshare's 2.13" e-paper display is supported!
 ### Easy Insall
 
 ```bash
-curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/display.sh | bash
+curl https://raw.githubusercontent.com/scidsg/mastodon-scheduler/main/display.sh | bash
 ```
 
-![IMG_8299](https://github.com/glenn-sorrentino/mastodon-scheduler/assets/28545431/304e3381-f573-4179-95b3-925b2138c44e)
+![IMG_8299](https://github.com/scidsg/mastodon-scheduler/assets/28545431/304e3381-f573-4179-95b3-925b2138c44e)
 
 ## Prerequisites
 
@@ -51,13 +51,13 @@ To install the Mastodon App, follow these steps:
 
 1. Run the easy installer command:
 ```bash
-curl https://raw.githubusercontent.com/glenn-sorrentino/mastodon-scheduler/main/install.sh | bash
+curl https://raw.githubusercontent.com/scidsg/mastodon-scheduler/main/install.sh | bash
 ```
 or
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/glenn-sorrentino/mastodon-scheduler.git
+git clone https://github.com/scidsg/mastodon-scheduler.git
 ```
   
 2. Navigate to the project directory:
@@ -99,4 +99,4 @@ Alternatively, see the GitHub documentation on [creating a pull request](https:/
 
 ## Contact
 
-If you have any questions or feedback, please get in touch with me at glenn@scidsg.org.
+If you have any questions or feedback, please get in touch with me at mastodon@scidsg.org.
