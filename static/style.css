@@ -50,6 +50,23 @@ h1, h2, h3 {
     font-weight: normal;
 }
 
+p {
+    max-width: 640px;
+    width: 100%;
+}
+
+.mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .875rem;
+    padding: .125rem .325rem;
+    background-color: rgba(255,255,255,.75);
+    border: .5px solid rgba(0,0,0,0.15);
+    border-radius: .25rem;
+    display: inline-flex;
+    margin: .05rem 0;
+    box-shadow: 1.125px 1.125px 0 0 rgba(0,0,0,0.15);
+}
+
 #form img:not(header img) {
     max-width: 150px;
     width: 100%;
@@ -261,7 +278,8 @@ h2, .publisher label {
 }
 
 input:not([type='file']),
-textarea {
+textarea,
+select {
     padding: .75rem;
     font-family: 'Atkinson Hyperlegible', sans-serif;
     font-size: 1rem;
@@ -269,9 +287,11 @@ textarea {
     border: none;
     border: 1px solid rgba(99,100,255,.75);
     box-shadow: 2px 2px 0px 0 rgba(99,100,255,.33);
+    background-color: white;
 }
 
-input:not([type='datetime-local']) {
+input:not([type='datetime-local']),
+select {
     margin-bottom: .75rem
 }
 
@@ -280,7 +300,8 @@ input[type='file'] {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     outline: 3px double rgba(99,100,255,.75);
 }
 

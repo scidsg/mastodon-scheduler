@@ -37,7 +37,7 @@
         </nav>
     </header>
     <h1>Settings</h1>
-    <p>From your Mastodon account, go to: Preferences > Development and create a new app with the scopes: read:accounts, read:statuses, write:statuses, write: media, crypto.</p>
+    <p>From your Mastodon account, go to: Preferences > Development and create a new app with the scopes: <span class="mono">read:accounts</span>, <span class="mono">read:statuses</span>, <span class="mono">write:statuses</span>, <span class="mono">write:media</span>, <span class="mono">crypto</span>.</p>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="flashes">
@@ -49,6 +49,13 @@
     {% endwith %}
     <form method="POST" action="{{ url_for('settings') }}">
         {{ form.hidden_tag() }}
+
+        <!-- Timezone Selection -->
+        <label for="timezone">Time Zone</label>
+        {{ form.timezone(id='timezone') }}
+        {% for error in form.timezone.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
         
         <label for="client_key">Client Key</label>
         {{ form.client_key(id='client_key') }}

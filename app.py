@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField, ValidationError
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, FileField, SelectField, ValidationError
 import re
 from wtforms.validators import DataRequired, Length, Optional, EqualTo
 from flask_wtf.file import FileAllowed
@@ -34,7 +34,8 @@ class User(db.Model):
     _client_key_encrypted = db.Column('client_key', db.LargeBinary)
     _client_secret_encrypted = db.Column('client_secret', db.LargeBinary)
     _access_token_encrypted = db.Column('access_token', db.LargeBinary)
-    _api_base_url_encrypted = db.Column('api_base_url', db.LargeBinary)   
+    _api_base_url_encrypted = db.Column('api_base_url', db.LargeBinary)
+    timezone = db.Column(db.String(50), default='UTC')  # Default to UTC
 
     # Client key encrypted field and its getter and setter
     @property
@@ -105,24 +106,15 @@ def index():
     form = PostForm()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-
     if user is None:
         flash("User not found. Please log in again.")
         return redirect(url_for('login'))
 
-    # Initialize Mastodon with user's credentials
-    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        mastodon = Mastodon(
-            client_id=user.client_key,
-            client_secret=user.client_secret,
-            access_token=user.access_token,
-            api_base_url=user.api_base_url
-        )
-    else:
+    mastodon = get_mastodon_client(user) if user.client_key and user.client_secret and user.access_token and user.api_base_url else None
+    if mastodon is None:
         flash("👇 Please set your Mastodon API credentials.")
         return redirect(url_for('settings'))
 
-    # Retrieve user information
     try:
         user_info = mastodon.account_verify_credentials()
         user_avatar = user_info['avatar']
@@ -134,6 +126,7 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
+    utc_datetime = "" 
     if form.validate_on_submit():
         content = form.content.data
         content_warning = form.content_warning.data
@@ -141,23 +134,34 @@ def index():
         image = form.image.data
         alt_text = form.alt_text.data
 
-        error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
-        if not error_message:
-            return redirect(url_for('index'))
-        else:
-            flash(error_message, 'error')
+        if scheduled_time:
+            try:
+                user_timezone = pytz.timezone(user.timezone) if user.timezone else pytz.utc
+                local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+                local_datetime = user_timezone.localize(local_datetime)
+                utc_datetime = local_datetime.astimezone(pytz.utc)
+                print("Scheduled Time (UTC):", utc_datetime)
+            except Exception as e:
+                flash(f"Error in date conversion: {e}", 'error')
+                return render_template('index.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
+
+            error_message, media_id = handle_post(mastodon, content, content_warning, utc_datetime, image, alt_text)
+            if not error_message:
+                return redirect(url_for('index'))
+            else:
+                flash(error_message, 'error')
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
-        # Process scheduled statuses as before
     except Exception as e:
         scheduled_statuses = []
         flash(f"Error: {e}", 'error')
 
+    # Pass the user object and scheduled_statuses to the template
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           user_avatar=user_avatar, username=username, profile_url=profile_url)
+                           user_avatar=user_avatar, username=username, profile_url=profile_url, user=user)
 
-def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text):
+def handle_post(mastodon, content, content_warning, utc_datetime, image, alt_text):
     """
     Handle the posting logic. This function tries to upload an image, schedule or post a toot.
     Returns a tuple of error_message and media_id.
@@ -177,15 +181,13 @@ def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_t
             except Exception as e:
                 error_message = f"Error uploading image: {e}"
 
-    if scheduled_time and not error_message:
+    if utc_datetime and not error_message:  # Use utc_datetime directly without parsing
         try:
-            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-            utc_datetime = local_datetime.astimezone(timezone.utc)
             mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
             flash("👍 Toot scheduled successfully!", "success")
-        except ValueError:
-            error_message = "Invalid date format."
-    elif not scheduled_time and not error_message:
+        except Exception as e:
+            error_message = f"Error scheduling post: {e}"
+    elif not utc_datetime and not error_message:
         try:
             mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
             flash("👍 Toot posted successfully!", "success")
@@ -240,29 +242,27 @@ def get_next_post():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
-    """Format a date time to (Default): 'Dec. 1, 2023 at 1:30 PM'"""
-    if value is None:
-        return ""
-    
-    # Check if value is already a datetime object
-    if isinstance(value, datetime):
-        utc_datetime = value
-    else:
-        # If it's a string, parse it into a datetime object
-        try:
+def format_datetime(value, timezone_str='UTC', format='%b %d, %Y at %-I:%M %p'):
+    """Format a date time to a specified timezone."""
+    if not value:
+        return "Invalid date"
+
+    try:
+        if isinstance(value, datetime):
+            utc_datetime = value
+        else:
             utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError as e:
-            return f"Invalid datetime format: {e}"
 
-    # Ensure the datetime is timezone-aware
-    utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
+        # Ensure the datetime is timezone-aware
+        utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
 
-    # Convert UTC to local timezone
-    local_timezone = pytz.timezone('America/Los_Angeles')  # Adjust to your timezone
-    local_datetime = utc_datetime.astimezone(local_timezone)
+        # Convert UTC to the specified timezone
+        user_timezone = pytz.timezone(timezone_str)
+        local_datetime = utc_datetime.astimezone(user_timezone)
 
-    return local_datetime.strftime(format)
+        return local_datetime.strftime(format)
+    except (ValueError, pytz.exceptions.UnknownTimeZoneError) as e:
+        return f"Error in datetime conversion: {e}"
 
 app.jinja_env.filters['datetime'] = format_datetime
 
@@ -376,6 +376,7 @@ class SettingsForm(FlaskForm):
     client_secret = StringField('Client Secret', validators=[DataRequired()])
     access_token = StringField('Access Token', validators=[DataRequired()])
     api_base_url = StringField('API Base URL', validators=[DataRequired()])
+    timezone = SelectField('Timezone', choices=[(tz, tz) for tz in pytz.all_timezones], default='UTC')
     submit = SubmitField('Save Settings')
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -396,6 +397,7 @@ def settings():
         user.client_secret = form.client_secret.data
         user.access_token = form.access_token.data
         user.api_base_url = form.api_base_url.data
+        user.timezone = form.timezone.data
 
         # Create a Mastodon instance here with the new settings
         mastodon = get_mastodon_client(user)

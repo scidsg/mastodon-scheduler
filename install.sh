@@ -199,7 +199,7 @@ APP_DIR=$DOMAIN
 
 # Clone the repo
 cd $APP_DIR
-git switch hosted
+git switch tz
 
 # Create a directory for the app
 mkdir -p static
