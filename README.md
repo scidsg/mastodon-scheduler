@@ -26,7 +26,7 @@ Waveshare's 2.13" e-paper display is supported!
 ### Easy Insall
 
 ```bash
-curl https://raw.githubusercontent.com/scidsg/mastodon-scheduler/main/display.sh | bash
+curl https://raw.githubusercontent.com/scidsg/mastodon-scheduler/main/setup_display.sh | bash
 ```
 
 ![IMG_8299](https://github.com/scidsg/mastodon-scheduler/assets/28545431/304e3381-f573-4179-95b3-925b2138c44e)
