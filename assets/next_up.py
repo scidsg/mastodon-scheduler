@@ -55,7 +55,7 @@ def display_post(epd, post_data):
             print(f"Parsed date object: {schedule_time_obj}")
 
             # Convert to local timezone (e.g., Pacific Time)
-            local_timezone_obj = pytz.timezone('America/Los_Angeles')
+            local_timezone_obj = pytz.timezone('SYSTEM_TIMEZONE')
             local_schedule_time = schedule_time_obj.astimezone(local_timezone_obj)
             print(f"Converted to local timezone: {local_schedule_time}")
 
