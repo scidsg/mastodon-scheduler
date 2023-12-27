@@ -173,7 +173,7 @@ def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
     utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
 
     # Convert UTC to local timezone
-    local_timezone = pytz.timezone('America/Los_Angeles')  # Adjust to your timezone
+    local_timezone = pytz.timezone('SYSTEM_TIMEZONE')
     local_datetime = utc_datetime.astimezone(local_timezone)
 
     return local_datetime.strftime(format)

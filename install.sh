@@ -66,6 +66,9 @@ SECRET_KEY=$(openssl rand -hex 24)
 # Generate local certificates using mkcert
 mkcert -key-file key.pem -cert-file cert.pem mastodon-scheduler.local
 
+# Read timezone from the system
+SYSTEM_TIMEZONE=$(cat /etc/timezone)
+
 # Modify app.py to directly use these variables
 sed -i "s|SECRET_KEY|$SECRET_KEY|g" app.py
 sed -i "s|CLIENT_KEY|$CLIENT_KEY|g" app.py
@@ -73,6 +76,7 @@ sed -i "s|CLIENT_SECRET|$CLIENT_SECRET|g" app.py
 sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 sed -i "s|HASHED_PASSWORD|$HASHED_PASSWORD|g" app.py
+sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" app.py
 
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
