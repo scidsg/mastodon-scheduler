@@ -108,7 +108,7 @@
                     {% if status['params']['spoiler_text'] %}
                     <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
                     {% endif %}
-                    <span class="meta">Scheduled for {{ status['scheduled_at'] | datetime }}</span>
+                    <span class="meta">Scheduled for {{ scheduled_time|datetime(user.timezone) }}</span>
                     <!-- Cancel button -->
                     <form action="/cancel/{{ status['id'] }}" method="post">
                         <input type="submit" value="Cancel">
