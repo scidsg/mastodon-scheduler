@@ -80,7 +80,10 @@ sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 sed -i "s|HASHED_PASSWORD|$HASHED_PASSWORD|g" app.py
 sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" app.py
-sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" assets/next_up.py
+
+# Update e-paper python
+cd $HOME/mastodon-scheduler/assets
+sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" next_up.py
 
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
