@@ -55,6 +55,18 @@ p {
     width: 100%;
 }
 
+.mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .875rem;
+    padding: .125rem .325rem;
+    background-color: rgba(255,255,255,.75);
+    border: .5px solid rgba(0,0,0,0.15);
+    border-radius: .25rem;
+    display: inline-flex;
+    margin: .05rem 0;
+    box-shadow: 1.125px 1.125px 0 0 rgba(0,0,0,0.15);
+}
+
 #form img:not(header img) {
     max-width: 150px;
     width: 100%;
