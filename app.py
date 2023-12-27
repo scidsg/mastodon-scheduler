@@ -114,62 +114,36 @@ def index():
     user = User.query.get(user_id)
 
     if user:
-        if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-            mastodon = get_mastodon_client(user)
-
-            try:
-                user_info = mastodon.account_verify_credentials()
-                user_avatar = user_info['avatar']
-                username = user_info['username']
-                profile_url = user_info['url']
-            except Exception as e:
-                print(f"Error fetching user information: {e}")
+        mastodon = get_mastodon_client(user) if user.client_key and user.client_secret and user.access_token and user.api_base_url else None
 
         if request.method == 'POST' and form.validate_on_submit():
             local_timezone = pytz.timezone(user.timezone if user.timezone else 'UTC')
 
             scheduled_time = form.scheduled_at.data
             if scheduled_time:
+                # Convert the input time (assumed to be in the user's specified time zone) to UTC
                 local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
                 local_datetime = local_timezone.localize(local_datetime)
                 utc_datetime = local_datetime.astimezone(pytz.utc)
 
-            # Initialize Mastodon with user's credentials
-            if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-                mastodon = Mastodon(
-                    client_id=user.client_key,
-                    client_secret=user.client_secret,
-                    access_token=user.access_token,
-                    api_base_url=user.api_base_url
-                )
+                # Pass utc_datetime as a string in the correct format
+                utc_datetime_str = utc_datetime.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-                # Retrieve user information
-                try:
-                    user_info = mastodon.account_verify_credentials()
-                    user_avatar = user_info['avatar']
-                    username = user_info['username']
-                    profile_url = user_info['url']
-                except Exception as e:
-                    print(f"Error fetching user information: {e}")
-
-            if form.validate_on_submit():
-                content = form.content.data
-                content_warning = form.content_warning.data
-                image = form.image.data
-                alt_text = form.alt_text.data
-
-                error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
+                # Handle post scheduling
+                error_message, media_id = handle_post(mastodon, form.content.data, form.content_warning.data, utc_datetime_str, form.image.data, form.alt_text.data)
                 if not error_message:
                     return redirect(url_for('index'))
                 else:
                     flash(error_message, 'error')
 
+        # Load scheduled statuses
         try:
             if mastodon:
                 scheduled_statuses = mastodon.scheduled_statuses()
         except Exception as e:
             scheduled_statuses = []
             flash(f"Error: {e}", 'error')
+
     else:
         flash("User not found. Please log in again.")
         return redirect(url_for('login'))
@@ -197,15 +171,17 @@ def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_t
             except Exception as e:
                 error_message = f"Error uploading image: {e}"
 
-    if scheduled_time and not error_message:
+    if scheduled_time:
         try:
-            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-            utc_datetime = local_datetime.astimezone(timezone.utc)
+            # Ensure the scheduled_time is in the correct UTC format before parsing
+            utc_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+            # Schedule or post the toot
             mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
             flash("👍 Toot scheduled successfully!", "success")
         except ValueError:
             error_message = "Invalid date format."
-    elif not scheduled_time and not error_message:
+    else:
         try:
             mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
             flash("👍 Toot posted successfully!", "success")
@@ -260,29 +236,22 @@ def get_next_post():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def format_datetime(value, format='%b %d, %Y at %-I:%M %p'):
-    """Format a date time to (Default): 'Dec. 1, 2023 at 1:30 PM'"""
+def format_datetime(value, timezone_str='UTC', format='%b %d, %Y at %-I:%M %p'):
+    """Format a date time to a specified timezone. Default: 'Dec. 1, 2023 at 1:30 PM' in UTC"""
     if value is None:
         return ""
     
-    # Check if value is already a datetime object
-    if isinstance(value, datetime):
-        utc_datetime = value
-    else:
-        # If it's a string, parse it into a datetime object
-        try:
-            utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError as e:
-            return f"Invalid datetime format: {e}"
+    try:
+        utc_datetime = value if isinstance(value, datetime) else datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+        utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
 
-    # Ensure the datetime is timezone-aware
-    utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
+        # Convert UTC to user's local timezone
+        user_timezone = pytz.timezone(timezone_str)
+        local_datetime = utc_datetime.astimezone(user_timezone)
 
-    # Convert UTC to local timezone
-    local_timezone = pytz.timezone('America/Los_Angeles')  # Adjust to your timezone
-    local_datetime = utc_datetime.astimezone(local_timezone)
-
-    return local_datetime.strftime(format)
+        return local_datetime.strftime(format)
+    except (ValueError, pytz.exceptions.UnknownTimeZoneError) as e:
+        return f"Error in datetime conversion: {e}"
 
 app.jinja_env.filters['datetime'] = format_datetime
 
