@@ -113,40 +113,50 @@ def index():
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
-    if user:
-        mastodon = get_mastodon_client(user) if user.client_key and user.client_secret and user.access_token and user.api_base_url else None
+    if not user:
+        flash("User not found. Please log in again.")
+        return redirect(url_for('login'))
 
-        if request.method == 'POST' and form.validate_on_submit():
-            local_timezone = pytz.timezone(user.timezone if user.timezone else 'UTC')
+    # Initialize Mastodon with user's credentials
+    mastodon = get_mastodon_client(user) if user.client_key and user.client_secret and user.access_token and user.api_base_url else None
 
-            scheduled_time = form.scheduled_at.data
-            if scheduled_time:
-                # Convert the input time (assumed to be in the user's specified time zone) to UTC
+    if mastodon:
+        try:
+            user_info = mastodon.account_verify_credentials()
+            user_avatar = user_info['avatar']
+            username = user_info['username']
+            profile_url = user_info['url']
+        except Exception as e:
+            flash(f"Error fetching user information: {e}")
+
+    if request.method == 'POST' and form.validate_on_submit():
+        local_timezone = pytz.timezone(user.timezone) if user.timezone else pytz.utc
+
+        scheduled_time = form.scheduled_at.data
+        if scheduled_time:
+            try:
                 local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
                 local_datetime = local_timezone.localize(local_datetime)
                 utc_datetime = local_datetime.astimezone(pytz.utc)
+            except ValueError:
+                flash("Invalid date format.", 'error')
+                return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
+                                       user_avatar=user_avatar, username=username, profile_url=profile_url)
 
-                # Pass utc_datetime as a string in the correct format
-                utc_datetime_str = utc_datetime.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            # Handle post scheduling
+            error_message, media_id = handle_post(mastodon, form.content.data, form.content_warning.data, utc_datetime, form.image.data, form.alt_text.data)
+            if not error_message:
+                return redirect(url_for('index'))
+            else:
+                flash(error_message, 'error')
 
-                # Handle post scheduling
-                error_message, media_id = handle_post(mastodon, form.content.data, form.content_warning.data, utc_datetime_str, form.image.data, form.alt_text.data)
-                if not error_message:
-                    return redirect(url_for('index'))
-                else:
-                    flash(error_message, 'error')
-
-        # Load scheduled statuses
-        try:
-            if mastodon:
-                scheduled_statuses = mastodon.scheduled_statuses()
-        except Exception as e:
-            scheduled_statuses = []
-            flash(f"Error: {e}", 'error')
-
-    else:
-        flash("User not found. Please log in again.")
-        return redirect(url_for('login'))
+    try:
+        if mastodon:
+            scheduled_statuses = mastodon.scheduled_statuses()
+            # Process scheduled statuses as before
+    except Exception as e:
+        scheduled_statuses = []
+        flash(f"Error: {e}", 'error')
 
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
                            user_avatar=user_avatar, username=username, profile_url=profile_url)
