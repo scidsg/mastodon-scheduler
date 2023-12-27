@@ -106,24 +106,15 @@ def index():
     form = PostForm()
     user_id = session.get('user_id')
     user = User.query.get(user_id)
-
     if user is None:
         flash("User not found. Please log in again.")
         return redirect(url_for('login'))
 
-    # Initialize Mastodon with user's credentials
-    if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-        mastodon = Mastodon(
-            client_id=user.client_key,
-            client_secret=user.client_secret,
-            access_token=user.access_token,
-            api_base_url=user.api_base_url
-        )
-    else:
+    mastodon = get_mastodon_client(user) if user.client_key and user.client_secret and user.access_token and user.api_base_url else None
+    if mastodon is None:
         flash("👇 Please set your Mastodon API credentials.")
         return redirect(url_for('settings'))
 
-    # Retrieve user information
     try:
         user_info = mastodon.account_verify_credentials()
         user_avatar = user_info['avatar']
@@ -135,6 +126,7 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
+    utc_datetime = "" 
     if form.validate_on_submit():
         content = form.content.data
         content_warning = form.content_warning.data
@@ -144,11 +136,11 @@ def index():
 
         if scheduled_time:
             try:
-                # Convert the scheduled time from the user's timezone to UTC
                 user_timezone = pytz.timezone(user.timezone) if user.timezone else pytz.utc
                 local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
                 local_datetime = user_timezone.localize(local_datetime)
                 utc_datetime = local_datetime.astimezone(pytz.utc)
+                print("Scheduled Time (UTC):", utc_datetime)
             except Exception as e:
                 flash(f"Error in date conversion: {e}", 'error')
                 return render_template('index.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
@@ -161,13 +153,13 @@ def index():
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
-        # Process scheduled statuses as before
     except Exception as e:
         scheduled_statuses = []
         flash(f"Error: {e}", 'error')
 
+    # Pass the user object and scheduled_statuses to the template
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           user_avatar=user_avatar, username=username, profile_url=profile_url)
+                           user_avatar=user_avatar, username=username, profile_url=profile_url, user=user)
 
 def handle_post(mastodon, content, content_warning, utc_datetime, image, alt_text):
     """
@@ -250,18 +242,22 @@ def get_next_post():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def format_datetime(value, user_timezone_str='UTC', format='%b %d, %Y at %-I:%M %p'):
-    """Format a datetime to the user's local timezone."""
-    if value is None:
-        return ""
-    
+def format_datetime(value, timezone_str='UTC', format='%b %d, %Y at %-I:%M %p'):
+    """Format a date time to a specified timezone."""
+    if not value:
+        return "Invalid date"
+
     try:
-        # Parse the datetime string into a datetime object
-        utc_datetime = value if isinstance(value, datetime) else datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+        if isinstance(value, datetime):
+            utc_datetime = value
+        else:
+            utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+        # Ensure the datetime is timezone-aware
         utc_datetime = utc_datetime.replace(tzinfo=pytz.UTC)
 
-        # Convert UTC to the user's local timezone
-        user_timezone = pytz.timezone(user_timezone_str)
+        # Convert UTC to the specified timezone
+        user_timezone = pytz.timezone(timezone_str)
         local_datetime = utc_datetime.astimezone(user_timezone)
 
         return local_datetime.strftime(format)
