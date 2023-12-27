@@ -101,75 +101,81 @@ class PostForm(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
+    scheduled_statuses = []
+    user_avatar = None
+    username = "User"
+    profile_url = "#"
+    mastodon = None  # Initialize mastodon variable
+
     if not session.get('authenticated'):
         return redirect(url_for('login'))
 
     user_id = session.get('user_id')
     user = User.query.get(user_id)
 
-    if not user:
-        flash("User not found. Please log in again.")
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        local_timezone = pytz.timezone(user.timezone if user.timezone else 'UTC')
-
-        scheduled_time = form.scheduled_at.data
-        if scheduled_time:
-            local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
-            local_datetime = local_timezone.localize(local_datetime)
-            utc_datetime = local_datetime.astimezone(pytz.utc)
-
-        if user is None:
-            flash("User not found. Please log in again.")
-            return redirect(url_for('login'))
-
-        # Initialize Mastodon with user's credentials
+    if user:
         if user.client_key and user.client_secret and user.access_token and user.api_base_url:
-            mastodon = Mastodon(
-                client_id=user.client_key,
-                client_secret=user.client_secret,
-                access_token=user.access_token,
-                api_base_url=user.api_base_url
-            )
-        else:
-            flash("👇 Please set your Mastodon API credentials.")
-            return redirect(url_for('settings'))
+            mastodon = get_mastodon_client(user)
 
-        # Retrieve user information
-        try:
-            user_info = mastodon.account_verify_credentials()
-            user_avatar = user_info['avatar']
-            username = user_info['username']
-            profile_url = user_info['url']
-        except Exception as e:
-            user_avatar = None
-            username = "User"
-            profile_url = "#" 
-            print(f"Error fetching user information: {e}")
+            try:
+                user_info = mastodon.account_verify_credentials()
+                user_avatar = user_info['avatar']
+                username = user_info['username']
+                profile_url = user_info['url']
+            except Exception as e:
+                print(f"Error fetching user information: {e}")
 
-        if form.validate_on_submit():
-            content = form.content.data
-            content_warning = form.content_warning.data
+        if request.method == 'POST' and form.validate_on_submit():
+            local_timezone = pytz.timezone(user.timezone if user.timezone else 'UTC')
+
             scheduled_time = form.scheduled_at.data
-            image = form.image.data
-            alt_text = form.alt_text.data
+            if scheduled_time:
+                local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
+                local_datetime = local_timezone.localize(local_datetime)
+                utc_datetime = local_datetime.astimezone(pytz.utc)
 
-            error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
-            if not error_message:
-                return redirect(url_for('index'))
-            else:
-                flash(error_message, 'error')
+            # Initialize Mastodon with user's credentials
+            if user.client_key and user.client_secret and user.access_token and user.api_base_url:
+                mastodon = Mastodon(
+                    client_id=user.client_key,
+                    client_secret=user.client_secret,
+                    access_token=user.access_token,
+                    api_base_url=user.api_base_url
+                )
+
+                # Retrieve user information
+                try:
+                    user_info = mastodon.account_verify_credentials()
+                    user_avatar = user_info['avatar']
+                    username = user_info['username']
+                    profile_url = user_info['url']
+                except Exception as e:
+                    print(f"Error fetching user information: {e}")
+
+            if form.validate_on_submit():
+                content = form.content.data
+                content_warning = form.content_warning.data
+                image = form.image.data
+                alt_text = form.alt_text.data
+
+                error_message, media_id = handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text)
+                if not error_message:
+                    return redirect(url_for('index'))
+                else:
+                    flash(error_message, 'error')
 
         try:
-            scheduled_statuses = mastodon.scheduled_statuses()
-            # Process scheduled statuses as before
+            if mastodon:
+                scheduled_statuses = mastodon.scheduled_statuses()
         except Exception as e:
             scheduled_statuses = []
             flash(f"Error: {e}", 'error')
+    else:
+        flash("User not found. Please log in again.")
+        return redirect(url_for('login'))
 
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           user_avatar=user_avatar, username=username, profile_url=profile_url, timezones=timezones)
+                           user_avatar=user_avatar, username=username, profile_url=profile_url)
 
 def handle_post(mastodon, content, content_warning, scheduled_time, image, alt_text):
     """

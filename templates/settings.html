@@ -49,6 +49,13 @@
     {% endwith %}
     <form method="POST" action="{{ url_for('settings') }}">
         {{ form.hidden_tag() }}
+
+        <!-- Timezone Selection -->
+        <label for="timezone">Time Zone</label>
+        {{ form.timezone(id='timezone') }}
+        {% for error in form.timezone.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
         
         <label for="client_key">Client Key</label>
         {{ form.client_key(id='client_key') }}
