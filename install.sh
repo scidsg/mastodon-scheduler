@@ -24,6 +24,9 @@ PASSWORD=$(whiptail --inputbox "Since anyone on your local network can reach the
 # Clone the repo
 cd $HOME
 git clone https://github.com/scidsg/mastodon-scheduler.git
+cd mastodon-scheduler
+git switch localtz
+cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
@@ -77,6 +80,7 @@ sed -i "s|ACCESS_TOKEN|$ACCESS_TOKEN|g" app.py
 sed -i "s|MASTODON_URL|$MASTODON_URL|g" app.py
 sed -i "s|HASHED_PASSWORD|$HASHED_PASSWORD|g" app.py
 sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" app.py
+sed -i "s|SYSTEM_TIMEZONE|$SYSTEM_TIMEZONE|g" assets/next_up.py
 
 # Create a systemd service file for the application
 cat > /etc/systemd/system/mastodon_app.service <<EOF
