@@ -6,6 +6,21 @@ if [[ $EUID -ne 0 ]]; then
   exec sudo /bin/bash "$0" "$@"
 fi
 
+# Welcome message and ASCII art
+cat <<"EOF"
+   __  ___         __          __        
+  /  |/  /__ ____ / /____  ___/ /__  ___ 
+ / /|_/ / _ `(_-</ __/ _ \/ _  / _ \/ _ \
+/_/__/_/\_,_/___/\__/\___/\_,_/\___/_//_/
+  / __/___/ /  ___ ___/ /_ __/ /__ ____  
+ _\ \/ __/ _ \/ -_) _  / // / / -_) __/  
+/___/\__/_//_/\__/\_,_/\_,_/_/\__/_/                                   
+Mastodon Scheduler - Hosted v0.1
+
+A free tool by Science & Design - https://scidsg.org
+EOF
+sleep 3
+
 # Function to display error message and exit
 error_exit() {
     echo "An error occurred during installation. Please check the output above for more details."
