@@ -75,8 +75,11 @@
         {% for error in form.api_base_url.errors %}
         <span class="error">{{ error }}</span>
         {% endfor %}
-        {{ form.submit() }}
+        <div class="buttonContainer">
+            <button type="submit" id="submitBtn" class="submit-button">Submit</button>
+        </div>
     </form>
+    <script src="{{ url_for('static', filename='button.js') }}"></script>
     <script src="{{ url_for('static', filename='nav.js') }}"></script>
     <script src="{{ url_for('static', filename='notifications.js') }}"></script>
 </body>
