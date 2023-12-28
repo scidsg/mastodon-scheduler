@@ -50,7 +50,9 @@
         {% for error in form.invite_code.errors %}
         <span class="error">{{ error }}</span>
         {% endfor %}
-        {{ form.submit() }}
+        <div class="buttonContainer">
+            <button type="submit" id="submitBtn" class="submit-button">Submit</button>
+        </div>
     </form>
     <a href="/login">Log In</a>
     <a href="https://github.com/glenn-sorrentino/mastodon-scheduler/blob/hosted/privacy-policy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
