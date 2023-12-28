@@ -488,7 +488,8 @@ li.empty-list {
     width: min-content;
 }
 
-.publisher form input[type="submit"] {
+.publisher form input[type="submit"],
+.publisher button {
     max-width: 120px;
 }
 
@@ -504,9 +505,7 @@ li.empty-list {
     height: .875rem;
     animation: spin 2s linear infinite;
     display: inline-block;
-    /* Display inline-block within the button */
-    vertical-align: middle;
-    /* Center vertically within the button */
+    box-sizing: content-box;
 }
 
 @keyframes spin {
