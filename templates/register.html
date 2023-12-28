@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
@@ -14,49 +15,46 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body id="form">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
     <h1>Create an Account</h1>
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endwith %}
     <form method="post" action="{{ url_for('register') }}">
         {{ form.hidden_tag() }}
-        
         <label for="username">Username</label>
         {{ form.username(id="username") }}
         {% for error in form.username.errors %}
-            <span class="error">{{ error }}</span>
+        <span class="error">{{ error }}</span>
         {% endfor %}
-        
         <label for="password">Password</label>
         {{ form.password(id="password") }}
         {% for error in form.password.errors %}
-            <span class="error">{{ error }}</span>
+        <span class="error">{{ error }}</span>
         {% endfor %}
-
         <label for="confirm_password">Confirm Password</label>
         {{ form.confirm_password(id="confirm_password") }}
         {% for error in form.confirm_password.errors %}
-            <span class="error">{{ error }}</span>
+        <span class="error">{{ error }}</span>
         {% endfor %}
-
         <label for="invite_code">Invite Code</label>
         {{ form.invite_code(id="invite_code") }}
         {% for error in form.invite_code.errors %}
-            <span class="error">{{ error }}</span>
+        <span class="error">{{ error }}</span>
         {% endfor %}
-
         {{ form.submit() }}
     </form>
     <a href="/login">Log In</a>
     <a href="https://github.com/glenn-sorrentino/mastodon-scheduler/blob/hosted/privacy-policy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
