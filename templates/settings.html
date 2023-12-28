@@ -38,11 +38,11 @@
     </header>
     <h1>Settings</h1>
     <p>From your Mastodon account, go to: Preferences > Development and create a new app with the scopes: <span class="mono">read:accounts</span>, <span class="mono">read:statuses</span>, <span class="mono">write:statuses</span>, <span class="mono">write:media</span>, <span class="mono">crypto</span>.</p>
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <ul class="flashes">
-        {% for message in messages %}
-        <li>{{ message }}</li>
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
@@ -77,7 +77,8 @@
         {% endfor %}
         {{ form.submit() }}
     </form>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='notifications.js') }}"></script>
 </body>
 
 </html>

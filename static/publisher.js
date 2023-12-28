@@ -13,15 +13,6 @@ function validateForm() {
     return true;
 }
 
-function hideFlashMessages() {
-    const flashMessages = document.querySelectorAll('#flash-messages');
-    flashMessages.forEach(msg => {
-        setTimeout(() => {
-            msg.style.display = 'none';
-        }, 5000); // Hide after 5 seconds
-    });
-}
-
 function toggleAltTextInput(imageInput) {
     const altTextContainer = document.getElementById('altTextContainer');
 
@@ -59,17 +50,6 @@ function updateFieldCharCount(field, charCountDiv) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile navigation
-    var mobileNavButton = document.getElementById('mobileNavButton');
-    var mobileNavMenu = document.getElementById('mobileNavMenu');
-
-    if (mobileNavButton && mobileNavMenu) {
-        mobileNavButton.addEventListener('click', function() {
-            var isExpanded = mobileNavButton.getAttribute('aria-expanded') === 'true';
-            mobileNavButton.setAttribute('aria-expanded', !isExpanded);
-            mobileNavMenu.style.display = isExpanded ? 'none' : 'flex';
-        });
-    }
     // Validate form on submit
     const form = document.querySelector('form');
     form.addEventListener('submit', function(event) {
@@ -97,14 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    hideFlashMessages();
     updateCharCount(); // Initialize character count
     document.querySelector('textarea[name="content"]').addEventListener('textarea', updateCharCount);
     document.querySelector('input[name="content_warning"]').addEventListener('input', updateCharCount);
     document.querySelector('textarea[name="alt_text"]').addEventListener('textarea', () => updateFieldCharCount(document.querySelector('textarea[name="alt_text"]'), document.getElementById('altTextCharCount')));
 
     // Additional onLoad functions
-    hideFlashMessages();
     updateCharCount();
 });
 

@@ -161,10 +161,9 @@ nav a {
   display: none;
 }
 
-#flash-messages,
 .flashes {
       position: absolute;
-      top: 1.5rem;
+      top: 0;
       z-index: 3;
       padding-left: 0;
       display: flex;
@@ -172,7 +171,6 @@ nav a {
       align-items: center;
 }
 
-.flash-message,
 .flashes li {
       background-color: white;
       padding: 1rem;
@@ -183,10 +181,38 @@ nav a {
       width: max-content;
       list-style: none;
       max-width: 80vw;
+      opacity: 0;
+      animation: fadeInMoveDown .5s ease forwards;
 }
 
 .flashes li + li {
     margin-top: .5rem;
+}
+
+@keyframes fadeInMoveDown {
+    0% {
+        opacity: 0; 
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(1.5rem);
+    }
+}
+
+@keyframes fadeOutMoveUp {
+    0% {
+        opacity: 1;
+        transform: translateY(1.5rem);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.flashes li.fadeOut {
+    animation: fadeOutMoveUp .5s ease forwards;
 }
 
 .user-info a {
