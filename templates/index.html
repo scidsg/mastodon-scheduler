@@ -29,7 +29,7 @@
             <div class="user-info">
                 <a href="{{ profile_url }}" class="user-profile-link">
                     {% if user_avatar %}
-                        <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
+                    <img src="{{ user_avatar }}" alt="User Avatar" class="user-avatar">
                     {% endif %}
                     <span class="username">{{ username }}</span>
                 </a>
@@ -37,13 +37,13 @@
         </nav>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endwith %}
     <div class="publisher">
         <form method="POST" enctype="multipart/form-data">
@@ -51,76 +51,71 @@
             <label for="content">What's on Your Mind?</label>
             {{ form.content(size=32, maxlength=500) }}
             {% for error in form.content.errors %}
-                <span style="color: red;">{{ error }}</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
-
             <label for="content_warning">Content Warning</label>
             {{ form.content_warning(size=32, maxlength=500) }}
             {% for error in form.content_warning.errors %}
-                <span style="color: red;">{{ error }}</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
             <div id="charCount">0/500</div>
-
             <label for="image">Add an Image</label>
             {{ form.image() }}
             {% for error in form.image.errors %}
-                <span style="color: red;">{{ error }}</span>
+            <span style="color: red;">{{ error }}</span>
             {% endfor %}
             <div id="altTextContainer">
                 <label for="alt_text">Alt Text</label>
                 {{ form.alt_text(size=32, maxlength=1500) }}
                 {% for error in form.alt_text.errors %}
                 <span style="color: red;">{{ error }}</span>
-            {% endfor %}
+                {% endfor %}
                 <div id="altTextCharCount">0/1500</div>
             </div>
-
             <label for="scheduled_at">Schedule Post</label>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at">
-
             <input type="submit" value="Toot!">
         </form>
     </div>
     <div class="scheduled-posts">
         <h2>
             {% if scheduled_statuses|length == 1 %}
-                1 Scheduled Post
+            1 Scheduled Post
             {% else %}
-                {{ scheduled_statuses|length }} Scheduled Posts
+            {{ scheduled_statuses|length }} Scheduled Posts
             {% endif %}
         </h2>
         <ul>
             {% if scheduled_statuses %}
-                {% for status in scheduled_statuses %}
-                <li>
-                    <!-- Display content -->
-                    {{ status['params']['text'] }}<br>
-                    <!-- Display images with alt text as title -->
-                    {% for media in status.get('media_attachments', []) %}
-                    <div class="image-container">
-                        <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post">
-                        {% if media.description %}
-                        <span class="alt-indicator">Alt</span>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                    <!-- Display content warning if available -->
-                    {% if status['params']['spoiler_text'] %}
-                    <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+            {% for status in scheduled_statuses %}
+            <li>
+                <!-- Display content -->
+                {{ status['params']['text'] }}<br>
+                <!-- Display images with alt text as title -->
+                {% for media in status.get('media_attachments', []) %}
+                <div class="image-container">
+                    <img src="{{ media.url }}" title="{{ media.description }}" alt="Image attached to post">
+                    {% if media.description %}
+                    <span class="alt-indicator">Alt</span>
                     {% endif %}
-                    <span class="meta">Scheduled for {{ status['scheduled_at']|datetime(user.timezone) }}</span>
-
-                    <!-- Cancel button -->
-                    <form action="/cancel/{{ status['id'] }}" method="post">
-                        <input type="submit" value="Cancel">
-                    </form>
-                </li>
+                </div>
                 {% endfor %}
+                <!-- Display content warning if available -->
+                {% if status['params']['spoiler_text'] %}
+                <span class="meta cw">Content Warning: {{ status['params']['spoiler_text'] }}</span>
+                {% endif %}
+                <span class="meta">Scheduled for {{ status['scheduled_at']|datetime(user.timezone) }}</span>
+                <!-- Cancel button -->
+                <form action="/cancel/{{ status['id'] }}" method="post">
+                    <input type="submit" value="Cancel">
+                </form>
+            </li>
+            {% endfor %}
             {% else %}
-                <li class="empty-list">
-                    <img src="{{ url_for('static', filename='empty-state.png') }}">
-                    No posts scheduled
-                </li>
+            <li class="empty-list">
+                <img src="{{ url_for('static', filename='empty-state.png') }}">
+                No posts scheduled
+            </li>
             {% endif %}
         </ul>
     </div>
