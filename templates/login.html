@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="author" content="Glenn Sorrentino">
@@ -14,42 +15,44 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body id="form">
     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo for the Mastodon Scheduler">
     <h1>Log in to the Mastodon Scheduler</h1>
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endwith %}
     <form action="{{ url_for('login') }}" method="post">
         {{ form.hidden_tag() }}
         <label for="username">Username</label>
         {{ form.username(size=32, class_="input-field") }}
         {% if form.username.errors %}
-            <ul class="errors">
-                {% for error in form.username.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+        <ul class="errors">
+            {% for error in form.username.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
         <label for="password">Password</label>
         {{ form.password(size=32, class_="input-field") }}
         {% if form.password.errors %}
-            <ul class="errors">
-                {% for error in form.password.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}  
+        <ul class="errors">
+            {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         <input type="submit" value="Login">
     </form>
     <a href="/register">Register</a>
     <a href="https://github.com/glenn-sorrentino/mastodon-scheduler/blob/hosted/privacy-policy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
