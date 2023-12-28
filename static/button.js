@@ -13,6 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mock processing time with setTimeout (replace with your form submission logic)
         setTimeout(function() {
             submitBtn.innerHTML = originalButtonText;
-        }, 3000); // Adjust this timeout as per your actual form submission logic
+        }, 5000); // Adjust this timeout as per your actual form submission logic
     });
 });
