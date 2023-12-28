@@ -15,7 +15,7 @@ cat <<"EOF"
   / __/___/ /  ___ ___/ /_ __/ /__ ____  
  _\ \/ __/ _ \/ -_) _  / // / / -_) __/  
 /___/\__/_//_/\__/\_,_/\_,_/_/\__/_/                                   
-Mastodon Scheduler - Hosted v0.1.2
+Mastodon Scheduler - Hosted v0.1.3
 
 A free tool by Science & Design - https://scidsg.org
 EOF
