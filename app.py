@@ -126,7 +126,7 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
-    utc_datetime = "" 
+    utc_datetime = None 
     if form.validate_on_submit():
         content = form.content.data
         content_warning = form.content_warning.data
