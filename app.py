@@ -126,7 +126,7 @@ def index():
         profile_url = "#" 
         print(f"Error fetching user information: {e}")
 
-    utc_datetime = None 
+    utc_datetime = None
     if form.validate_on_submit():
         content = form.content.data
         content_warning = form.content_warning.data
@@ -134,22 +134,38 @@ def index():
         image = form.image.data
         alt_text = form.alt_text.data
 
+        media_id = None
+        if image:
+            filename = secure_filename(image.filename)
+            mimetype = mimetypes.guess_type(filename)[0]
+            if mimetype:
+                try:
+                    media = mastodon.media_post(image.stream, mime_type=mimetype, description=alt_text)
+                    media_id = media['id']
+                except Exception as e:
+                    flash(f"Error uploading image: {e}", 'error')
+
         if scheduled_time:
             try:
                 user_timezone = pytz.timezone(user.timezone) if user.timezone else pytz.utc
                 local_datetime = datetime.strptime(scheduled_time, "%Y-%m-%dT%H:%M")
                 local_datetime = user_timezone.localize(local_datetime)
                 utc_datetime = local_datetime.astimezone(pytz.utc)
-                print("Scheduled Time (UTC):", utc_datetime)
             except Exception as e:
                 flash(f"Error in date conversion: {e}", 'error')
                 return render_template('index.html', form=form, user_avatar=user_avatar, username=username, profile_url=profile_url)
 
-            error_message, media_id = handle_post(mastodon, content, content_warning, utc_datetime, image, alt_text)
-            if not error_message:
-                return redirect(url_for('index'))
+        try:
+            if utc_datetime:
+                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None, scheduled_at=utc_datetime)
+                flash("👍 Toot scheduled successfully!", "success")
             else:
-                flash(error_message, 'error')
+                mastodon.status_post(status=content, spoiler_text=content_warning, media_ids=[media_id] if media_id else None)
+                flash("👍 Toot posted successfully!", "success")
+        except Exception as e:
+            flash(f"Error posting to Mastodon: {e}", 'error')
+
+        return redirect(url_for('index'))
 
     try:
         scheduled_statuses = mastodon.scheduled_statuses()
@@ -157,7 +173,6 @@ def index():
         scheduled_statuses = []
         flash(f"Error: {e}", 'error')
 
-    # Pass the user object and scheduled_statuses to the template
     return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
                            user_avatar=user_avatar, username=username, profile_url=profile_url, user=user)
 
