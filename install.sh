@@ -59,7 +59,10 @@ cp $HOME/mastodon-scheduler/app.py $HOME/mastodon_app
 cp $HOME/mastodon-scheduler/templates/index.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/templates/login.html $HOME/mastodon_app/templates
 cp $HOME/mastodon-scheduler/static/style.css $HOME/mastodon_app/static
-cp $HOME/mastodon-scheduler/static/script.js $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/button.js $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/nav.js $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/notifications.js $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/publisher.js $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/empty-state.png $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/logo.png $HOME/mastodon_app/static
 
