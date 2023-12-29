@@ -65,6 +65,7 @@ cp $HOME/mastodon-scheduler/static/notifications.js $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/publisher.js $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/empty-state.png $HOME/mastodon_app/static
 cp $HOME/mastodon-scheduler/static/logo.png $HOME/mastodon_app/static
+cp $HOME/mastodon-scheduler/static/icon-menu.png $HOME/mastodon_app/static
 
 # Generate a secret key
 SECRET_KEY=$(openssl rand -hex 24)

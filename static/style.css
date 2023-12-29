@@ -527,6 +527,7 @@ body#form input {
 
     .btnIcon {
         display: initial;
+        background-position: center;
     }
 
     nav ul {
