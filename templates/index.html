@@ -39,13 +39,13 @@
         </nav>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endwith %}
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
