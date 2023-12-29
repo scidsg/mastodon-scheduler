@@ -32,7 +32,9 @@
     <form method="POST" action="{{ url_for('login') }}">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
+        <div class="buttonContainer">
+            <button type="submit" id="submitBtn" class="submit-button">Login</button>
+        </div>
     </form>
     <script src="{{ url_for('static', filename='button.js') }}"></script>
     <script src="{{ url_for('static', filename='notifications.js') }}"></script>
