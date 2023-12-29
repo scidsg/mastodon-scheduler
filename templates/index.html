@@ -39,13 +39,13 @@
         </nav>
     </header>
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endwith %}
     <div class="publisher">
         <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
@@ -63,7 +63,9 @@
             </div>
             <label for="scheduled_at">Schedule Post</label>
             <input type="datetime-local" id="scheduled_at" name="scheduled_at">
-            <input type="submit" value="Toot!">
+            <div class="buttonContainer">
+                <button type="submit" id="submitBtn" class="submit-button">Toot!</button>
+            </div>
         </form>
     </div>
     <div class="scheduled-posts">
@@ -108,7 +110,10 @@
             {% endif %}
         </ul>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='publisher.js') }}"></script>
+    <script src="{{ url_for('static', filename='button.js') }}"></script>
+    <script src="{{ url_for('static', filename='nav.js') }}"></script>
+    <script src="{{ url_for('static', filename='notifications.js') }}"></script>
 </body>
 
 </html>
