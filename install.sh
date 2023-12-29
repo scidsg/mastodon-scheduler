@@ -24,6 +24,9 @@ PASSWORD=$(whiptail --inputbox "Since anyone on your local network can reach the
 # Clone the repo
 cd $HOME
 git clone https://github.com/scidsg/mastodon-scheduler.git
+cd mastodon-scheduler
+git switch spin
+cd ..
 
 # Install mkcert
 wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-arm
