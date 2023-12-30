@@ -549,6 +549,7 @@ body#form input {
         gap: 1.5rem;
         flex-direction: column;
         align-items: start;
+        margin: 0;
     }
 
     .user-info a {
