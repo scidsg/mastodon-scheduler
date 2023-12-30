@@ -96,7 +96,7 @@ header {
 header nav {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 1.25rem;
 }
 
 header h1 a {
@@ -111,7 +111,7 @@ header h1 a:hover {
 nav ul {
     display: inline-flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
     font-size: .875rem;
     margin: 0;
     padding-left: 0;
@@ -531,6 +531,10 @@ body#form input {
     .btnIcon {
         display: initial;
         background-position: center;
+    }
+
+    header nav {
+        gap: .5rem;
     }
 
     nav ul {
