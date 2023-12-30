@@ -111,7 +111,7 @@ header h1 a:hover {
 nav ul {
     display: inline-flex;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
     font-size: .875rem;
     margin: 0;
     padding-left: 0;
@@ -141,7 +141,7 @@ nav a {
     border: none;
     cursor: pointer;
     background-image: url('icon-menu.png');
-    min-width: 0;
+    min-width: 48px;
     display: none;
 }
 
@@ -226,7 +226,7 @@ header h1 {
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
-    outline: 1px solid rgba(0, 0, 0, .15);
+    border: 1px solid rgba(0, 0, 0, .15);
 }
 
 h2 {
@@ -542,6 +542,11 @@ body#form input {
         gap: 1.5rem;
         flex-direction: column;
         align-items: start;
+    }
+
+    .user-info a {
+        max-width: 34px;
+        overflow: hidden;
     }
 
     .scheduled-posts,
