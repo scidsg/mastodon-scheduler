@@ -22,6 +22,8 @@ def load_key():
         return key_file.read()
 
 app.config['SECRET_KEY'] = load_key()
+app.config['SESSION_COOKIE_SECURE'] = True  # Ensure cookies are sent over HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Set SameSite attribute for cookies
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
