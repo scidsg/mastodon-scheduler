@@ -486,6 +486,7 @@ li.empty-list {
     font-size: .825rem;
     margin-bottom: 0;
     width: min-content;
+    min-height: initial;
 }
 
 .publisher form input[type="submit"],
@@ -535,6 +536,7 @@ li.empty-list {
 
     .btnIcon {
         display: initial;
+        background-position: center;
     }
 
     nav ul {
