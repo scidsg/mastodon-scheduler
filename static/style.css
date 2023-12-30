@@ -111,7 +111,7 @@ header h1 a:hover {
 nav ul {
     display: inline-flex;
     align-items: center;
-    gap: .5rem;
+    gap: 1rem;
     font-size: .875rem;
     margin: 0;
     padding-left: 0;
@@ -296,6 +296,7 @@ h2,
 }
 
 input:not([type='file']),
+input[type="datetime-local"],
 textarea,
 select {
     padding: .75rem;
@@ -306,6 +307,8 @@ select {
     border: 1px solid rgba(99, 100, 255, .75);
     box-shadow: 2px 2px 0px 0 rgba(99, 100, 255, .33);
     background-color: white;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 input:not([type='datetime-local']),
