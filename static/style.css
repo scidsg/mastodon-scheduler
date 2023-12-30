@@ -114,7 +114,7 @@ header {
 header nav {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: 1rem;
 }
 
 header h1 a {
@@ -532,6 +532,10 @@ li.empty-list {
 
     header h1 {
         font-size: 1.125rem;
+    }
+
+    header nav {
+        gap: 1rem;
     }
 
     .btnIcon {
