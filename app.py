@@ -22,8 +22,10 @@ def load_key():
         return key_file.read()
 
 app.config['SECRET_KEY'] = load_key()
-app.config['SESSION_COOKIE_SECURE'] = True  # Ensure cookies are sent over HTTPS
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Set SameSite attribute for cookies
+app.config['SESSION_COOKIE_NAME'] = '__Host-sess'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mastodon-scheduler.db'
@@ -125,7 +127,7 @@ def index():
     except Exception as e:
         user_avatar = None
         username = "User"
-        profile_url = "#" 
+        profile_url = "#"
         print(f"Error fetching user information: {e}")
 
     utc_datetime = None
@@ -175,8 +177,7 @@ def index():
         scheduled_statuses = []
         flash(f"Error: {e}", 'error')
 
-    return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, 
-                           user_avatar=user_avatar, username=username, profile_url=profile_url, user=user)
+    return render_template('index.html', form=form, scheduled_statuses=scheduled_statuses, user_avatar=user_avatar, username=username, profile_url=profile_url, user=user)
 
 def handle_post(mastodon, content, content_warning, utc_datetime, image, alt_text):
     """
@@ -309,7 +310,9 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('authenticated', None)  # Clear the 'authenticated' session key
-    return redirect(url_for('login'))   # Redirect to the login page
+    response = redirect(url_for('login'))  # Redirect to the login page
+    response.set_cookie('__Host-session', '', expires=0)  # Clear the __Host- prefixed cookie
+    return response
 
 # Password Requirements
 def password_length(min=-1, max=-1):
