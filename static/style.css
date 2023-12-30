@@ -243,7 +243,7 @@ header h1 {
 .user-info img {
     width: 2rem;
     border-radius: 50vh;
-    outline: 1px solid rgba(0, 0, 0, .15);
+    border: 1px solid rgba(0, 0, 0, .15);
 }
 
 h2 {
@@ -551,6 +551,11 @@ li.empty-list {
         gap: 1.5rem;
         flex-direction: column;
         align-items: start;
+    }
+
+    .user-info a {
+        max-width: 34px;
+        overflow: hidden;
     }
 
     .scheduled-posts,
