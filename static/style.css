@@ -96,7 +96,7 @@ header {
 header nav {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: .5rem;
 }
 
 header h1 a {
