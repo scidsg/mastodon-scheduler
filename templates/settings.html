@@ -70,7 +70,7 @@
         {% for error in form.access_token.errors %}
         <span class="error">{{ error }}</span>
         {% endfor %}
-        <label for="api_base_url">API Base URL</label>
+        <label for="api_base_url">Instance URL</label>
         {{ form.api_base_url(id='api_base_url') }}
         {% for error in form.api_base_url.errors %}
         <span class="error">{{ error }}</span>
